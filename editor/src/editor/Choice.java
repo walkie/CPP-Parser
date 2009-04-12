@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import editor.util.*;
 
 public class Choice extends AbstractVersionedObject {
 
@@ -13,6 +12,21 @@ public class Choice extends AbstractVersionedObject {
 	public void addAlternative(Label l, AbstractVersionedObject p)
 	{
 		alternatives.put(l,p);
+	}
+	
+	public Collection<AbstractVersionedObject> getAlternatives()
+	{
+		return alternatives.values();
+	}
+
+	public AbstractVersionedObject getAlternative(Label l)
+	{
+		return alternatives.get(l);
+	}
+
+	public Set<Label> getLabels()
+	{
+		return alternatives.keySet();
 	}
 	
 	public Set<AbstractVersionedObject> range()
@@ -63,40 +77,15 @@ public class Choice extends AbstractVersionedObject {
 	}
 	
 	@Override
-	public AbstractVersionedObject select(String tag)
+	public String getText()
 	{
-		Label[] ls = new Label[domain().size()];
-		domain().toArray(ls);
-		
-		for (Label l : ls)
-		{
-			if (l.tags.contains(tag))
-			{
-				AbstractVersionedObject v = alternatives.get(l);
-				v.select(tag);
-			}
-			else
-			{
-				alternatives.remove(l);
-			}
-		}
-		for (Label l : ls)
-		{
-			l.tags.remove(tag);
-		}
-		return lift();
-	}
-	
-	@Override
-	public Tree<String> getText()
-	{
-		Tree<String> t = new Tree<String>("", false);
+		String str = "";
 		for (Label l : alternatives.keySet())
 		{
-			t.addChild(alternatives.get(l).getText());
+			str += alternatives.get(l).getText();
 		}
 		
-		return t;
+		return str;
 	}
 
 	@Override
@@ -125,8 +114,10 @@ public class Choice extends AbstractVersionedObject {
 	{
 		v.visit(this);
 	}
-	
-	public Collection<AbstractVersionedObject> getAlternatives() {
-		return alternatives.values();
+
+	@Override
+	public AbstractVersionedObject transform(VersionedObjectTransformer v) 
+	{
+		return v.transform(this);
 	}
 }

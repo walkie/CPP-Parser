@@ -2,7 +2,6 @@ package editor;
 
 import java.util.Set;
 import java.util.TreeSet;
-import editor.util.*;
 
 public class Let extends AbstractVersionedObject {
 	
@@ -17,8 +16,21 @@ public class Let extends AbstractVersionedObject {
 		this.scope = scope;
 	}
 	
+
+	public AbstractVersionedObject getBound() {
+		return bound;
+	}
+
+	public AbstractVersionedObject getScope() {
+		return scope;
+	}
+
+	public Variable getVar() {
+		return var;
+	}
+
 	@Override
-	public Tree<String> getText() {
+	public String getText() {
 		AbstractVersionedObject v = scope.replace(var, bound);
 		return v.getText();
 	}
@@ -29,15 +41,6 @@ public class Let extends AbstractVersionedObject {
 		Let let = new Let(var, bound.replace(v, b), scope.replace(v, b));
 		
 		return let.scope.replace(let.var, let.bound);
-	}
-
-	@Override
-	public AbstractVersionedObject select(String tag) {
-		var = (Variable) var.select(tag);
-		bound = bound.select(tag);
-		scope = scope.select(tag);
-		
-		return this;
 	}
 
 	@Override
@@ -62,11 +65,8 @@ public class Let extends AbstractVersionedObject {
 		v.visit(this);
 	}
 
-	public AbstractVersionedObject getBound() {
-		return bound;
-	}
-
-	public AbstractVersionedObject getScope() {
-		return scope;
+	@Override
+	public AbstractVersionedObject transform(VersionedObjectTransformer v) {
+		return v.transform(this);
 	}
 }

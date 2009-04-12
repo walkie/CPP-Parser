@@ -1,7 +1,6 @@
 package editor;
 
 import java.util.Set;
-import editor.util.*;
 
 public class Variable extends AbstractVersionedObject {
 
@@ -12,22 +11,26 @@ public class Variable extends AbstractVersionedObject {
 		this.name = name;
 	}
 	
-	@Override
-	public Tree<String> getText() {
-		return new Tree<String>("", true);
-	}
-	@Override
-	public AbstractVersionedObject select(String tag) {
-		return this;
+	public Variable(Variable variable)
+	{
+		this.name = variable.name;
 	}
 
 	@Override
-	public Set<String> tags() {
+	public String getText() 
+	{
+		return "";
+	}
+
+	@Override
+	public Set<String> tags() 
+	{
 		return null;
 	}
 
 	@Override
-	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound) {
+	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound)
+	{
 		if (equals(var))
 		{
 			return bound;
@@ -36,7 +39,8 @@ public class Variable extends AbstractVersionedObject {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) 
+	{
 		
 		if (obj instanceof Variable)
 		{
@@ -46,7 +50,8 @@ public class Variable extends AbstractVersionedObject {
 	}
 
 	@Override
-	public String getStructuredText() {
+	public String getStructuredText() 
+	{
 		return String.format("<var>%s</var>\n", name);
 	}
 
@@ -54,5 +59,11 @@ public class Variable extends AbstractVersionedObject {
 	public void visit(VersionedObjectVisitor v)
 	{
 		v.visit(this);
+	}
+
+	@Override
+	public AbstractVersionedObject transform(VersionedObjectTransformer v) 
+	{
+		return v.transform(this);
 	}
 }

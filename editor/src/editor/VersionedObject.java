@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
-import editor.util.*;
 
 public class VersionedObject extends AbstractVersionedObject {
-	String text;
+	String value;
 	ArrayList<AbstractVersionedObject> subObjects = new ArrayList<AbstractVersionedObject>();
 
-	public VersionedObject(String text)
+	public VersionedObject(String value)
 	{
-		this.text = text;
+		this.value = value;
+	}
+	
+	public String getValue()
+	{
+		return value;
 	}
 	
 	public void addSubObject(AbstractVersionedObject v)
@@ -31,31 +35,21 @@ public class VersionedObject extends AbstractVersionedObject {
 		
 		return ts;
 	}
-	
+		
 	@Override
-	public AbstractVersionedObject select(String tag)
+	public String getText()
 	{
+		String str = value;
 		for (AbstractVersionedObject v : subObjects)
 		{
-			v.select(tag);
+			str += v.getText();
 		}
-		return this;
-	}
-	
-	@Override
-	public Tree<String> getText()
-	{
-		Tree<String> t = new Tree<String>(text, true);
-		for (AbstractVersionedObject v : subObjects)
-		{
-			t.addChild(v.getText());
-		}
-		return t;
+		return str;
 	}
 
 	@Override
 	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound) {
-		VersionedObject v = new VersionedObject(text);
+		VersionedObject v = new VersionedObject(value);
 		for (AbstractVersionedObject vo : subObjects)
 		{
 			v.subObjects.add(vo.replace(var, bound));
@@ -71,7 +65,7 @@ public class VersionedObject extends AbstractVersionedObject {
 		{
 			subText += v.getStructuredText();
 		}
-		String r = String.format("<object>\n<text>%s</text>\n%s</object>\n", text.replace("\n",""), subText);
+		String r = String.format("<object>\n<text>%s</text>\n%s</object>\n", value.replace("\n",""), subText);
 
 		return r;
 	}
@@ -84,5 +78,10 @@ public class VersionedObject extends AbstractVersionedObject {
 
 	public Collection<AbstractVersionedObject> getSubObjects() {
 		return subObjects;
+	}
+
+	@Override
+	public AbstractVersionedObject transform(VersionedObjectTransformer v) {
+		return v.transform(this);
 	}
 }

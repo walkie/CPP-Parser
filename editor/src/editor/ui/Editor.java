@@ -2,6 +2,8 @@ package editor.ui;
 
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Set;
 
@@ -13,16 +15,35 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
-import editor.util.Tree;
+import editor.AbstractVersionedObject;
 
 public class Editor extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final JEditorPane e1 = new JEditorPane();
 	private final JEditorPane e2 = new JEditorPane();
 	private JPanel dimPanel = null;
+	private DocumentAdapter da;
 	
-	public Editor()
+	public Editor(DocumentAdapter da)
 	{
+		this.da = da;
+	}
+	
+	private class RBLChecked implements ActionListener
+	{
+		DocumentAdapter da;
+		String tag;
+		
+		public RBLChecked(DocumentAdapter da, String tag)
+		{
+			this.da = da;
+			this.tag = tag;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			da.select(tag);
+		}
 	}
 	
 	public void setDimesionList(Collection<Set<String>> dimensions) {
@@ -36,6 +57,7 @@ public class Editor extends JFrame {
 			for (String t : d)
 			{
 				JRadioButton r = new JRadioButton(t);
+				r.addActionListener(new RBLChecked(da, t));
 				g.add(r);
 				p.add(r);
 			}
@@ -47,8 +69,8 @@ public class Editor extends JFrame {
 		e2.setText(structuredText);
 	}
 
-	public void setTopDoc(Tree<String> doc) {
-		DocumentAdapter da = new DocumentAdapter(doc, e1);
+	public void setTopDoc(AbstractVersionedObject doc) {
+		da.setDocument(doc, e1);
 		da.setText();
 		e1.addMouseListener(da);
 	}

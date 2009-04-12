@@ -10,14 +10,14 @@ public class EditorApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Editor e = new Editor();
+		Editor e = new Editor(new DocumentAdapter());
 				
 		AbstractVersionedObject v = Temp.getTestDoc();
 		Dimension d = new Dimension(v);
 		
 		e.setDimesionList(d.getDimensions());
 
-		e.setTopDoc(v.getText());
+		e.setTopDoc(v);
 		e.setBottomText(v.getStructuredText());
 		e.showit();
 	}
