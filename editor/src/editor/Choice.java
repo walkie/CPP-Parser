@@ -24,6 +24,11 @@ public class Choice extends AbstractVersionedObject {
 		return alternatives.get(l);
 	}
 
+	public void removeAlternative(Label l) 
+	{
+		alternatives.remove(l);
+	}
+
 	public Set<Label> getLabels()
 	{
 		return alternatives.keySet();

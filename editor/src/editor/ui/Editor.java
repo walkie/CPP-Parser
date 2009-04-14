@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -33,21 +35,27 @@ public class Editor extends JFrame {
 	{
 		DocumentAdapter da;
 		String tag;
+		Set<String> dim;
 		
-		public RBLChecked(DocumentAdapter da, String tag)
+		public RBLChecked(DocumentAdapter da, String tag, Set<String> dim)
 		{
 			this.da = da;
 			this.tag = tag;
+			this.dim = dim;
 		}
 		
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) 
+		{
+			da.unselect(dim);
 			da.select(tag);
 		}
 	}
 	
 	public void setDimesionList(Collection<Set<String>> dimensions) {
 		dimPanel = new JPanel();
+		BoxLayout layout = new BoxLayout(dimPanel, BoxLayout.Y_AXIS);
+		dimPanel.setLayout(layout);
 		
 		for (Set<String> d : dimensions)
 		{
@@ -57,7 +65,10 @@ public class Editor extends JFrame {
 			for (String t : d)
 			{
 				JRadioButton r = new JRadioButton(t);
-				r.addActionListener(new RBLChecked(da, t));
+				TreeSet<String> d2 = new TreeSet<String>();
+				d2.addAll(d);
+				d2.remove(t);
+				r.addActionListener(new RBLChecked(da, t, d2));
 				g.add(r);
 				p.add(r);
 			}
@@ -77,7 +88,7 @@ public class Editor extends JFrame {
 
 	public void showit()
 	{
-		GridLayout layout  = new GridLayout(1,2);
+		BoxLayout layout  = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
 		getContentPane().setLayout(layout);
 		
 		JPanel inner = new JPanel();
@@ -95,7 +106,7 @@ public class Editor extends JFrame {
 		add(dimPanel);
 		add(inner);
 		
-		setSize(new java.awt.Dimension(500,500));
+		setSize(new java.awt.Dimension(700,550));
 		setVisible(true);
 	}
 }

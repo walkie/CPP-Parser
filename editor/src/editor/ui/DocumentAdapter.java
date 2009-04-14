@@ -2,6 +2,8 @@ package editor.ui;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.DocumentEvent;
@@ -85,9 +87,16 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		
 	}
 
+	TreeSet<String> selectedTags = new TreeSet<String>();
+	
 	public void select(String tag) {
+		selectedTags.add(tag);
 		TagSelector ts = new TagSelector(doc);
-		AbstractVersionedObject doc2 = ts.select(tag);
+		AbstractVersionedObject doc2 = ts.select(selectedTags);
 		setText(doc2);
+	}
+
+	public void unselect(Set<String> dim) {
+		selectedTags.removeAll(dim);
 	}
 }

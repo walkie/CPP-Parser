@@ -14,6 +14,10 @@ public class Label implements Comparable<Label> {
 		}
 	}
 
+	public Label(String tag) {
+		tags.add(tag);
+	}
+
 	private Label() {}
 	
 	public Label(Label l) {
