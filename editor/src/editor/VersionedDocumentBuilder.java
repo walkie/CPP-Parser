@@ -11,11 +11,6 @@ public class VersionedDocumentBuilder {
 		objs = new ArrayList<AbstractVersionedObject>();
 	}
 	
-	public void addObject(AbstractVersionedObject v)
-	{
-		objs.add(v);
-	}
-	
 	public void createChoice()
 	{
 		objs.add(new Choice());
@@ -48,5 +43,9 @@ public class VersionedDocumentBuilder {
 		}
 		
 		return v;
+	}
+
+	public void addText(String text) {
+		objs.add(new VersionedObject(text));
 	}
 }
