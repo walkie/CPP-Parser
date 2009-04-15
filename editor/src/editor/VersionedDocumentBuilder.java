@@ -11,9 +11,13 @@ public class VersionedDocumentBuilder {
 		objs = new ArrayList<AbstractVersionedObject>();
 	}
 	
-	public void createChoice()
+	public void createChoice(int i, String tag)
 	{
-		objs.add(new Choice());
+		AbstractVersionedObject v = objs.get(i);
+		objs.remove(i);
+		Choice c = new Choice();
+		c.addAlternative(new Label(tag), v);
+		objs.add(i, c);
 	}
 	
 	public void removeChoice()
@@ -21,10 +25,10 @@ public class VersionedDocumentBuilder {
 		objs.remove(0);
 	}
 	
-	public void addAlternative(String tag, AbstractVersionedObject v)
+	public void addAlternative(int i, String tag, String text)
 	{
-		Choice c = (Choice)objs.get(objs.size()-1);
-		c.addAlternative(new Label(tag), v);
+		Choice c = (Choice)objs.get(i);
+		c.addAlternative(new Label(tag), new VersionedObject(text));
 	}
 	
 	public void removeAlternative(String tag)
@@ -47,5 +51,9 @@ public class VersionedDocumentBuilder {
 
 	public void addText(String text) {
 		objs.add(new VersionedObject(text));
+	}
+
+	public int size() {
+		return objs.size();
 	}
 }

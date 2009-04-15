@@ -6,124 +6,55 @@ import editor.Label;
 import editor.VersionedDocumentBuilder;
 import editor.VersionedObject;
 
-public class Temp {
+public class Temp 
+{
 	public static AbstractVersionedObject getTestDoc()
 	{
-		VersionedObject p = new VersionedObject("");
-		try {
-
-//			Label l_ft = new Label(new String[] { "f", "t" });
-//			Label l_45 = new Label(new String[] { "4", "5" });
-			
-			Label l_4 = new Label(new String[] { "4" });
-			Label l_5 = new Label(new String[] { "5" });
-	
-			Label l_f = new Label(new String[] { "f" });
-			Label l_t = new Label(new String[] { "t" });
-			
-			Choice c;
-			
-			p.addSubObject(new VersionedObject("class GoodApp {\n"));
-			
-			c = new Choice();
-			c.addAlternative((Label)l_5.clone(), new VersionedObject("List<Job> jobs = new LinkedList<Job>();\n"));
-			c.addAlternative((Label)l_4.clone(), new VersionedObject("List jobs = new LinkedList();\n"));
-			p.addSubObject(c);
-			
-			p.addSubObject(new VersionedObject("void runJobs() {\n"));
-			
-			c = new Choice();
-			c.addAlternative((Label)l_f.clone(), new VersionedObject(""));
-			c.addAlternative((Label)l_t.clone(), new VersionedObject("int trialCount = 0;\n"));
-			p.addSubObject(c);
-			
-			c = new Choice();
-			c.addAlternative((Label)l_5.clone(), new VersionedObject(""));
-			c.addAlternative((Label)l_4.clone(), new VersionedObject("Iterator it = jobs.iterator();\n"));
-			p.addSubObject(c);
-			
-			c = new Choice();
-			c.addAlternative((Label)l_5.clone(), new VersionedObject("for (Job j : jobs) {\n"));
-			c.addAlternative((Label)l_4.clone(), new VersionedObject("while (it.hasNext()) {\n"));
-			p.addSubObject(c);
-			
-			c = new Choice();
-			c.addAlternative((Label)l_5.clone(), new VersionedObject(""));
-			c.addAlternative((Label)l_4.clone(), new VersionedObject("Job j = (Job) it.next();\n"));
-			p.addSubObject(c);
-			
-			p.addSubObject(new VersionedObject("j.run();\n"));
-			
-			c = new Choice();
-			c.addAlternative((Label)l_f.clone(), new VersionedObject(""));
-			c.addAlternative((Label)l_t.clone(), new VersionedObject("if (++trialCount > 5) break;\n"));
-			p.addSubObject(c);
-			
-			p.addSubObject(new VersionedObject("}\n"));
-			p.addSubObject(new VersionedObject("}\n"));
-			p.addSubObject(new VersionedObject("}\n"));
-
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return p;
-	}
-
-	public static AbstractVersionedObject getTestDoc2()
-	{
+		int i = 0;
+		
 		VersionedDocumentBuilder vdb = new VersionedDocumentBuilder();
 		
-		//VersionedObject p = new VersionedObject("");
-			Label l_4 = new Label(new String[] { "4" });
-			Label l_5 = new Label(new String[] { "5" });
+		vdb.addText("class GoodApp {\n");
+
+		vdb.addText("List<Job> jobs = new LinkedList<Job>();\n");
+		i = vdb.size() - 1;
+		vdb.createChoice(i, "5");
+		vdb.addAlternative(i, "4", "List jobs = new LinkedList();\n");
+
+		vdb.addText("void runJobs() {\n");
+
+		vdb.addText("");
+		i = vdb.size() - 1;
+		vdb.createChoice(i, "f");
+		vdb.addAlternative(i, "t", "int trialCount = 0;\n");
 	
-			Label l_f = new Label(new String[] { "f" });
-			Label l_t = new Label(new String[] { "t" });
-			
-//			p.addSubObject(new VersionedObject("class GoodApp {\n"));
-			vdb.addText("class GoodApp {\n");
+		vdb.addText("");
+		i = vdb.size() - 1;
+		vdb.createChoice(i, "5");
+		vdb.addAlternative(i, "4", "Iterator it = jobs.iterator();\n");
 
-//			c = new Choice();
-			vdb.addText("");
-//			c.addAlternative((Label)l_5.clone(), new VersionedObject("List<Job> jobs = new LinkedList<Job>();\n"));
-//			c.addAlternative((Label)l_4.clone(), new VersionedObject("List jobs = new LinkedList();\n"));
-//			p.addSubObject(c);
-//			
-//			p.addSubObject(new VersionedObject("void runJobs() {\n"));
-//			
-//			c = new Choice();
-//			c.addAlternative((Label)l_f.clone(), new VersionedObject(""));
-//			c.addAlternative((Label)l_t.clone(), new VersionedObject("int trialCount = 0;\n"));
-//			p.addSubObject(c);
-//			
-//			c = new Choice();
-//			c.addAlternative((Label)l_5.clone(), new VersionedObject(""));
-//			c.addAlternative((Label)l_4.clone(), new VersionedObject("Iterator it = jobs.iterator();\n"));
-//			p.addSubObject(c);
-//			
-//			c = new Choice();
-//			c.addAlternative((Label)l_5.clone(), new VersionedObject("for (Job j : jobs) {\n"));
-//			c.addAlternative((Label)l_4.clone(), new VersionedObject("while (it.hasNext()) {\n"));
-//			p.addSubObject(c);
-//			
-//			c = new Choice();
-//			c.addAlternative((Label)l_5.clone(), new VersionedObject(""));
-//			c.addAlternative((Label)l_4.clone(), new VersionedObject("Job j = (Job) it.next();\n"));
-//			p.addSubObject(c);
-//			
-//			p.addSubObject(new VersionedObject("j.run();\n"));
-//			
-//			c = new Choice();
-//			c.addAlternative((Label)l_f.clone(), new VersionedObject(""));
-//			c.addAlternative((Label)l_t.clone(), new VersionedObject("if (++trialCount > 5) break;\n"));
-//			p.addSubObject(c);
-//			
-//			p.addSubObject(new VersionedObject("}\n"));
-//			p.addSubObject(new VersionedObject("}\n"));
-//			p.addSubObject(new VersionedObject("}\n"));
+		vdb.addText("for (Job j : jobs) {\n");
+		i = vdb.size() - 1;
+		vdb.createChoice(i, "5");
+		vdb.addAlternative(i, "4", "while (it.hasNext()) {\n");
 
-//		return p;
-		return null;
+		vdb.addText("");
+		i = vdb.size() - 1;
+		vdb.createChoice(i, "5");
+		vdb.addAlternative(i, "4", "Job j = (Job) it.next();\n");
+
+		vdb.addText("j.run();\n");
+
+		vdb.addText("");
+		i = vdb.size() - 1;
+		vdb.createChoice(i, "f");
+		vdb.addAlternative(i, "t", "if (++trialCount > 5) break;\n");
+
+		vdb.addText("}\n");
+		vdb.addText("}\n");
+		vdb.addText("}\n");
+
+		return vdb.getVersionedDocument();
 	}
 }
 
