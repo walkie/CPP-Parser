@@ -119,6 +119,15 @@ public class Editor extends JFrame {
 	private void setMenus()
 	{
 		JMenuBar mb = new JMenuBar();
+				
+		mb.add(fileMenu());
+		mb.add(editMenu());
+		
+		this.setJMenuBar(mb);
+	}
+	
+	private JMenu fileMenu()
+	{
 		JMenu m = new JMenu("File");
 		JMenuItem mi;
 		
@@ -158,7 +167,59 @@ public class Editor extends JFrame {
 		});
 		m.add(mi);
 		
-		mb.add(m);
-		this.setJMenuBar(mb);
+		return m;
+	}
+
+	private JMenu editMenu()
+	{
+		JMenu m = new JMenu("Edit");
+		JMenuItem mi;
+		
+		mi = new JMenuItem("Add Text");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null, "not implemented yet");
+			}
+		});
+		m.add(mi);
+
+		mi = new JMenuItem("Create Choice");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "not implemented yet");
+			}
+		});
+		m.add(mi);
+
+		mi = new JMenuItem("Remove Choice");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "not implemented yet");
+			}
+		});
+		m.add(mi);
+
+		mi = new JMenuItem("Add Alternative");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "not implemented yet");
+			}
+		});
+		m.add(mi);
+
+		mi = new JMenuItem("Remove Alternative");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "not implemented yet");
+			}
+		});
+		m.add(mi);
+		
+		return m;
 	}
 }
