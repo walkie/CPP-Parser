@@ -1,10 +1,7 @@
 package editor.util;
 
-import editor.Choice;
 import editor.AbstractVersionedObject;
-import editor.Label;
 import editor.VersionedDocumentBuilder;
-import editor.VersionedObject;
 
 public class Temp 
 {

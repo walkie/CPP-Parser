@@ -11,6 +11,7 @@ import javax.swing.event.DocumentListener;
 
 import editor.AbstractVersionedObject;
 import editor.TagSelector;
+import editor.VersionedObject;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
 
@@ -98,5 +99,10 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 
 	public void unselect(Set<String> dim) {
 		selectedTags.removeAll(dim);
+	}
+
+	public void newDoc() {
+		this.doc = new VersionedObject("");
+		setText();
 	}
 }

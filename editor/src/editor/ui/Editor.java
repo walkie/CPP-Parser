@@ -13,6 +13,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -29,8 +33,10 @@ public class Editor extends JFrame {
 	public Editor(DocumentAdapter da)
 	{
 		this.da = da;
+		
+		setMenus();
 	}
-	
+
 	private class RBLChecked implements ActionListener
 	{
 		DocumentAdapter da;
@@ -108,5 +114,51 @@ public class Editor extends JFrame {
 		
 		setSize(new java.awt.Dimension(700,550));
 		setVisible(true);
+	}
+	
+	private void setMenus()
+	{
+		JMenuBar mb = new JMenuBar();
+		JMenu m = new JMenu("File");
+		JMenuItem mi;
+		
+		mi = new JMenuItem("New");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				da.newDoc();
+			}
+		});
+		m.add(mi);
+
+		mi = new JMenuItem("Open");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "not implemented yet");
+			}
+		});
+		m.add(mi);
+
+		mi = new JMenuItem("Save");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "not implemented yet");
+			}
+		});
+		m.add(mi);
+
+		mi = new JMenuItem("Exit");
+		mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		m.add(mi);
+		
+		mb.add(m);
+		this.setJMenuBar(mb);
 	}
 }
