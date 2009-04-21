@@ -22,6 +22,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import editor.AbstractVersionedObject;
+import editor.ui.dialogs.AddTextDialog;
 
 public class Editor extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -179,7 +180,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "not implemented yet");
+				new AddTextDialog(da);
 			}
 		});
 		m.add(mi);

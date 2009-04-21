@@ -105,4 +105,9 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		this.doc = new VersionedObject("");
 		setText();
 	}
+
+	public void addText(String text) {
+		((VersionedObject)doc).getSubObjects().add(new VersionedObject(text));
+		setText();
+	}
 }
