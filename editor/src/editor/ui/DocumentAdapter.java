@@ -10,6 +10,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import editor.AbstractVersionedObject;
+import editor.ChoiceCreator;
+import editor.Dimension;
 import editor.TagSelector;
 import editor.VersionedObject;
 
@@ -17,15 +19,20 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 
 	private AbstractVersionedObject doc;
 	private JEditorPane textBox;
+	private JEditorPane stTextBox;
+	private Editor editor;
 	
 	public DocumentAdapter()
 	{
 	}
 	
-	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox)
+	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, JEditorPane stTextBox, Editor editor)
 	{
 		this.doc = doc;
 		this.textBox = textBox;
+		this.stTextBox = stTextBox;
+		// don't need this if I have a control for the dimension selector
+		this.editor = editor;
 	}
 		
 	@Override
@@ -56,12 +63,14 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 
 	public void setText()
 	{
-		textBox.setText(doc.getText());
+		setText(doc);
 	}
 	
 	public void setText(AbstractVersionedObject doc2)
 	{
 		textBox.setText(doc2.getText());
+		stTextBox.setText(doc2.getStructuredText());
+		editor.setDimesionList(new Dimension(doc2).getDimensions());
 	}
 	
 	@Override
@@ -109,5 +118,14 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	public void addText(String text) {
 		((VersionedObject)doc).getSubObjects().add(new VersionedObject(text));
 		setText();
+	}
+
+	public void createChoice(String tag)
+	{
+		int pos = textBox.getCaretPosition();
+		ChoiceCreator cc = new ChoiceCreator(pos, tag);
+		
+		doc = doc.transform(cc);
+		setText();		
 	}
 }

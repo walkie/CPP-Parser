@@ -35,25 +35,6 @@ public class Label implements Comparable<Label> {
 	    return l;
     }
 
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (!(obj instanceof Label))
-//			return false;
-//	
-//		Label l = (Label)obj;
-//		for (String t : tags)
-//		{
-//			if (!l.tags.contains(t))
-//				return false;
-//		}
-//		for (String t : l.tags)
-//		{
-//			if (!tags.contains(t))
-//				return false;
-//		}
-//		return true;
-//	}
-
 	@Override
 	public int hashCode() {
 		int hc = 0;
@@ -83,6 +64,7 @@ public class Label implements Comparable<Label> {
 		{
 			String s1 = i1.next();
 			String s2 = i2.next();
+			
 			if (!s1.equals(s2))
 				return s1.compareTo(s2);
 		}

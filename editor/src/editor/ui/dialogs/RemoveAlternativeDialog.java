@@ -10,28 +10,22 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import editor.ui.DocumentAdapter;
-
-public class AddTextDialog extends JDialog {
+public class RemoveAlternativeDialog extends JDialog
+{
 	private static final long serialVersionUID = 1L;
-	
-	private final DocumentAdapter documentAdapter;
 	JTextField textBox;
 	JButton okButton;
 	JButton cancelButton;
-	
-	public AddTextDialog(DocumentAdapter da)
+
+	public RemoveAlternativeDialog()
 	{
-		this.documentAdapter = da;
-	
 		textBox = new JTextField();
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
 		
 		okButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				documentAdapter.addText(textBox.getText());
+			public void actionPerformed(ActionEvent arg0) {
 				setVisible(false);
 			}
 		});
@@ -56,8 +50,9 @@ public class AddTextDialog extends JDialog {
 		p.add(p2);
 		
 		add(p);
-		
+
 		setSize(200,100);
+		setTitle("Remove Alternative");
 		setVisible(true);
 	}
 }

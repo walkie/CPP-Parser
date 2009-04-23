@@ -22,7 +22,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import editor.AbstractVersionedObject;
+import editor.ui.dialogs.AddAlternativeDialog;
 import editor.ui.dialogs.AddTextDialog;
+import editor.ui.dialogs.CreateChoiceDialog;
+import editor.ui.dialogs.RemoveAlternativeDialog;
+import editor.ui.dialogs.RemoveChoiceDialog;
 
 public class Editor extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -34,7 +38,7 @@ public class Editor extends JFrame {
 	public Editor(DocumentAdapter da)
 	{
 		this.da = da;
-		
+	
 		setMenus();
 	}
 
@@ -88,7 +92,7 @@ public class Editor extends JFrame {
 	}
 
 	public void setTopDoc(AbstractVersionedObject doc) {
-		da.setDocument(doc, e1);
+		da.setDocument(doc, e1, e2, this);
 		da.setText();
 		e1.addMouseListener(da);
 	}
@@ -189,7 +193,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "not implemented yet");
+				new CreateChoiceDialog(da);
 			}
 		});
 		m.add(mi);
@@ -198,7 +202,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "not implemented yet");
+				new RemoveChoiceDialog();
 			}
 		});
 		m.add(mi);
@@ -207,7 +211,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "not implemented yet");
+				new AddAlternativeDialog();
 			}
 		});
 		m.add(mi);
@@ -216,7 +220,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "not implemented yet");
+				new RemoveAlternativeDialog();
 			}
 		});
 		m.add(mi);
