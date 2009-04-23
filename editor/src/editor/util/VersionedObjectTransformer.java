@@ -1,4 +1,11 @@
-package editor;
+package editor.util;
+
+import editor.AbstractVersionedObject;
+import editor.Choice;
+import editor.Label;
+import editor.Let;
+import editor.Variable;
+import editor.VersionedObject;
 
 public class VersionedObjectTransformer 
 {

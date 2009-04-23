@@ -2,6 +2,9 @@ package editor;
 
 import java.util.Set;
 
+import editor.util.VersionedObjectTransformer;
+import editor.util.VersionedObjectVisitor;
+
 public abstract class AbstractVersionedObject {
 	public abstract Set<String> tags();
 	public abstract String getText();

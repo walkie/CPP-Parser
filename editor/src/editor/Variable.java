@@ -2,6 +2,9 @@ package editor;
 
 import java.util.Set;
 
+import editor.util.VersionedObjectTransformer;
+import editor.util.VersionedObjectVisitor;
+
 public class Variable extends AbstractVersionedObject {
 
 	private String name;

@@ -1,4 +1,9 @@
-package editor;
+package editor.util;
+
+import editor.AbstractVersionedObject;
+import editor.Choice;
+import editor.Label;
+import editor.VersionedObject;
 
 public class ChoiceCreator extends VersionedObjectTransformer
 {

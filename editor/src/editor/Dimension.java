@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import editor.util.ChoiceFinder;
+
 public class Dimension {
 
 	private AbstractVersionedObject doc;

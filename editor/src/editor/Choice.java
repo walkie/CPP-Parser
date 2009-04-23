@@ -5,6 +5,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import editor.util.VersionedObjectTransformer;
+import editor.util.VersionedObjectVisitor;
+
 public class Choice extends AbstractVersionedObject {
 
 	TreeMap<Label,AbstractVersionedObject> alternatives = new TreeMap<Label,AbstractVersionedObject>();

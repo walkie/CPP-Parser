@@ -1,7 +1,9 @@
-package editor;
+package editor.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import editor.Choice;
 
 public class ChoiceFinder extends VersionedObjectVisitor {
 

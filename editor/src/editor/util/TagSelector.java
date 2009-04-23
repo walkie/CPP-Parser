@@ -1,6 +1,10 @@
-package editor;
+package editor.util;
 
 import java.util.TreeSet;
+
+import editor.AbstractVersionedObject;
+import editor.Choice;
+import editor.Label;
 
 public class TagSelector extends VersionedObjectTransformer 
 {

@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
+import editor.util.VersionedObjectTransformer;
+import editor.util.VersionedObjectVisitor;
+
 public class VersionedObject extends AbstractVersionedObject {
 	String value;
 	ArrayList<AbstractVersionedObject> subObjects = new ArrayList<AbstractVersionedObject>();

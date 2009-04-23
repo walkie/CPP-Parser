@@ -10,10 +10,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import editor.AbstractVersionedObject;
-import editor.ChoiceCreator;
 import editor.Dimension;
-import editor.TagSelector;
 import editor.VersionedObject;
+import editor.util.ChoiceCreator;
+import editor.util.TagSelector;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
 
