@@ -10,22 +10,26 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import editor.ui.DocumentAdapter;
+
 public class RemoveChoiceDialog extends JDialog 
 {
 	private static final long serialVersionUID = 1L;
-	JTextField textBox;
+	DocumentAdapter documentAdapter;
 	JButton okButton;
 	JButton cancelButton;
 
-	public RemoveChoiceDialog()
+	public RemoveChoiceDialog(DocumentAdapter da)
 	{
-		textBox = new JTextField();
+		this.documentAdapter = da;
+
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
 		
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				documentAdapter.removeChoice();
 				setVisible(false);
 			}
 		});
@@ -38,8 +42,7 @@ public class RemoveChoiceDialog extends JDialog
 		});
 		
 		JPanel p = new JPanel();
-		p.setLayout(new GridLayout(2,1));
-		p.add(textBox);
+		p.setLayout(new GridLayout(1,1));
 		
 		JPanel p2 = new JPanel();
 		

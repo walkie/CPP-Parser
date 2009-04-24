@@ -13,6 +13,7 @@ import editor.AbstractVersionedObject;
 import editor.Dimension;
 import editor.VersionedObject;
 import editor.util.ChoiceCreator;
+import editor.util.ChoiceRemover;
 import editor.util.TagSelector;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
@@ -126,6 +127,14 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		ChoiceCreator cc = new ChoiceCreator(pos, tag);
 		
 		doc = doc.transform(cc);
+		setText();		
+	}
+
+	public void removeChoice() {
+		int pos = textBox.getCaretPosition();
+		ChoiceRemover cr = new ChoiceRemover(pos);
+		
+		doc = doc.transform(cr);
 		setText();		
 	}
 }

@@ -202,7 +202,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new RemoveChoiceDialog();
+				new RemoveChoiceDialog(da);
 			}
 		});
 		m.add(mi);
