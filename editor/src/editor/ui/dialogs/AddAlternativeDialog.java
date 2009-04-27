@@ -10,15 +10,21 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import editor.ui.DocumentAdapter;
+
 public class AddAlternativeDialog extends JDialog 
 {
 	private static final long serialVersionUID = 1L;
+	DocumentAdapter documentAdapter;
 	JTextField textBox;
+	JTextField tagTextBox;
 	JButton okButton;
 	JButton cancelButton;
 
-	public AddAlternativeDialog()
+	public AddAlternativeDialog(DocumentAdapter da)
 	{
+		documentAdapter = da;
+		tagTextBox = new JTextField();
 		textBox = new JTextField();
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
@@ -26,6 +32,7 @@ public class AddAlternativeDialog extends JDialog
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				documentAdapter.addAlternative(tagTextBox.getText(), textBox.getText()); 
 				setVisible(false);
 			}
 		});
@@ -38,7 +45,8 @@ public class AddAlternativeDialog extends JDialog
 		});
 		
 		JPanel p = new JPanel();
-		p.setLayout(new GridLayout(2,1));
+		p.setLayout(new GridLayout(3,1));
+		p.add(tagTextBox);
 		p.add(textBox);
 		
 		JPanel p2 = new JPanel();

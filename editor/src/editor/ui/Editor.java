@@ -211,7 +211,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new AddAlternativeDialog();
+				new AddAlternativeDialog(da);
 			}
 		});
 		m.add(mi);
@@ -220,7 +220,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new RemoveAlternativeDialog();
+				new RemoveAlternativeDialog(da);
 			}
 		});
 		m.add(mi);

@@ -12,6 +12,8 @@ import javax.swing.event.DocumentListener;
 import editor.AbstractVersionedObject;
 import editor.Dimension;
 import editor.VersionedObject;
+import editor.util.AlternativeAdder;
+import editor.util.AlternativeRemover;
 import editor.util.ChoiceCreator;
 import editor.util.ChoiceRemover;
 import editor.util.TagSelector;
@@ -130,11 +132,30 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		setText();		
 	}
 
-	public void removeChoice() {
+	public void removeChoice() 
+	{
 		int pos = textBox.getCaretPosition();
 		ChoiceRemover cr = new ChoiceRemover(pos);
 		
 		doc = doc.transform(cr);
+		setText();		
+	}
+
+	public void addAlternative(String tag, String text) 
+	{
+		int pos = textBox.getCaretPosition();
+		AlternativeAdder aa = new AlternativeAdder(pos, tag, text);
+		
+		doc = doc.transform(aa);
+		setText();		
+	}
+
+	public void removerAlternative() 
+	{
+		int pos = textBox.getCaretPosition();
+		AlternativeRemover ar = new AlternativeRemover(pos);
+		
+		doc = doc.transform(ar);
 		setText();		
 	}
 }
