@@ -15,7 +15,7 @@ public class EditorApp {
 		AbstractVersionedObject v = Temp.getTestDoc();
 		Dimension d = new Dimension(v);
 		
-		e.setDimesionList(d.getDimensions());
+		e.setDimensionList(d.getDimensions());
 
 		e.setTopDoc(v);
 		e.setBottomText(v.getStructuredText());

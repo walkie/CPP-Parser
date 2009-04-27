@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
@@ -28,20 +29,20 @@ public class Editor extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final JEditorPane e1 = new JEditorPane();
 	private final JEditorPane e2 = new JEditorPane();
-	private DimensionSelector dimPanel;
+	private DimensionSelector dimensionSelector;
 	private DocumentAdapter da;
 	
 	public Editor(DocumentAdapter da)
 	{
 		this.da = da;
-		dimPanel = new DimensionSelector(da);
+		dimensionSelector = new DimensionSelector(da);
 		
 		setMenus();
 	}
 	
-	public void setDimesionList(Collection<Set<String>> dimensions) 
+	public void setDimensionList(Collection<Set<String>> dimensions) 
 	{
-		dimPanel.setDimensions(dimensions);
+		dimensionSelector.setDimensions(dimensions, new TreeSet<String>());
 	}
 
 	public void setBottomText(String structuredText) {
@@ -49,7 +50,7 @@ public class Editor extends JFrame {
 	}
 
 	public void setTopDoc(AbstractVersionedObject doc) {
-		da.setDocument(doc, e1, e2, this);
+		da.setDocument(doc, e1, e2, dimensionSelector);
 		da.setText();
 		e1.addMouseListener(da);
 	}
@@ -71,7 +72,7 @@ public class Editor extends JFrame {
 		inner.add(sp1);
 		inner.add(sp2);
 		
-		add(dimPanel);
+		add(dimensionSelector);
 		add(inner);
 		
 		setSize(new java.awt.Dimension(700,550));

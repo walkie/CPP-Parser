@@ -24,19 +24,18 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	private AbstractVersionedObject doc;
 	private JEditorPane textBox;
 	private JEditorPane stTextBox;
-	private Editor editor;
+	private DimensionSelector dimensionSelecter;
 	
 	public DocumentAdapter()
 	{
 	}
 	
-	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, JEditorPane stTextBox, Editor editor)
+	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, JEditorPane stTextBox, DimensionSelector dimensionSelecter)
 	{
 		this.doc = doc;
 		this.textBox = textBox;
 		this.stTextBox = stTextBox;
-		// don't need this if I have a control for the dimension selector
-		this.editor = editor;
+		this.dimensionSelecter = dimensionSelecter;
 	}
 		
 	@Override
@@ -74,7 +73,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	{
 		textBox.setText(doc2.getText());
 		stTextBox.setText(doc2.getStructuredText());
-		editor.setDimesionList(new Dimension(doc2).getDimensions());
+		dimensionSelecter.setDimensions(new Dimension(doc).getDimensions(), selectedTags);
 	}
 	
 	@Override

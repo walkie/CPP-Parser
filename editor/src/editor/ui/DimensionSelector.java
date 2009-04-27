@@ -45,7 +45,7 @@ public class DimensionSelector extends JPanel
 
 	}
 	
-	public void setDimensions(Collection<Set<String>> dimensions)
+	public void setDimensions(Collection<Set<String>> dimensions, Collection<String> selectedTags)
 	{
 		if (panel != null)
 			panel.setVisible(false);
@@ -65,6 +65,7 @@ public class DimensionSelector extends JPanel
 				d2.addAll(d);
 				d2.remove(t);
 				r.addActionListener(new RBLChecked(da, t, d2));
+				r.setSelected(selectedTags.contains(t));
 				g.add(r);
 				p.add(r);
 			}
