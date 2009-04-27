@@ -6,19 +6,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import editor.AbstractVersionedObject;
@@ -32,59 +28,20 @@ public class Editor extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final JEditorPane e1 = new JEditorPane();
 	private final JEditorPane e2 = new JEditorPane();
-	private JPanel dimPanel = null;
+	private DimensionSelector dimPanel;
 	private DocumentAdapter da;
 	
 	public Editor(DocumentAdapter da)
 	{
 		this.da = da;
-	
+		dimPanel = new DimensionSelector(da);
+		
 		setMenus();
 	}
-
-	private class RBLChecked implements ActionListener
-	{
-		DocumentAdapter da;
-		String tag;
-		Set<String> dim;
-		
-		public RBLChecked(DocumentAdapter da, String tag, Set<String> dim)
-		{
-			this.da = da;
-			this.tag = tag;
-			this.dim = dim;
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) 
-		{
-			da.unselect(dim);
-			da.select(tag);
-		}
-	}
 	
-	public void setDimesionList(Collection<Set<String>> dimensions) {
-		dimPanel = new JPanel();
-		BoxLayout layout = new BoxLayout(dimPanel, BoxLayout.Y_AXIS);
-		dimPanel.setLayout(layout);
-		
-		for (Set<String> d : dimensions)
-		{
-			JPanel p = new JPanel();
-			p.add(new JLabel("Dimension"));
-			ButtonGroup g = new ButtonGroup();
-			for (String t : d)
-			{
-				JRadioButton r = new JRadioButton(t);
-				TreeSet<String> d2 = new TreeSet<String>();
-				d2.addAll(d);
-				d2.remove(t);
-				r.addActionListener(new RBLChecked(da, t, d2));
-				g.add(r);
-				p.add(r);
-			}
-			dimPanel.add(p);
-		}
+	public void setDimesionList(Collection<Set<String>> dimensions) 
+	{
+		dimPanel.setDimensions(dimensions);
 	}
 
 	public void setBottomText(String structuredText) {
