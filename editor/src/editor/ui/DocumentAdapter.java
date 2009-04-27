@@ -17,6 +17,7 @@ import editor.util.AlternativeRemover;
 import editor.util.ChoiceCreator;
 import editor.util.ChoiceRemover;
 import editor.util.TagSelector;
+import editor.util.TextAdder;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
 
@@ -118,8 +119,12 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		setText();
 	}
 
-	public void addText(String text) {
-		((VersionedObject)doc).getSubObjects().add(new VersionedObject(text));
+	public void addText(String text)
+	{
+		int pos = textBox.getCaretPosition();
+		TextAdder ta = new TextAdder(pos, text);
+		
+		doc = doc.transform(ta);
 		setText();
 	}
 
