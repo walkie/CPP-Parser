@@ -38,25 +38,21 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		this.dimensionSelecter = dimensionSelecter;
 	}
 		
-	@Override
 	public void changedUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void insertUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void removeUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getButton() == MouseEvent.BUTTON1)
@@ -76,25 +72,21 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		dimensionSelecter.setDimensions(new Dimension(doc).getDimensions(), selectedTags);
 	}
 	
-	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
