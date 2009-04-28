@@ -31,7 +31,6 @@ public class DimensionSelector extends JPanel
 			this.dim = dim;
 		}
 		
-		@Override
 		public void actionPerformed(ActionEvent e) 
 		{
 			da.unselect(dim);

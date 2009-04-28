@@ -28,7 +28,6 @@ public class Label implements Comparable<Label> {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
     public Object clone() throws CloneNotSupportedException {
 	    Label l = new Label();
 	    l.tags = (TreeSet<String>) tags.clone();
@@ -55,7 +54,6 @@ public class Label implements Comparable<Label> {
 		return false;
 	}
 	
-	@Override
 	public int compareTo(Label l) {
 		Iterator<String> i1 = tags.iterator();
 		Iterator<String> i2 = l.tags.iterator();
