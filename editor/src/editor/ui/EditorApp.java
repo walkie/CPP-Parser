@@ -1,5 +1,7 @@
 package editor.ui;
 
+import javax.swing.WindowConstants;
+
 import editor.*;
 import editor.util.*;
 
@@ -19,6 +21,7 @@ public class EditorApp {
 
 		e.setTopDoc(v);
 		e.setBottomText(v.getStructuredText());
+		e.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		e.showit();
 	}
 }

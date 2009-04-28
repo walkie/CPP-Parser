@@ -122,6 +122,7 @@ public class Editor extends JFrame {
 		mi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
+				System.exit(0);
 			}
 		});
 		m.add(mi);
