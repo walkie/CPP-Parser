@@ -26,7 +26,6 @@ public class RemoveChoiceDialog extends JDialog
 		cancelButton = new JButton("Cancel");
 		
 		okButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				documentAdapter.removeChoice();
 				setVisible(false);
@@ -34,7 +33,6 @@ public class RemoveChoiceDialog extends JDialog
 		});
 
 		cancelButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 			}

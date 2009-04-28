@@ -29,7 +29,6 @@ public class AddTextDialog extends JDialog {
 		cancelButton = new JButton("Cancel");
 		
 		okButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				documentAdapter.addText(textBox.getText());
 				setVisible(false);
@@ -37,7 +36,6 @@ public class AddTextDialog extends JDialog {
 		});
 
 		cancelButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 			}

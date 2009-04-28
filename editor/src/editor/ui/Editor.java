@@ -96,7 +96,6 @@ public class Editor extends JFrame {
 		
 		mi = new JMenuItem("New");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				da.newDoc();
 			}
@@ -105,7 +104,6 @@ public class Editor extends JFrame {
 
 		mi = new JMenuItem("Open");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "not implemented yet");
 			}
@@ -114,7 +112,6 @@ public class Editor extends JFrame {
 
 		mi = new JMenuItem("Save");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "not implemented yet");
 			}
@@ -123,7 +120,6 @@ public class Editor extends JFrame {
 
 		mi = new JMenuItem("Exit");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 			}
@@ -140,7 +136,6 @@ public class Editor extends JFrame {
 		
 		mi = new JMenuItem("Add Text");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				new AddTextDialog(da);
 			}
@@ -149,7 +144,6 @@ public class Editor extends JFrame {
 
 		mi = new JMenuItem("Create Choice");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				new CreateChoiceDialog(da);
 			}
@@ -158,7 +152,6 @@ public class Editor extends JFrame {
 
 		mi = new JMenuItem("Remove Choice");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				new RemoveChoiceDialog(da);
 			}
@@ -167,7 +160,6 @@ public class Editor extends JFrame {
 
 		mi = new JMenuItem("Add Alternative");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				new AddAlternativeDialog(da);
 			}
@@ -176,7 +168,6 @@ public class Editor extends JFrame {
 
 		mi = new JMenuItem("Remove Alternative");
 		mi.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				new RemoveAlternativeDialog(da);
 			}

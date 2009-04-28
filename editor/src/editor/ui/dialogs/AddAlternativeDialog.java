@@ -30,7 +30,6 @@ public class AddAlternativeDialog extends JDialog
 		cancelButton = new JButton("Cancel");
 		
 		okButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				documentAdapter.addAlternative(tagTextBox.getText(), textBox.getText()); 
 				setVisible(false);
@@ -38,7 +37,6 @@ public class AddAlternativeDialog extends JDialog
 		});
 
 		cancelButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 			}
