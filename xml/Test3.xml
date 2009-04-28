@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md-doc>
+	<state>
+		<dim-def id="version" sel-tag="1.4" />
+		<dim-def id="Release" sel-tag="Trial" />
+	</state>
+	<choice id="version">
+		<alt tag="1.4" />
+		<alt tag="5" />
+	</choice>
+
+
+</md-doc>
