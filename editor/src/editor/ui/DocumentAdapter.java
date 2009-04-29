@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -143,7 +144,11 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		AlternativeAdder aa = new AlternativeAdder(pos, tag, text);
 		
 		doc = doc.transform(aa);
-		setText();		
+		
+		if (aa.suceeded())
+			setText();	
+		else
+			JOptionPane.showMessageDialog(null, "Could not add alternative at cursor position.");
 	}
 
 	public void removerAlternative() 

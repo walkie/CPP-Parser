@@ -19,9 +19,14 @@ public class AlternativeAdder extends VersionedObjectTransformer
 		this.text = text;
 	}
 	
+	public boolean suceeded()
+	{
+		return done;
+	}
+	
 	public AbstractVersionedObject transform(Choice choice)
 	{
-		if (done)
+		if (done || pos <= 0)
 		{
 			return super.transform(choice);
 		}
@@ -38,6 +43,7 @@ public class AlternativeAdder extends VersionedObjectTransformer
 			if (pos <= 0)
 			{
 				c.addAlternative(new Label(tag), new VersionedObject(text));
+				done = true;
 			}
 			
 			return c;
