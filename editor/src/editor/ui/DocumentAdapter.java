@@ -1,7 +1,9 @@
 package editor.ui;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -9,6 +11,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
 import editor.AbstractVersionedObject;
 import editor.Dimension;
@@ -19,6 +22,7 @@ import editor.util.ChoiceCreator;
 import editor.util.ChoiceRemover;
 import editor.util.TagSelector;
 import editor.util.TextAdder;
+import editor.util.TextGetter;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
 
@@ -68,7 +72,41 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	
 	public void setText(AbstractVersionedObject doc2)
 	{
-		textBox.setText(doc2.getText());
+		TextGetter tg = new TextGetter();
+		doc2.visit(tg);
+		Collection<TextGetter.Line> lines = tg.getLines();
+		
+		DimensionHighlighter h = null;
+		boolean hasHighlighter = true;
+		try 
+		{
+			h = (DimensionHighlighter)textBox.getHighlighter();
+		}
+		catch (Exception e)
+ 		{
+			hasHighlighter = false;
+		}
+		
+		int r = 0;
+		String str = "";
+		for (TextGetter.Line line : lines)
+		{
+			str += line.getText();
+		}
+		textBox.setText(str);
+		if (hasHighlighter)
+		{
+			for (TextGetter.Line line : lines)
+			{
+				r = (r + 100) % 256;
+				try {
+					h.addHighlight(line.getStartPos(), line.getEndPos(), new Color(r,0,0));
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		stTextBox.setText(doc2.getStructuredText());
 		dimensionSelecter.setDimensions(new Dimension(doc).getDimensions(), selectedTags);
 	}

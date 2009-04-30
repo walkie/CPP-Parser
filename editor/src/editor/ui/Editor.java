@@ -52,6 +52,14 @@ public class Editor extends JFrame {
 	public void setTopDoc(AbstractVersionedObject doc) {
 		da.setDocument(doc, e1, e2, dimensionSelector);
 		da.setText();
+		DimensionHighlighter h = new DimensionHighlighter();
+		e1.setHighlighter(h);
+//		try {
+//			h.addHighlight(0, 100, new java.awt.Color(200,100,100));
+//			h.addHighlight(20, 25, new java.awt.Color(100,100,200));
+//		} catch (BadLocationException e) {
+//			e.printStackTrace();
+//		}
 		e1.addMouseListener(da);
 	}
 
