@@ -25,6 +25,7 @@ public class VersionedObject extends AbstractVersionedObject {
 	public void addSubObject(AbstractVersionedObject v)
 	{
 		subObjects.add(v);
+		v.setParentObject(this);
 	}
 	
 	@Override
@@ -39,17 +40,6 @@ public class VersionedObject extends AbstractVersionedObject {
 		return ts;
 	}
 		
-	@Override
-	public String getText()
-	{
-		String str = value;
-		for (AbstractVersionedObject v : subObjects)
-		{
-			str += v.getText();
-		}
-		return str;
-	}
-
 	@Override
 	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound) {
 		VersionedObject v = new VersionedObject(value);

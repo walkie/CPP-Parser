@@ -17,6 +17,8 @@ public class Let extends AbstractVersionedObject {
 		this.var = var;
 		this.bound = bound;
 		this.scope = scope;
+		this.bound.setParentObject(this);
+		this.scope.setParentObject(this);
 	}
 	
 
@@ -30,12 +32,6 @@ public class Let extends AbstractVersionedObject {
 
 	public Variable getVar() {
 		return var;
-	}
-
-	@Override
-	public String getText() {
-		AbstractVersionedObject v = scope.replace(var, bound);
-		return v.getText();
 	}
 	
 	@Override

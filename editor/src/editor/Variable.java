@@ -20,12 +20,6 @@ public class Variable extends AbstractVersionedObject {
 	}
 
 	@Override
-	public String getText() 
-	{
-		return "";
-	}
-
-	@Override
 	public Set<String> tags() 
 	{
 		return null;

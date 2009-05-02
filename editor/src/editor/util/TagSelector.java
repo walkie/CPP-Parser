@@ -1,56 +1,114 @@
 package editor.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import editor.AbstractVersionedObject;
 import editor.Choice;
 import editor.Label;
+import editor.VersionedObject;
 
-public class TagSelector extends VersionedObjectTransformer 
+public class TagSelector extends VersionedObjectVisitor
 {
-	private final AbstractVersionedObject doc;
+	int pos = 0;
+	ArrayList<Line> lines = new ArrayList<Line>();
 	private TreeSet<String> selectedTags = null;
+	Stack<Label> labels = new Stack<Label>();
+	boolean selected = false;
 	
-	public TagSelector(AbstractVersionedObject doc)
-	{
-		this.doc = doc;
-	}
-
-	public AbstractVersionedObject select(TreeSet<String> selectedTags)
+	public TagSelector(TreeSet<String> selectedTags)
 	{
 		this.selectedTags = selectedTags;
-		return doc.transform(this);
+	}
+	
+	@Override
+	public void visit(VersionedObject v)
+	{
+		int end = pos + v.getValue().length();
+		
+		Label tag = null;
+		if (labels.size() != 0)
+			tag = labels.peek();
+		
+		if (selected || tag == null)
+		{
+			lines.add(new Line(pos, end, v.getValue(), tag, selected));
+			pos = end;
+		}
+		for (AbstractVersionedObject o : v.getSubObjects())
+		{
+			o.visit(this);
+		}
 	}
 
 	@Override
-	public AbstractVersionedObject transform(Choice choice) {
-		Choice c = new Choice();
-		
-		for (String t : selectedTags)
+	public void visit(Choice choice) 
+	{
+		if (intersects(selectedTags, choice.ctags()))
 		{
-			if (choice.ctags().contains(t))
+			for (Label l : choice.getLabels())
 			{
-				for (Label l : choice.getLabels())
+				labels.push(l);
+				if (intersects(selectedTags, l.tags))
 				{
-					if (l.tags.contains(t))
-					{
-						Label l2 = new Label(l);
-						l2.tags.remove(t);
-						AbstractVersionedObject o = choice.getAlternative(l).transform(this);
-						c.addAlternative(l2, o);
-					}
+					selected = true;
+					choice.getAlternative(l).visit(this);
+					selected = false;
 				}
-			}
-			else
-			{
-				for (Label l : choice.getLabels())
-				{
-					AbstractVersionedObject o = choice.getAlternative(l).transform(this);
-					c.addAlternative(new Label(l), o);				
-				}			
+				labels.pop();
 			}
 		}
+		else
+		{
+			for (Label l : choice.getLabels())
+			{
+				labels.push(l);
+				choice.getAlternative(l).visit(this);
+				labels.pop();
+			}			
+		}
+	}
+
+	private boolean intersects(Collection<String> s1, Collection<String> s2)
+	{
+		for (String s : s1)
+		{
+			if (s2.contains(s))
+				return true;
+		}
 		
-		return c.lift();
+		return false;
+	}
+	
+	public Collection<Line> getLines()
+	{
+		return lines;
+	}
+	
+	public class Line
+	{
+		int start;
+		int end;
+		String text;
+		Label tag;
+		boolean visible;
+		
+		public Line(int start, int end, String text, Label tag, boolean visible)
+		{
+			this.start = start;
+			this.end = end;
+			this.text = text;
+			this.tag = tag;
+			this.visible = visible;
+		}
+		
+		public int getStartPos() { return start; }
+		public int getEndPos() { return end; }
+		public String getText() { return text; }
+		public Label getTag() { return tag; }
+		public boolean isAlt() { return tag != null; }
+		public boolean isVisible() { return visible; }
 	}
 }

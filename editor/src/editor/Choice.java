@@ -15,6 +15,7 @@ public class Choice extends AbstractVersionedObject {
 	public void addAlternative(Label l, AbstractVersionedObject p)
 	{
 		alternatives.put(l,p);
+		p.setParentObject(this);
 	}
 	
 	public Collection<AbstractVersionedObject> getAlternatives()
@@ -84,18 +85,6 @@ public class Choice extends AbstractVersionedObject {
 		return this;
 	}
 	
-	@Override
-	public String getText()
-	{
-		String str = "";
-		for (Label l : alternatives.keySet())
-		{
-			str += alternatives.get(l).getText();
-		}
-		
-		return str;
-	}
-
 	@Override
 	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound) {
 		Choice c = new Choice();

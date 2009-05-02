@@ -11,7 +11,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 
 import editor.AbstractVersionedObject;
 import editor.Dimension;
@@ -22,7 +21,6 @@ import editor.util.ChoiceCreator;
 import editor.util.ChoiceRemover;
 import editor.util.TagSelector;
 import editor.util.TextAdder;
-import editor.util.TextGetter;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
 
@@ -72,38 +70,30 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	
 	public void setText(AbstractVersionedObject doc2)
 	{
-		TextGetter tg = new TextGetter();
-		doc2.visit(tg);
-		Collection<TextGetter.Line> lines = tg.getLines();
+		TagSelector ts = new TagSelector(selectedTags);
+		doc2.visit(ts);
+		Collection<TagSelector.Line> lines = ts.getLines();
 		
-		DimensionHighlighter h = null;
-		boolean hasHighlighter = true;
-		try 
-		{
-			h = (DimensionHighlighter)textBox.getHighlighter();
-		}
-		catch (Exception e)
- 		{
-			hasHighlighter = false;
-		}
-		
-		int r = 0;
+		int r = 0, g = 64, b = 128;
 		String str = "";
-		for (TextGetter.Line line : lines)
+		for (TagSelector.Line line : lines)
 		{
 			str += line.getText();
 		}
 		textBox.setText(str);
-		if (hasHighlighter)
+		for (TagSelector.Line line : lines)
 		{
-			for (TextGetter.Line line : lines)
-			{
-				r = (r + 100) % 256;
-				try {
-					h.addHighlight(line.getStartPos(), line.getEndPos(), new Color(r,0,0));
-				} catch (BadLocationException e) {
-					e.printStackTrace();
-				}
+			if (!line.isAlt())
+				continue;
+			r = (r + 256 - 37) % 256;
+			g = (g + 37) % 256;
+			b = (b + 137) % 256;
+			try {
+				DimensionHighlighter h = null;
+				h = (DimensionHighlighter)textBox.getHighlighter();
+				h.addHighlight(line.getStartPos(), line.getEndPos(), new Color(r,g,b));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		
@@ -135,9 +125,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	
 	public void select(String tag) {
 		selectedTags.add(tag);
-		TagSelector ts = new TagSelector(doc);
-		AbstractVersionedObject doc2 = ts.select(selectedTags);
-		setText(doc2);
+		setText();
 	}
 
 	public void unselect(Set<String> dim) {
