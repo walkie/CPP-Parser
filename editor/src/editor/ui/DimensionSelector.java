@@ -17,6 +17,7 @@ public class DimensionSelector extends JPanel
 	private static final long serialVersionUID = 1L;
 	private DocumentAdapter da;
 	private JPanel panel = null;
+	private final ColorManager colorManager;
 	
 	private class RBLChecked implements ActionListener
 	{
@@ -38,14 +39,15 @@ public class DimensionSelector extends JPanel
 		}
 	}
 
-	public DimensionSelector(DocumentAdapter da)
+	public DimensionSelector(DocumentAdapter da, ColorManager colorManager)
 	{
 		this.da = da;
-
+		this.colorManager = colorManager;
 	}
 	
 	public void setDimensions(Collection<Set<String>> dimensions, Collection<String> selectedTags)
 	{
+		colorManager.setDimensions(dimensions);
 		if (panel != null)
 			panel.setVisible(false);
 		panel = new JPanel();
@@ -55,11 +57,13 @@ public class DimensionSelector extends JPanel
 		for (Set<String> d : dimensions)
 		{
 			JPanel p = new JPanel();
+			p.setBackground(colorManager.getColor(d));
 			p.add(new JLabel("Dimension"));
 			ButtonGroup g = new ButtonGroup();
 			for (String t : d)
 			{
 				JRadioButton r = new JRadioButton(t);
+				r.setBackground(colorManager.getColor(d));
 				TreeSet<String> d2 = new TreeSet<String>();
 				d2.addAll(d);
 				d2.remove(t);

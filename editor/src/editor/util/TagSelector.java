@@ -92,23 +92,23 @@ public class TagSelector extends VersionedObjectVisitor
 		int start;
 		int end;
 		String text;
-		Label tag;
+		Label label;
 		boolean visible;
 		
-		public Line(int start, int end, String text, Label tag, boolean visible)
+		public Line(int start, int end, String text, Label label, boolean visible)
 		{
 			this.start = start;
 			this.end = end;
 			this.text = text;
-			this.tag = tag;
+			this.label = label;
 			this.visible = visible;
 		}
 		
 		public int getStartPos() { return start; }
 		public int getEndPos() { return end; }
 		public String getText() { return text; }
-		public Label getTag() { return tag; }
-		public boolean isAlt() { return tag != null; }
+		public Label getLabel() { return label; }
+		public boolean isAlt() { return label != null; }
 		public boolean isVisible() { return visible; }
 	}
 }

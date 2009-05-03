@@ -31,11 +31,13 @@ public class Editor extends JFrame {
 	private final JEditorPane e2 = new JEditorPane();
 	private DimensionSelector dimensionSelector;
 	private DocumentAdapter da;
+	private ColorManager colorManager;
 	
 	public Editor(DocumentAdapter da)
 	{
 		this.da = da;
-		dimensionSelector = new DimensionSelector(da);
+		this.colorManager = new ColorManager();
+		this.dimensionSelector = new DimensionSelector(da, colorManager);
 		
 		setMenus();
 	}
@@ -50,7 +52,7 @@ public class Editor extends JFrame {
 	}
 
 	public void setTopDoc(AbstractVersionedObject doc) {
-		da.setDocument(doc, e1, e2, dimensionSelector);
+		da.setDocument(doc, e1, e2, dimensionSelector, colorManager);
 		DimensionHighlighter h = new DimensionHighlighter();
 		e1.setHighlighter(h);
 		e1.addMouseListener(da);

@@ -1,6 +1,5 @@
 package editor.ui;
 
-import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
@@ -28,17 +27,19 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	private JEditorPane textBox;
 	private JEditorPane stTextBox;
 	private DimensionSelector dimensionSelecter;
+	private ColorManager colorManager;
 	
 	public DocumentAdapter()
 	{
 	}
 	
-	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, JEditorPane stTextBox, DimensionSelector dimensionSelecter)
+	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, JEditorPane stTextBox, DimensionSelector dimensionSelecter, ColorManager colorManager)
 	{
 		this.doc = doc;
 		this.textBox = textBox;
 		this.stTextBox = stTextBox;
 		this.dimensionSelecter = dimensionSelecter;
+		this.colorManager = colorManager;
 	}
 		
 	public void changedUpdate(DocumentEvent e) {
@@ -65,16 +66,12 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 
 	public void setText()
 	{
-		setText(doc);
-	}
-	
-	public void setText(AbstractVersionedObject doc2)
-	{
+		Dimension d = new Dimension(doc);
+		colorManager.setDimensions(d.getDimensions());
 		TagSelector ts = new TagSelector(selectedTags);
-		doc2.visit(ts);
+		doc.visit(ts);
 		Collection<TagSelector.Line> lines = ts.getLines();
 		
-		int r = 0, g = 64, b = 128;
 		String str = "";
 		for (TagSelector.Line line : lines)
 		{
@@ -85,19 +82,17 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		{
 			if (!line.isAlt())
 				continue;
-			r = (r + 256 - 37) % 256;
-			g = (g + 37) % 256;
-			b = (b + 137) % 256;
+
 			try {
 				DimensionHighlighter h = null;
 				h = (DimensionHighlighter)textBox.getHighlighter();
-				h.addHighlight(line.getStartPos(), line.getEndPos(), new Color(r,g,b));
+				h.addHighlight(line.getStartPos(), line.getEndPos(), colorManager.getColor(line.getLabel()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		
-		stTextBox.setText(doc2.getStructuredText());
+		stTextBox.setText(doc.getStructuredText());
 		dimensionSelecter.setDimensions(new Dimension(doc).getDimensions(), selectedTags);
 	}
 	

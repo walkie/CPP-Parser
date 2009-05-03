@@ -32,7 +32,7 @@ public class Dimension {
 		{
 			for (int j = dimensions.size()-1; j > i; j--)
 			{
-				if (intersect(dimensions.get(i), dimensions.get(j)))
+				if (intersects(dimensions.get(i), dimensions.get(j)))
 				{
 					dimensions.get(i).addAll(dimensions.get(j));
 					dimensions.remove(j);
@@ -41,7 +41,7 @@ public class Dimension {
 		}
 	}
 
-	private boolean intersect(Set<String> tags1, Set<String> tags2) {
+	private boolean intersects(Set<String> tags1, Set<String> tags2) {
 		for (String t : tags2)
 		{
 			if (tags1.contains(t))
