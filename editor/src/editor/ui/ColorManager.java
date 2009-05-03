@@ -13,14 +13,7 @@ public class ColorManager
 	
 	public Color getColor(Label l)
 	{
-		for (String t : colors.keySet())
-		{
-			if (l.tags.contains(t))
-			{
-				return colors.get(t);
-			}
-		}
-		return new Color(255,255,255);
+		return getColor(l.tags);
 	}
 
 	public Color getColor(Set<String> d) {

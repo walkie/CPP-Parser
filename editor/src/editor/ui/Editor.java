@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -16,6 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 import editor.AbstractVersionedObject;
@@ -87,15 +89,16 @@ public class Editor extends JFrame {
 	{
 		JMenuBar mb = new JMenuBar();
 				
-		mb.add(fileMenu());
-		mb.add(editMenu());
+		mb.add(fileMenu(new JMenu("File")));
+		mb.add(editMenu(new JMenu("Edit")));
+		
+		e1.setComponentPopupMenu((JPopupMenu)editMenu(new JPopupMenu()));
 		
 		this.setJMenuBar(mb);
 	}
 	
-	private JMenu fileMenu()
+	private <T extends JComponent> T fileMenu(T m)
 	{
-		JMenu m = new JMenu("File");
 		JMenuItem mi;
 		
 		mi = new JMenuItem("New");
@@ -134,9 +137,8 @@ public class Editor extends JFrame {
 		return m;
 	}
 
-	private JMenu editMenu()
+	private JComponent editMenu(JComponent m)
 	{
-		JMenu m = new JMenu("Edit");
 		JMenuItem mi;
 		
 		mi = new JMenuItem("Add Text");
