@@ -43,21 +43,22 @@ public class DimensionHighlighter extends DefaultHighlighter
 			Rectangle alloc = null;
 			if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset())
 			{
-				if (bounds instanceof Rectangle)
-				{
-					alloc = (Rectangle) bounds;
-				}
-				else
-				{
+//				if (bounds instanceof Rectangle)
+//				{
+//					alloc = (Rectangle) bounds;
+//				}
+//				else
+//				{
 					alloc = bounds.getBounds();
-				}
+//				}
 			}
 			else
 			{
 				try
 				{
 					Shape shape = view.modelToView(offs0, Position.Bias.Forward, offs1, Position.Bias.Backward, bounds);
-					alloc = (shape instanceof Rectangle) ? (Rectangle) shape : shape.getBounds();
+//					alloc = (shape instanceof Rectangle) ? (Rectangle) shape : shape.getBounds();
+					alloc = shape.getBounds();
 				}
 				catch (BadLocationException e) 
 				{
@@ -66,6 +67,7 @@ public class DimensionHighlighter extends DefaultHighlighter
 			}
 			
 			g.fillRect(alloc.x, alloc.y, alloc.width, alloc.height);
+			
 			return alloc;
 		}
 	}

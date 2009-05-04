@@ -1,5 +1,6 @@
 package editor.ui;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -63,7 +64,7 @@ public class DimensionSelector extends JPanel
 			for (String t : d)
 			{
 				JRadioButton r = new JRadioButton(t);
-				r.setBackground(colorManager.getColor(d));
+				r.setBackground(new Color(0, 0, 0, 0));
 				TreeSet<String> d2 = new TreeSet<String>();
 				d2.addAll(d);
 				d2.remove(t);

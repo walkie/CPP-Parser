@@ -16,18 +16,20 @@ public class VersionedObjectVisitor {
 		}
 	}
 
-	public void visit(VersionedObject versionedObject) {
+	public void visit(VersionedObject versionedObject) 
+	{
 		for (AbstractVersionedObject v : versionedObject.getSubObjects())
 		{
 			v.visit(this);
 		}
 	}
 
-	public void visit(Variable variable) {
-		
+	public void visit(Variable variable) 
+	{
 	}
 
-	public void visit(Let let) {
+	public void visit(Let let)
+	{
 		let.getBound().visit(this);
 		let.getScope().visit(this);
 	}

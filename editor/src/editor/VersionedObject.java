@@ -25,7 +25,6 @@ public class VersionedObject extends AbstractVersionedObject {
 	public void addSubObject(AbstractVersionedObject v)
 	{
 		subObjects.add(v);
-		v.setParentObject(this);
 	}
 	
 	@Override
@@ -49,18 +48,6 @@ public class VersionedObject extends AbstractVersionedObject {
 		}
 
 		return v;
-	}
-
-	@Override
-	public String getStructuredText() {
-		String subText = "";
-		for (AbstractVersionedObject v : subObjects)
-		{
-			subText += v.getStructuredText();
-		}
-		String r = String.format("<object>\n<text>%s</text>\n%s</object>\n", value.replace("\n",""), subText);
-
-		return r;
 	}
 	
 	@Override

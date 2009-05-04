@@ -2,14 +2,14 @@ package editor.ui;
 
 import java.awt.Color;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Set;
 
 import editor.Label;
 
 public class ColorManager 
 {
-	Hashtable<String, Color> colors = new Hashtable<String,Color>();
+	HashMap<String, Color> colors = new HashMap<String,Color>();
 	
 	public Color getColor(Label l)
 	{
@@ -36,7 +36,7 @@ public class ColorManager
 			i += 50;
 			for (String t : dim)
 			{
-				colors.put(t, Color.getHSBColor(255, i, 255));
+				colors.put(t, new Color(128, 255 - i, 128, 128));
 			}
 		}
 	}

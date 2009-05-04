@@ -17,20 +17,21 @@ public class Let extends AbstractVersionedObject {
 		this.var = var;
 		this.bound = bound;
 		this.scope = scope;
-		this.bound.setParentObject(this);
-		this.scope.setParentObject(this);
 	}
 	
 
-	public AbstractVersionedObject getBound() {
+	public AbstractVersionedObject getBound() 
+	{
 		return bound;
 	}
 
-	public AbstractVersionedObject getScope() {
+	public AbstractVersionedObject getScope() 
+	{
 		return scope;
 	}
 
-	public Variable getVar() {
+	public Variable getVar() 
+	{
 		return var;
 	}
 	
@@ -43,19 +44,12 @@ public class Let extends AbstractVersionedObject {
 	}
 
 	@Override
-	public Set<String> tags() {
+	public Set<String> tags() 
+	{
 		Set<String> ts = new TreeSet<String>();
 		ts.addAll(bound.tags());
 		ts.addAll(scope.tags());
 		return ts;
-	}
-
-	@Override
-	public String getStructuredText() {
-		String v = var.getStructuredText();
-		String b = bound.getStructuredText();
-		String s = scope.getStructuredText();
-		return String.format("<let>\n%s%s%s</let>\n", v, b, s);
 	}
 	
 	@Override
@@ -65,7 +59,8 @@ public class Let extends AbstractVersionedObject {
 	}
 
 	@Override
-	public AbstractVersionedObject transform(VersionedObjectTransformer v) {
+	public AbstractVersionedObject transform(VersionedObjectTransformer v)
+	{
 		return v.transform(this);
 	}
 }

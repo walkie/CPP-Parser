@@ -38,18 +38,11 @@ public class Variable extends AbstractVersionedObject {
 	@Override
 	public boolean equals(Object obj) 
 	{
-		
 		if (obj instanceof Variable)
 		{
 			return name.equals(((Variable)obj).name);
 		}
 		return false;
-	}
-
-	@Override
-	public String getStructuredText() 
-	{
-		return String.format("<var>%s</var>\n", name);
 	}
 
 	@Override

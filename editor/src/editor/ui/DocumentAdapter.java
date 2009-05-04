@@ -25,7 +25,6 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 
 	private AbstractVersionedObject doc;
 	private JEditorPane textBox;
-	private JEditorPane stTextBox;
 	private DimensionSelector dimensionSelecter;
 	private ColorManager colorManager;
 	
@@ -33,23 +32,33 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	{
 	}
 	
-	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, JEditorPane stTextBox, DimensionSelector dimensionSelecter, ColorManager colorManager)
+	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, DimensionSelector dimensionSelecter, ColorManager colorManager)
 	{
 		this.doc = doc;
 		this.textBox = textBox;
-		this.stTextBox = stTextBox;
 		this.dimensionSelecter = dimensionSelecter;
 		this.colorManager = colorManager;
 	}
 		
-	public void changedUpdate(DocumentEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void changedUpdate(DocumentEvent e) 
+	{
 	}
 
-	public void insertUpdate(DocumentEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void insertUpdate(DocumentEvent e)
+	{
+//		int pos = e.getOffset();
+//		String text = "";
+//		try 
+//		{
+//			text = e.getDocument().getText(e.getOffset(), e.getOffset()+e.getLength());
+//		}
+//		catch (BadLocationException e1) 
+//		{
+//			e1.printStackTrace();
+//			return;
+//		}
+//		TextAdder ta = new TextAdder(pos, text);
+//		doc = doc.transform(ta);
 	}
 
 	public void removeUpdate(DocumentEvent e) {
@@ -92,7 +101,6 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 			}
 		}
 		
-		stTextBox.setText(doc.getStructuredText());
 		dimensionSelecter.setDimensions(new Dimension(doc).getDimensions(), selectedTags);
 	}
 	

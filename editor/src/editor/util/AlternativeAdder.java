@@ -53,13 +53,6 @@ public class AlternativeAdder extends VersionedObjectTransformer
 	public AbstractVersionedObject transform(VersionedObject v)
 	{
 		pos -= v.getValue().length();
-		
-		VersionedObject v2 = new VersionedObject(v.getValue());
-		for (AbstractVersionedObject o : v.getSubObjects())
-		{
-			v2.addSubObject(o.transform(this));
-		}
-		
-		return v2;
+		return super.transform(v);
 	}
 }

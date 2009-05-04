@@ -15,7 +15,6 @@ public class Choice extends AbstractVersionedObject {
 	public void addAlternative(Label l, AbstractVersionedObject p)
 	{
 		alternatives.put(l,p);
-		p.setParentObject(this);
 	}
 	
 	public Collection<AbstractVersionedObject> getAlternatives()
@@ -94,16 +93,6 @@ public class Choice extends AbstractVersionedObject {
 			c.addAlternative(l2, alternatives.get(l).replace(var, bound));
 		}
 		return c;
-	}
-
-	@Override
-	public String getStructuredText() {
-		String as = "";
-		for (AbstractVersionedObject v : alternatives.values())
-		{
-			as += v.getStructuredText();
-		}
-		return String.format("<choice>%s</choice>\n", as);
 	}
 
 	@Override

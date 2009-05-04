@@ -15,7 +15,8 @@ public class ChoiceFinder extends VersionedObjectVisitor {
 	}
 
 	@Override
-	public void visit(Choice choice) {
+	public void visit(Choice choice)
+	{
 		choices.add(choice);
 		super.visit(choice);
 	}

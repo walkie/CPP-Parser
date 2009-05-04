@@ -14,28 +14,22 @@ public class Label implements Comparable<Label> {
 		}
 	}
 
-	public Label(String tag) {
+	public Label(String tag) 
+	{
 		tags.add(tag);
 	}
-
-	private Label() {}
 	
-	public Label(Label l) {
+	public Label(Label l) 
+	{
 		for (String t : l.tags)
 		{
 			tags.add(t);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-    public Object clone() throws CloneNotSupportedException {
-	    Label l = new Label();
-	    l.tags = (TreeSet<String>) tags.clone();
-	    return l;
-    }
-
 	@Override
-	public int hashCode() {
+	public int hashCode() 
+	{
 		int hc = 0;
 		for (String t : tags)
 			hc ^= t.hashCode();
@@ -54,7 +48,8 @@ public class Label implements Comparable<Label> {
 		return false;
 	}
 	
-	public int compareTo(Label l) {
+	public int compareTo(Label l) 
+	{
 		Iterator<String> i1 = tags.iterator();
 		Iterator<String> i2 = l.tags.iterator();
 		

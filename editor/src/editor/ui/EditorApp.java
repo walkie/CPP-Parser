@@ -11,7 +11,8 @@ public class EditorApp {
    /**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) 
+	{
 		Editor e = new Editor(new DocumentAdapter());
 				
 		AbstractVersionedObject v = Temp.getTestDoc();
@@ -20,7 +21,6 @@ public class EditorApp {
 		e.setDimensionList(d.getDimensions());
 
 		e.setTopDoc(v);
-		e.setBottomText(v.getStructuredText());
 		e.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		e.showit();
 	}

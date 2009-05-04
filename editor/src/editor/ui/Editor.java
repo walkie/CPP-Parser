@@ -30,7 +30,6 @@ import editor.ui.dialogs.RemoveChoiceDialog;
 public class Editor extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final JEditorPane e1 = new JEditorPane();
-	private final JEditorPane e2 = new JEditorPane();
 	private DimensionSelector dimensionSelector;
 	private DocumentAdapter da;
 	private ColorManager colorManager;
@@ -49,15 +48,12 @@ public class Editor extends JFrame {
 		dimensionSelector.setDimensions(dimensions, new TreeSet<String>());
 	}
 
-	public void setBottomText(String structuredText) {
-		e2.setText(structuredText);
-	}
-
 	public void setTopDoc(AbstractVersionedObject doc) {
-		da.setDocument(doc, e1, e2, dimensionSelector, colorManager);
+		da.setDocument(doc, e1, dimensionSelector, colorManager);
 		DimensionHighlighter h = new DimensionHighlighter();
 		e1.setHighlighter(h);
 		e1.addMouseListener(da);
+		e1.getDocument().addDocumentListener(da);
 		da.setText();
 	}
 
@@ -67,16 +63,13 @@ public class Editor extends JFrame {
 		getContentPane().setLayout(layout);
 		
 		JPanel inner = new JPanel();
-		inner.setLayout(new GridLayout(2,1));
+		inner.setLayout(new GridLayout(1,1));
 		
 		e1.setFont(new Font("Monospaced", 12, 12));
-		e2.setFont(new Font("Monospaced", 12, 12));
 		
 		JScrollPane sp1 = new JScrollPane(e1);
-		JScrollPane sp2 = new JScrollPane(e2);
 
 		inner.add(sp1);
-		inner.add(sp2);
 		
 		add(dimensionSelector);
 		add(inner);

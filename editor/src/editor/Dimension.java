@@ -15,10 +15,10 @@ public class Dimension {
 	{
 		this.doc = doc;
 		this.dimensions = new ArrayList<Set<String>>();
-		setDimesions();
+		deriveDimesions();
 	}
 
-	private void setDimesions()
+	private void deriveDimesions()
 	{
 		ChoiceFinder cf = new ChoiceFinder();
 		doc.visit(cf);
