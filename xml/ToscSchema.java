@@ -13,8 +13,8 @@ public class ToscSchema {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String xml = "src\\Test1.xml";
-		String schema = "src\\Schema.xsd";
+		String xml = "src\\Test_GoodApp.xml";
+		String schema = "src\\Schema2.xsd";
 		SAXParser parser = new SAXParser();
 		ToscSchemaValidator handler = new ToscSchemaValidator();
 		parser.setErrorHandler(handler);

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md-doc>
+<state>
+	<dim-def id="Version" default_tag="5" />
+	<dim-def id="Release" default_tag="Full" />
+</state>
+<text>class</text>
+<choice id="Version">
+<alt tag="5"><text>List&lt;Job&gt;</text></alt>
+<alt tag="1.4"><text>List</text></alt>
+</choice>
+<text>runJob</text>
+<choice id="Release">
+	<alt tag="Trial"><text>trialCount</text></alt>
+	<alt tag="Full"></alt>
+</choice>
+</md-doc>
