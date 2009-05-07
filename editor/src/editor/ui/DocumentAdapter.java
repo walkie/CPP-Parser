@@ -13,28 +13,31 @@ import javax.swing.event.DocumentListener;
 
 import editor.AbstractVersionedObject;
 import editor.Dimension;
+import editor.VersionedDocument;
 import editor.VersionedObject;
 import editor.util.AlternativeAdder;
 import editor.util.AlternativeRemover;
 import editor.util.ChoiceCreator;
+import editor.util.ChoiceFinder;
 import editor.util.ChoiceRemover;
 import editor.util.TagSelector;
 import editor.util.TextAdder;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
 
-	private AbstractVersionedObject doc;
+	private VersionedDocument doc;
 	private JEditorPane textBox;
 	private DimensionSelector dimensionSelecter;
 	private ColorManager colorManager;
 	
 	public DocumentAdapter()
 	{
+		this.doc = new VersionedDocument();
 	}
 	
 	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, DimensionSelector dimensionSelecter, ColorManager colorManager)
 	{
-		this.doc = doc;
+		this.doc.setDocument(doc);
 		this.textBox = textBox;
 		this.dimensionSelecter = dimensionSelecter;
 		this.colorManager = colorManager;
@@ -67,19 +70,28 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		if (e.getButton() == MouseEvent.BUTTON1)
-		{
+		{		
+			AbstractVersionedObject c = doc.getChoice(textBox.getCaretPosition());
+			if (c != null)
+			{
+				TagSelector ts = new TagSelector(doc.getSelectedTags());
+				c.visit(ts);
+				
+				Collection<TagSelector.Line> lines = ts.getLines();
+				
+				for (TagSelector.Line line : lines)
+				{
+					System.out.println("ALT: " + line.getText().replace("\n", ""));
+				}
+			}
 		}
 	}
 
 	public void setText()
 	{
-		Dimension d = new Dimension(doc);
-		colorManager.setDimensions(d.getDimensions());
-		TagSelector ts = new TagSelector(selectedTags);
-		doc.visit(ts);
-		Collection<TagSelector.Line> lines = ts.getLines();
+		colorManager.setDimensions(doc.getDimensions());
+		Collection<TagSelector.Line> lines = doc.getLines();
 		
 		String str = "";
 		for (TagSelector.Line line : lines)
@@ -101,7 +113,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 			}
 		}
 		
-		dimensionSelecter.setDimensions(new Dimension(doc).getDimensions(), selectedTags);
+		dimensionSelecter.setDimensions(doc.getDimensions(), doc.getSelectedTags());
 	}
 	
 	public void mouseEntered(MouseEvent e) {
@@ -124,68 +136,58 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		
 	}
 
-	TreeSet<String> selectedTags = new TreeSet<String>();
-	
-	public void select(String tag) {
-		selectedTags.add(tag);
+	public void select(String tag) 
+	{
+		doc.select(tag);
 		setText();
 	}
 
-	public void unselect(Set<String> dim) {
-		selectedTags.removeAll(dim);
+	public void unselect(Set<String> dim) 
+	{
+		doc.unselect(dim);
 	}
 
-	public void newDoc() {
-		this.doc = new VersionedObject("");
+	public void newDoc() 
+	{
+		this.doc = new VersionedDocument();
 		setText();
 	}
 
 	public void addText(String text)
 	{
 		int pos = textBox.getCaretPosition();
-		TextAdder ta = new TextAdder(pos, text);
-		
-		doc = doc.transform(ta);
+		doc.addText(pos, text);
 		setText();
 	}
 
 	public void createChoice(String tag)
 	{
 		int pos = textBox.getCaretPosition();
-		ChoiceCreator cc = new ChoiceCreator(pos, tag);
-		
-		doc = doc.transform(cc);
+		doc.createChoice(pos, tag);
 		setText();		
 	}
 
 	public void removeChoice() 
 	{
 		int pos = textBox.getCaretPosition();
-		ChoiceRemover cr = new ChoiceRemover(pos);
-		
-		doc = doc.transform(cr);
+		doc.removeChoice(pos);
 		setText();		
 	}
 
 	public void addAlternative(String tag, String text) 
 	{
 		int pos = textBox.getCaretPosition();
-		AlternativeAdder aa = new AlternativeAdder(pos, tag, text);
 		
-		doc = doc.transform(aa);
-		
-		if (aa.suceeded())
+		if (doc.addAlternative(pos, tag, text))
 			setText();	
 		else
 			JOptionPane.showMessageDialog(null, "Could not add alternative at cursor position.");
 	}
 
-	public void removerAlternative() 
+	public void removeAlternative() 
 	{
 		int pos = textBox.getCaretPosition();
-		AlternativeRemover ar = new AlternativeRemover(pos);
-		
-		doc = doc.transform(ar);
+		doc.removeAlternative(pos);
 		setText();		
 	}
 }

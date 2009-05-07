@@ -25,7 +25,7 @@ public class RemoveAlternativeDialog extends JDialog
 		
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				documentAdapter.removerAlternative(); 
+				documentAdapter.removeAlternative(); 
 				setVisible(false);
 			}
 		});

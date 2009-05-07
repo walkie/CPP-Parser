@@ -3,7 +3,6 @@ package editor.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Stack;
-import java.util.TreeSet;
 
 import editor.AbstractVersionedObject;
 import editor.Choice;
@@ -14,13 +13,13 @@ public class TagSelector extends VersionedObjectVisitor
 {
 	int pos = 0;
 	ArrayList<Line> lines = new ArrayList<Line>();
-	private TreeSet<String> selectedTags = null;
+	private Collection<String> selectedTags;
 	Stack<Label> labels = new Stack<Label>();
 	boolean selected = false;
 	
-	public TagSelector(TreeSet<String> selectedTags)
+	public TagSelector(Collection<String> collection)
 	{
-		this.selectedTags = selectedTags;
+		this.selectedTags = collection;
 	}
 	
 	@Override
