@@ -49,8 +49,52 @@ public class VersionedDocument
 
 	public void addText(int pos, String text) 
 	{
-		TextAdder ta = new TextAdder(pos, text);
-		doc = doc.transform(ta);
+		Line found = null;
+		int p = pos;
+		for (Line line : selectedLines)
+		{
+			if (pos >= line.getStartPos() && pos <= line.getEndPos())
+			{
+				found = line;
+				break;
+			}
+			else
+			{
+				p -= line.getText().length();
+			}
+		}
+
+		if (found != null && found.getVersionedObject() instanceof VersionedObject)
+		{
+			VersionedObject v = (VersionedObject)found.getVersionedObject();
+			String str = v.getValue().substring(0, p) + text + v.getValue().substring(p);
+			v.setValue(str);
+		}	
+	}
+
+	public void removeText(int pos, int length) 
+	{
+		Line found = null;
+		int p = pos;
+		for (Line line : selectedLines)
+		{
+			if (pos >= line.getStartPos() && pos <= line.getEndPos())
+			{
+				found = line;
+				break;
+			}
+			else
+			{
+				p -= line.getText().length();
+			}
+		}
+
+		if (found != null && found.getVersionedObject() instanceof VersionedObject)
+		{
+			VersionedObject v = (VersionedObject)found.getVersionedObject();
+			String str = v.getValue().substring(0, p) + v.getValue().substring(p+length);
+			v.setValue(str);
+		}	
 	}
 
 	public void createChoice(int pos, String tag) 

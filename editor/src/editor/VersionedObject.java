@@ -22,6 +22,11 @@ public class VersionedObject extends AbstractVersionedObject {
 		return value;
 	}
 	
+	public void setValue(String value) 
+	{
+		this.value = value;	
+	}
+
 	public void addSubObject(AbstractVersionedObject v)
 	{
 		v.setParentObject(this);

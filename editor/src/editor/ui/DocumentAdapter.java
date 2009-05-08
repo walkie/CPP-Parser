@@ -9,6 +9,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
 import editor.AbstractVersionedObject;
 import editor.VersionedDocument;
@@ -38,26 +39,33 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	{
 	}
 
+	boolean inSetText = false;
 	public void insertUpdate(DocumentEvent e)
 	{
-//		int pos = e.getOffset();
-//		String text = "";
-//		try 
-//		{
-//			text = e.getDocument().getText(e.getOffset(), e.getOffset()+e.getLength());
-//		}
-//		catch (BadLocationException e1) 
-//		{
-//			e1.printStackTrace();
-//			return;
-//		}
-//		TextAdder ta = new TextAdder(pos, text);
-//		doc = doc.transform(ta);
+		if (!inSetText)
+		{
+			int pos = e.getOffset();
+			String text = "";
+			try 
+			{
+				text = e.getDocument().getText(e.getOffset(), e.getLength());
+			}
+			catch (BadLocationException e1) 
+			{
+				e1.printStackTrace();
+				return;
+			}
+			
+			doc.addText(pos, text);
+		}
 	}
 
-	public void removeUpdate(DocumentEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void removeUpdate(DocumentEvent e) 
+	{
+		if (!inSetText)
+		{
+			doc.removeText(e.getOffset(), e.getLength());
+		}
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -81,6 +89,8 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 
 	public void setText()
 	{
+		inSetText = true;
+		
 		colorManager.setDimensions(doc.getDimensions());
 		Collection<TagSelector.Line> lines = doc.getLines();
 		
@@ -105,6 +115,8 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		}
 		
 		dimensionSelecter.setDimensions(doc.getDimensions(), doc.getSelectedTags());
+
+		inSetText = false;
 	}
 	
 	public void mouseEntered(MouseEvent e) {
