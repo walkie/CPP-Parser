@@ -68,7 +68,8 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		}
 	}
 
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked(MouseEvent e) 
+	{
 		if (e.getButton() == MouseEvent.BUTTON1)
 		{		
 			AbstractVersionedObject c = doc.getChoice(textBox.getCaretPosition());

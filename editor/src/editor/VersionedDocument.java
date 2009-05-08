@@ -70,6 +70,7 @@ public class VersionedDocument
 			String str = v.getValue().substring(0, p) + text + v.getValue().substring(p);
 			v.setValue(str);
 		}	
+		setSelectedLines();
 	}
 
 	public void removeText(int pos, int length) 
@@ -95,6 +96,7 @@ public class VersionedDocument
 			String str = v.getValue().substring(0, p) + v.getValue().substring(p+length);
 			v.setValue(str);
 		}	
+		setSelectedLines();
 	}
 
 	public void createChoice(int pos, String tag) 
