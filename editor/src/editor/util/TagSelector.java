@@ -33,7 +33,7 @@ public class TagSelector extends VersionedObjectVisitor
 		
 		if (selected || tag == null)
 		{
-			lines.add(new Line(pos, end, v.getValue(), tag, selected));
+			lines.add(new Line(pos, end, tag, selected, v));
 			pos = end;
 		}
 		for (AbstractVersionedObject o : v.getSubObjects())
@@ -90,24 +90,25 @@ public class TagSelector extends VersionedObjectVisitor
 	{
 		int start;
 		int end;
-		String text;
 		Label label;
 		boolean visible;
+		VersionedObject v;
 		
-		public Line(int start, int end, String text, Label label, boolean visible)
+		public Line(int start, int end, Label label, boolean visible, VersionedObject v)
 		{
 			this.start = start;
 			this.end = end;
-			this.text = text;
 			this.label = label;
 			this.visible = visible;
+			this.v = v;
 		}
 		
 		public int getStartPos() { return start; }
 		public int getEndPos() { return end; }
-		public String getText() { return text; }
+		public String getText() { return v.getValue(); }
 		public Label getLabel() { return label; }
 		public boolean isAlt() { return label != null; }
 		public boolean isVisible() { return visible; }
+		public AbstractVersionedObject getVersionedObject() { return v; }
 	}
 }
