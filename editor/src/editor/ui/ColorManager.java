@@ -29,14 +29,30 @@ public class ColorManager
 
 	public void setDimensions(Collection<Set<String>> dimensions)
 	{
-		int i = 0;
+		float i = 0.0f;
+		float denom = 1.0f;
+		float start = 0.5f;
+		
 		colors.clear();
+		
+		System.out.println("****************");
 		for (Set<String> dim : dimensions)
 		{
-			i += 50;
+			i += 1.0f;
+			if (i >= denom)
+			{
+				denom *= 2.0f;
+				start /= 2.0f;
+				i = start;
+			}
+
+			float h = i / denom;
+			System.out.println("" + i + " " + denom + " " + start + " " + h);
+
 			for (String t : dim)
 			{
-				colors.put(t, new Color(128, 255 - i, 128, 128));
+				Color c = Color.getHSBColor(h, 0.8f, 1.0f);
+				colors.put(t, new Color(c.getRed(), c.getBlue(), c.getGreen(), 128));
 			}
 		}
 	}

@@ -4,9 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import editor.util.AlternativeAdder;
 import editor.util.AlternativeRemover;
-import editor.util.ChoiceCreator;
 import editor.util.ChoiceFinder;
 import editor.util.ChoiceRemover;
 import editor.util.Substituter;
@@ -94,9 +92,6 @@ public class VersionedDocument
 		}
 		
 		return false;
-		//AlternativeAdder aa = new AlternativeAdder(pos, tag, text);	
-		//doc = doc.transform(aa);
-		//return aa.suceeded();
 	}
 
 	public void removeAlternative(int pos)
