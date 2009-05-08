@@ -9,6 +9,7 @@ import editor.util.AlternativeRemover;
 import editor.util.ChoiceCreator;
 import editor.util.ChoiceFinder;
 import editor.util.ChoiceRemover;
+import editor.util.Substituter;
 import editor.util.TagSelector;
 import editor.util.TextAdder;
 import editor.util.TagSelector.Line;
@@ -56,8 +57,22 @@ public class VersionedDocument
 
 	public void createChoice(int pos, String tag) 
 	{
-		ChoiceCreator cc = new ChoiceCreator(pos, tag);	
-		doc = doc.transform(cc);
+		AbstractVersionedObject v = findVersionedObjectFromPos(pos);
+		AbstractVersionedObject parent = v.getParentObject(); 
+		
+		Choice c = new Choice();
+		c.addAlternative(new Label(tag), v);
+		
+		if (parent == null)
+		{
+			doc = c;
+		}
+		else
+		{
+			Substituter s = new Substituter(v, c);
+			doc = doc.transform(s);
+		}
+		setSelectedLines();
 	}
 
 	public void removeChoice(int pos)
@@ -68,9 +83,20 @@ public class VersionedDocument
 
 	public boolean addAlternative(int pos, String tag, String text)
 	{
-		AlternativeAdder aa = new AlternativeAdder(pos, tag, text);	
-		doc = doc.transform(aa);
-		return aa.suceeded();
+		AbstractVersionedObject v = findVersionedObjectFromPos(pos);
+		
+		if (v.getParentObject() instanceof Choice)
+		{
+			Choice c = (Choice)v.getParentObject();
+			c.addAlternative(new Label(tag), new VersionedObject(text));
+			setSelectedLines();
+			return true;
+		}
+		
+		return false;
+		//AlternativeAdder aa = new AlternativeAdder(pos, tag, text);	
+		//doc = doc.transform(aa);
+		//return aa.suceeded();
 	}
 
 	public void removeAlternative(int pos)
@@ -101,5 +127,18 @@ public class VersionedDocument
 	public Collection<String> getSelectedTags() 
 	{
 		return selectedTags;
+	}
+	
+	private AbstractVersionedObject findVersionedObjectFromPos(int pos)
+	{
+		for (Line line : selectedLines)
+		{
+			if (pos >= line.getStartPos() && pos <= line.getEndPos())
+			{
+				return line.getVersionedObject();
+			}
+		}
+
+		return null;
 	}
 }

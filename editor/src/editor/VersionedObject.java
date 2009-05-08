@@ -27,6 +27,11 @@ public class VersionedObject extends AbstractVersionedObject {
 		v.setParentObject(this);
 		subObjects.add(v);
 	}
+
+	public void removeSubObject(AbstractVersionedObject o) 
+	{
+		subObjects.remove(o);
+	}
 	
 	@Override
 	public Set<String> tags()
@@ -64,5 +69,21 @@ public class VersionedObject extends AbstractVersionedObject {
 	@Override
 	public AbstractVersionedObject transform(VersionedObjectTransformer v) {
 		return v.transform(this);
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof VersionedObject)
+		{
+			VersionedObject v = (VersionedObject)o;
+			return getValue().equals(v.getValue()) 
+			    && getSubObjects().containsAll(v.getSubObjects()) 
+			    && v.getSubObjects().containsAll(getSubObjects());
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

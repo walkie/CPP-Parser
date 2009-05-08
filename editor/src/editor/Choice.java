@@ -86,7 +86,8 @@ public class Choice extends AbstractVersionedObject {
 	}
 	
 	@Override
-	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound) {
+	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound)
+	{
 		Choice c = new Choice();
 		for (Label l : alternatives.keySet())
 		{
@@ -106,5 +107,31 @@ public class Choice extends AbstractVersionedObject {
 	public AbstractVersionedObject transform(VersionedObjectTransformer v) 
 	{
 		return v.transform(this);
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Choice)
+		{
+			Choice c = (Choice)o;
+
+			if (!( getLabels().containsAll(c.getLabels()) && c.getLabels().containsAll(getLabels())) )
+			{
+				return false;
+			}
+			
+			for (Label l : getLabels())
+			{
+				if (!getAlternative(l).equals(c.getAlternative(l)))
+					return false;
+			}
+		
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
