@@ -4,7 +4,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
@@ -12,16 +11,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import editor.AbstractVersionedObject;
-import editor.Dimension;
 import editor.VersionedDocument;
-import editor.VersionedObject;
-import editor.util.AlternativeAdder;
-import editor.util.AlternativeRemover;
-import editor.util.ChoiceCreator;
-import editor.util.ChoiceFinder;
-import editor.util.ChoiceRemover;
 import editor.util.TagSelector;
-import editor.util.TextAdder;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
 

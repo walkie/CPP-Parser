@@ -14,6 +14,7 @@ public class Choice extends AbstractVersionedObject {
 	
 	public void addAlternative(Label l, AbstractVersionedObject p)
 	{
+		p.setParentObject(this);
 		alternatives.put(l,p);
 	}
 	

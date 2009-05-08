@@ -17,6 +17,10 @@ public class Let extends AbstractVersionedObject {
 		this.var = var;
 		this.bound = bound;
 		this.scope = scope;
+		
+		var.setParentObject(this);
+		bound.setParentObject(this);
+		scope.setParentObject(this);
 	}
 	
 

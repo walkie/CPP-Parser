@@ -24,6 +24,7 @@ public class VersionedObject extends AbstractVersionedObject {
 	
 	public void addSubObject(AbstractVersionedObject v)
 	{
+		v.setParentObject(this);
 		subObjects.add(v);
 	}
 	
