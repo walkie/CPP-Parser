@@ -17,13 +17,14 @@ public class VersionedDocument
 {
 	private AbstractVersionedObject doc;
 	private TreeSet<String> selectedTags = new TreeSet<String>();
-	
+	private Collection<Line> selectedLines;
 
 	public VersionedDocument()
 	{
 		this.doc = new VersionedObject("");
+		setSelectedLines();
 	}
-	
+
 	public void setDocument(AbstractVersionedObject doc)
 	{
 		this.doc = doc;
@@ -44,9 +45,7 @@ public class VersionedDocument
 
 	public Collection<Line> getLines() 
 	{
-		TagSelector ts = new TagSelector(selectedTags);
-		doc.visit(ts);
-		return ts.getLines();
+		return selectedLines;
 	}
 
 	public void addText(int pos, String text) 
@@ -83,11 +82,20 @@ public class VersionedDocument
 	public void select(String tag)
 	{
 		selectedTags.add(tag);
+		setSelectedLines();
 	}
 	
 	public void unselect(Set<String> dim)
 	{
 		selectedTags.removeAll(dim);
+		setSelectedLines();
+	}
+	
+	private void setSelectedLines() 
+	{
+		TagSelector ts = new TagSelector(selectedTags);
+		doc.visit(ts);
+		selectedLines = ts.getLines();
 	}
 
 	public Collection<String> getSelectedTags() 
