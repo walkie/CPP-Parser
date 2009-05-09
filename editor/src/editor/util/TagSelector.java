@@ -12,7 +12,7 @@ import editor.VersionedObject;
 public class TagSelector extends VersionedObjectVisitor
 {
 	int pos = 0;
-	ArrayList<Line> lines = new ArrayList<Line>();
+	ArrayList<TextPart> parts = new ArrayList<TextPart>();
 	private Collection<String> selectedTags;
 	Stack<Label> labels = new Stack<Label>();
 	boolean selected = false;
@@ -33,7 +33,7 @@ public class TagSelector extends VersionedObjectVisitor
 		
 		if (selected || tag == null)
 		{
-			lines.add(new Line(pos, end, tag, selected, v));
+			parts.add(new TextPart(pos, end, tag, selected, v));
 			pos = end;
 		}
 		for (AbstractVersionedObject o : v.getSubObjects())
@@ -81,12 +81,12 @@ public class TagSelector extends VersionedObjectVisitor
 		return false;
 	}
 	
-	public Collection<Line> getLines()
+	public Collection<TextPart> getTextParts()
 	{
-		return lines;
+		return parts;
 	}
 	
-	public class Line
+	public class TextPart
 	{
 		int start;
 		int end;
@@ -94,7 +94,7 @@ public class TagSelector extends VersionedObjectVisitor
 		boolean visible;
 		VersionedObject v;
 		
-		public Line(int start, int end, Label label, boolean visible, VersionedObject v)
+		public TextPart(int start, int end, Label label, boolean visible, VersionedObject v)
 		{
 			this.start = start;
 			this.end = end;

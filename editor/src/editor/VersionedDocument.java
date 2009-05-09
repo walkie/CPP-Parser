@@ -10,13 +10,13 @@ import editor.util.ChoiceRemover;
 import editor.util.Substituter;
 import editor.util.TagSelector;
 import editor.util.TextAdder;
-import editor.util.TagSelector.Line;
+import editor.util.TagSelector.TextPart;
 
 public class VersionedDocument 
 {
 	private AbstractVersionedObject doc;
 	private TreeSet<String> selectedTags = new TreeSet<String>();
-	private Collection<Line> selectedLines;
+	private Collection<TextPart> selectedParts;
 
 	public VersionedDocument()
 	{
@@ -42,25 +42,25 @@ public class VersionedDocument
 		return d.getDimensions();
 	}
 
-	public Collection<Line> getLines() 
+	public Collection<TextPart> getTextParts() 
 	{
-		return selectedLines;
+		return selectedParts;
 	}
 
 	public void addText(int pos, String text) 
 	{
-		Line found = null;
+		TextPart found = null;
 		int p = pos;
-		for (Line line : selectedLines)
+		for (TextPart part : selectedParts)
 		{
-			if (pos >= line.getStartPos() && pos <= line.getEndPos())
+			if (pos >= part.getStartPos() && pos <= part.getEndPos())
 			{
-				found = line;
+				found = part;
 				break;
 			}
 			else
 			{
-				p -= line.getText().length();
+				p -= part.getText().length();
 			}
 		}
 
@@ -68,25 +68,27 @@ public class VersionedDocument
 		{
 			VersionedObject v = (VersionedObject)found.getVersionedObject();
 			String str = v.getValue().substring(0, p) + text + v.getValue().substring(p);
+			System.out.println("OLD: " + v.getValue());
 			v.setValue(str);
+			System.out.println("NEW: " + v.getValue());
 		}	
 		setSelectedLines();
 	}
 
 	public void removeText(int pos, int length) 
 	{
-		Line found = null;
+		TextPart found = null;
 		int p = pos;
-		for (Line line : selectedLines)
+		for (TextPart part : selectedParts)
 		{
-			if (pos >= line.getStartPos() && pos <= line.getEndPos())
+			if (pos > part.getStartPos() && pos < part.getEndPos())
 			{
-				found = line;
+				found = part;
 				break;
 			}
 			else
 			{
-				p -= line.getText().length();
+				p -= part.getText().length();
 			}
 		}
 
@@ -94,7 +96,9 @@ public class VersionedDocument
 		{
 			VersionedObject v = (VersionedObject)found.getVersionedObject();
 			String str = v.getValue().substring(0, p) + v.getValue().substring(p+length);
+			System.out.println("OLD: " + v.getValue());
 			v.setValue(str);
+			System.out.println("NEW: " + v.getValue());
 		}	
 		setSelectedLines();
 	}
@@ -162,7 +166,7 @@ public class VersionedDocument
 	{
 		TagSelector ts = new TagSelector(selectedTags);
 		doc.visit(ts);
-		selectedLines = ts.getLines();
+		selectedParts = ts.getTextParts();
 	}
 
 	public Collection<String> getSelectedTags() 
@@ -172,11 +176,11 @@ public class VersionedDocument
 	
 	private AbstractVersionedObject findVersionedObjectFromPos(int pos)
 	{
-		for (Line line : selectedLines)
+		for (TextPart part : selectedParts)
 		{
-			if (pos >= line.getStartPos() && pos <= line.getEndPos())
+			if (pos >= part.getStartPos() && pos <= part.getEndPos())
 			{
-				return line.getVersionedObject();
+				return part.getVersionedObject();
 			}
 		}
 

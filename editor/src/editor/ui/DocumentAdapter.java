@@ -75,15 +75,15 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 			AbstractVersionedObject c = doc.getChoice(textBox.getCaretPosition());
 			if (c != null)
 			{
-				TagSelector ts = new TagSelector(doc.getSelectedTags());
-				c.visit(ts);
+//				TagSelector ts = new TagSelector(doc.getSelectedTags());
+//				c.visit(ts);
 				
-				Collection<TagSelector.Line> lines = ts.getLines();
+//				Collection<TagSelector.TextPart> parts = ts.getTextParts();
 				
-				for (TagSelector.Line line : lines)
-				{
-					System.out.println("ALT: " + line.getText().replace("\n", ""));
-				}
+//				for (TagSelector.TextPart part : parts)
+//				{
+//					System.out.println("ALT: " + part.getText().replace("\n", ""));
+//				}
 			}
 		}
 	}
@@ -93,23 +93,23 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		inSetText = true;
 		
 		colorManager.setDimensions(doc.getDimensions());
-		Collection<TagSelector.Line> lines = doc.getLines();
+		Collection<TagSelector.TextPart> parts = doc.getTextParts();
 		
 		String str = "";
-		for (TagSelector.Line line : lines)
+		for (TagSelector.TextPart part : parts)
 		{
-			str += line.getText();
+			str += part.getText();
 		}
 		textBox.setText(str);
-		for (TagSelector.Line line : lines)
+		for (TagSelector.TextPart part : parts)
 		{
-			if (!line.isAlt())
+			if (!part.isAlt())
 				continue;
 
 			try {
 				DimensionHighlighter h = null;
 				h = (DimensionHighlighter)textBox.getHighlighter();
-				h.addHighlight(line.getStartPos(), line.getEndPos(), colorManager.getColor(line.getLabel()));
+				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getLabel()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
