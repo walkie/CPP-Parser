@@ -9,7 +9,7 @@ import editor.util.ChoiceFinder;
 import editor.util.ChoiceRemover;
 import editor.util.Substituter;
 import editor.util.TagSelector;
-import editor.util.TagSelector.TextPart;
+import editor.util.TextPart;
 
 public class VersionedDocument 
 {
@@ -43,7 +43,6 @@ public class VersionedDocument
 
 	public Collection<TextPart> getTextParts() 
 	{
-		
 		return selectedParts;
 	}
 
@@ -60,7 +59,7 @@ public class VersionedDocument
 			}
 			else
 			{
-				p -= part.getText().length();
+				p -= part.getLength();
 			}
 		}
 
@@ -95,7 +94,7 @@ public class VersionedDocument
 				}	
 			}
 			
-			p -= part.getText().length();
+			p -= part.getLength();
 		}
 
 		setSelectedLines();

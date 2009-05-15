@@ -20,8 +20,15 @@ public class TagSelector extends VersionedObjectVisitor
 	public TagSelector(Collection<String> collection)
 	{
 		this.selectedTags = collection;
+		addBoundary();
 	}
 	
+	private void addBoundary() 
+	{
+		parts.add(new BoundaryPart(pos));
+		pos++;
+	}
+
 	@Override
 	public void visit(VersionedObject v)
 	{
@@ -35,6 +42,7 @@ public class TagSelector extends VersionedObjectVisitor
 		{
 			parts.add(new TextPart(pos, end, tag, selected, v));
 			pos = end;
+			addBoundary();
 		}
 		for (AbstractVersionedObject o : v.getSubObjects())
 		{
@@ -84,31 +92,5 @@ public class TagSelector extends VersionedObjectVisitor
 	public Collection<TextPart> getTextParts()
 	{
 		return parts;
-	}
-	
-	public class TextPart
-	{
-		int start;
-		int end;
-		Label label;
-		boolean visible;
-		VersionedObject v;
-		
-		public TextPart(int start, int end, Label label, boolean visible, VersionedObject v)
-		{
-			this.start = start;
-			this.end = end;
-			this.label = label;
-			this.visible = visible;
-			this.v = v;
-		}
-		
-		public int getStartPos() { return start; }
-		public int getEndPos() { return end; }
-		public String getText() { return v.getValue(); }
-		public Label getLabel() { return label; }
-		public boolean isAlt() { return label != null; }
-		public boolean isVisible() { return visible; }
-		public AbstractVersionedObject getVersionedObject() { return v; }
 	}
 }

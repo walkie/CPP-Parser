@@ -13,7 +13,7 @@ import javax.swing.text.BadLocationException;
 
 import editor.AbstractVersionedObject;
 import editor.VersionedDocument;
-import editor.util.TagSelector;
+import editor.util.TextPart;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
 
@@ -93,15 +93,15 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		inSetText = true;
 		
 		colorManager.setDimensions(doc.getDimensions());
-		Collection<TagSelector.TextPart> parts = doc.getTextParts();
+		Collection<TextPart> parts = doc.getTextParts();
 		
 		String str = "";
-		for (TagSelector.TextPart part : parts)
+		for (TextPart part : parts)
 		{
 			str += part.getText();
 		}
 		textBox.setText(str);
-		for (TagSelector.TextPart part : parts)
+		for (TextPart part : parts)
 		{
 			if (!part.isAlt())
 				continue;
