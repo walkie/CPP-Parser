@@ -9,7 +9,6 @@ import editor.util.ChoiceFinder;
 import editor.util.ChoiceRemover;
 import editor.util.Substituter;
 import editor.util.TagSelector;
-import editor.util.TextAdder;
 import editor.util.TagSelector.TextPart;
 
 public class VersionedDocument 
@@ -44,6 +43,7 @@ public class VersionedDocument
 
 	public Collection<TextPart> getTextParts() 
 	{
+		
 		return selectedParts;
 	}
 
@@ -77,30 +77,41 @@ public class VersionedDocument
 
 	public void removeText(int pos, int length) 
 	{
-		TextPart found = null;
 		int p = pos;
 		for (TextPart part : selectedParts)
 		{
-			if (pos > part.getStartPos() && pos < part.getEndPos())
+			if (pos >= part.getStartPos() && pos < part.getEndPos() && part.getVersionedObject() instanceof VersionedObject)
 			{
-				found = part;
-				break;
+				int len = removeTextFromVersionedObject(length, p, (VersionedObject)part.getVersionedObject());
+				
+				if (len == length)
+				{
+					break;
+				}
+				else if (len < length)
+				{
+					pos += len;
+					length = length - len;
+				}	
 			}
-			else
-			{
-				p -= part.getText().length();
-			}
+			
+			p -= part.getText().length();
 		}
 
-		if (found != null && found.getVersionedObject() instanceof VersionedObject)
-		{
-			VersionedObject v = (VersionedObject)found.getVersionedObject();
-			String str = v.getValue().substring(0, p) + v.getValue().substring(p+length);
-			System.out.println("OLD: " + v.getValue());
-			v.setValue(str);
-			System.out.println("NEW: " + v.getValue());
-		}	
 		setSelectedLines();
+	}
+
+	private int removeTextFromVersionedObject(int length, int pos, VersionedObject v)
+	{
+		int len = Math.min(length, v.getValue().length()-pos);
+		
+		if (pos < v.getValue().length())
+		{
+			String str = v.getValue().substring(0, pos) + v.getValue().substring(pos+len);
+			v.setValue(str);
+		}
+		
+		return len;
 	}
 
 	public void createChoice(int pos, String tag) 
