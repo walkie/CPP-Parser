@@ -38,6 +38,12 @@ public class VersionedDocument
 	public Collection<Set<String>> getDimensions() 
 	{
 		Dimension d = new Dimension(doc);
+		if (selectedTags.size() == 0)
+		{
+			selectedTags = d.getDefaults();
+			setSelectedLines();
+		}
+		
 		return d.getDimensions();
 	}
 
@@ -70,7 +76,7 @@ public class VersionedDocument
 			System.out.println("OLD: " + v.getValue());
 			v.setValue(str);
 			System.out.println("NEW: " + v.getValue());
-		}	
+		}
 		setSelectedLines();
 	}
 

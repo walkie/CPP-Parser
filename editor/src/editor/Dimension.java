@@ -2,7 +2,9 @@ package editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import editor.util.ChoiceFinder;
 
@@ -41,7 +43,8 @@ public class Dimension {
 		}
 	}
 
-	private boolean intersects(Set<String> tags1, Set<String> tags2) {
+	private boolean intersects(Set<String> tags1, Set<String> tags2) 
+	{
 		for (String t : tags2)
 		{
 			if (tags1.contains(t))
@@ -50,7 +53,21 @@ public class Dimension {
 		return false;
 	}
 
-	public Collection<Set<String>> getDimensions() {
+	public Collection<Set<String>> getDimensions() 
+	{
 		return dimensions;
+	}
+
+	public TreeSet<String> getDefaults()
+	{
+		TreeSet<String> defaults = new TreeSet<String>();
+		for (Set<String> s : dimensions)
+		{
+			Iterator<String> it = s.iterator();
+			String t = it.next();
+			defaults.add(t);
+		}
+
+		return defaults;
 	}
 }

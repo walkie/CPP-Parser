@@ -93,14 +93,17 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		inSetText = true;
 		
 		colorManager.setDimensions(doc.getDimensions());
+		dimensionSelecter.setDimensions(doc.getDimensions(), doc.getSelectedTags());
+
 		Collection<TextPart> parts = doc.getTextParts();
-		
-		String str = "";
-		for (TextPart part : parts)
-		{
-			str += part.getText();
-		}
-		textBox.setText(str);
+
+		textBox.setText(getText(parts));
+		setHighlights(parts);
+
+		inSetText = false;
+	}
+
+	private void setHighlights(Collection<TextPart> parts) {
 		for (TextPart part : parts)
 		{
 			if (!part.isAlt())
@@ -114,10 +117,15 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 				e.printStackTrace();
 			}
 		}
-		
-		dimensionSelecter.setDimensions(doc.getDimensions(), doc.getSelectedTags());
+	}
 
-		inSetText = false;
+	private String getText(Collection<TextPart> parts) {
+		String str = "";
+		for (TextPart part : parts)
+		{
+			str += part.getText();
+		}
+		return str;
 	}
 	
 	public void mouseEntered(MouseEvent e) {
