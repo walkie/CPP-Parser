@@ -25,8 +25,8 @@ public class TagSelector extends VersionedObjectVisitor
 	
 	private void addBoundary() 
 	{
-		parts.add(new BoundaryPart(pos));
-		pos++;
+		//parts.add(new BoundaryPart(pos));
+		//pos++;
 	}
 
 	@Override
