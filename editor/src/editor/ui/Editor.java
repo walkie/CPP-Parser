@@ -4,7 +4,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -26,7 +25,8 @@ import editor.ui.dialogs.CreateChoiceDialog;
 import editor.ui.dialogs.RemoveAlternativeDialog;
 import editor.ui.dialogs.RemoveChoiceDialog;
 
-public class Editor extends JFrame {
+public class Editor extends JFrame
+{
 	private static final long serialVersionUID = 1L;
 	private final JEditorPane editorPane = new JEditorPane();
 	private final Gutter gutter = new Gutter();

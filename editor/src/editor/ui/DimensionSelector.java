@@ -16,6 +16,7 @@ import javax.swing.JRadioButton;
 
 import editor.Dimension;
 import editor.Dimensions;
+import editor.ui.dialogs.CreateTagDialog;
 
 public class DimensionSelector extends JPanel 
 {
@@ -97,9 +98,16 @@ public class DimensionSelector extends JPanel
 		
 		public void actionPerformed(ActionEvent e)
 		{
-			dim.addTag("T");
+			new CreateTagDialog(dim);
+			refresh();
 		}
 	}
+	
+	protected void refresh()
+	{
+		
+	}
+	
 	private JPopupMenu getDimensionPopupMenu(Dimension d)
 	{
 		JPopupMenu popup = new JPopupMenu();
