@@ -16,11 +16,11 @@ public class EditorApp {
 		Editor e = new Editor(new DocumentAdapter());
 				
 		AbstractVersionedObject v = Temp.getTestDoc();
-		Dimension d = new Dimension(v);
+		Dimensions d = new Dimensions(v);
 		
-		e.setDimensionList(d.getDimensions());
+		e.setDimensionList(d);
 
-		e.setTopDoc(v);
+		e.setDocument(v);
 		e.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		e.showit();
 	}

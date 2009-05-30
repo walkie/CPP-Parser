@@ -6,6 +6,7 @@ import java.util.Stack;
 
 import editor.AbstractVersionedObject;
 import editor.Choice;
+import editor.Dimensions;
 import editor.Label;
 import editor.VersionedObject;
 
@@ -13,13 +14,13 @@ public class TagSelector extends VersionedObjectVisitor
 {
 	int pos = 0;
 	ArrayList<TextPart> parts = new ArrayList<TextPart>();
-	private Collection<String> selectedTags;
+	private Dimensions dimensions;
 	Stack<Label> labels = new Stack<Label>();
 	boolean selected = false;
 	
-	public TagSelector(Collection<String> collection)
+	public TagSelector(Dimensions dimensions)
 	{
-		this.selectedTags = collection;
+		this.dimensions = dimensions;
 		addBoundary();
 	}
 	
@@ -53,12 +54,12 @@ public class TagSelector extends VersionedObjectVisitor
 	@Override
 	public void visit(Choice choice) 
 	{
-		if (intersects(selectedTags, choice.ctags()))
+		if (intersects(dimensions.getSelectedTags(), choice.ctags()))
 		{
 			for (Label l : choice.getLabels())
 			{
 				labels.push(l);
-				if (intersects(selectedTags, l.tags))
+				if (intersects(dimensions.getSelectedTags(), l.tags))
 				{
 					selected = true;
 					choice.getAlternative(l).visit(this);

@@ -2,7 +2,6 @@ package editor;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.TreeSet;
 
 import editor.util.AlternativeRemover;
 import editor.util.ChoiceFinder;
@@ -14,18 +13,21 @@ import editor.util.TextPart;
 public class VersionedDocument 
 {
 	private AbstractVersionedObject doc;
-	private TreeSet<String> selectedTags = new TreeSet<String>();
+	private Dimensions dimensions;
 	private Collection<TextPart> selectedParts;
 
 	public VersionedDocument()
 	{
-		this.doc = new VersionedObject("");
+		doc = new VersionedObject("");
+		dimensions = new Dimensions(doc);
 		setSelectedLines();
 	}
 
 	public void setDocument(AbstractVersionedObject doc)
 	{
 		this.doc = doc;
+		dimensions = new Dimensions(doc);
+		setSelectedLines();
 	}
 
 	public Choice getChoice(int caretPosition) 
@@ -35,16 +37,9 @@ public class VersionedDocument
 		return cf.getChoice();
 	}
 
-	public Collection<Set<String>> getDimensions() 
+	public Dimensions getDimensions() 
 	{
-		Dimension d = new Dimension(doc);
-		if (selectedTags.size() == 0)
-		{
-			selectedTags = d.getDefaults();
-			setSelectedLines();
-		}
-		
-		return d.getDimensions();
+		return dimensions;
 	}
 
 	public Collection<TextPart> getTextParts() 
@@ -168,27 +163,25 @@ public class VersionedDocument
 
 	public void select(String tag)
 	{
-		selectedTags.add(tag);
-		setSelectedLines();
-	}
-	
-	public void unselect(Set<String> dim)
-	{
-		selectedTags.removeAll(dim);
+		for (Dimension d : dimensions)
+		{
+			d.select(tag);
+		}
+
 		setSelectedLines();
 	}
 	
 	private void setSelectedLines() 
 	{
-		TagSelector ts = new TagSelector(selectedTags);
+		TagSelector ts = new TagSelector(dimensions);
 		doc.visit(ts);
 		selectedParts = ts.getTextParts();
 	}
 
-	public Collection<String> getSelectedTags() 
-	{
-		return selectedTags;
-	}
+//	public Collection<String> getSelectedTags() 
+//	{
+//		return selectedTags;
+//	}
 	
 	private AbstractVersionedObject findVersionedObjectFromPos(int pos)
 	{
@@ -201,5 +194,10 @@ public class VersionedDocument
 		}
 
 		return null;
+	}
+
+	public Set<String> getSelectedTags()
+	{
+		return dimensions.getSelectedTags();
 	}
 }

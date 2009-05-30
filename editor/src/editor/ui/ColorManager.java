@@ -1,25 +1,27 @@
 package editor.ui;
 
 import java.awt.Color;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
+import editor.Dimension;
+import editor.Dimensions;
 import editor.Label;
 
 public class ColorManager 
 {
 	HashMap<String, Color> colors = new HashMap<String,Color>();
-	
-	public Color getColor(Label l)
-	{
-		return getColor(l.tags);
-	}
 
-	public Color getColor(Set<String> d) {
+	public Color getColor(Label label)
+	{
+		return getColor(label.tags);
+	}
+	
+	public Color getColor(Set<String> s)
+	{
 		for (String t : colors.keySet())
 		{
-			if (d.contains(t))
+			if (s.contains(t))
 			{
 				return colors.get(t);
 			}
@@ -27,7 +29,7 @@ public class ColorManager
 		return new Color(255,255,255);
 	}
 
-	public void setDimensions(Collection<Set<String>> dimensions)
+	public void setDimensions(Dimensions dimensions)
 	{
 		float i = 0.0f;
 		float denom = 1.0f;
@@ -35,8 +37,7 @@ public class ColorManager
 		
 		colors.clear();
 		
-		System.out.println("****************");
-		for (Set<String> dim : dimensions)
+		for (Dimension dim : dimensions)
 		{
 			i += 1.0f;
 			if (i >= denom)
@@ -47,9 +48,8 @@ public class ColorManager
 			}
 
 			float h = i / denom;
-			System.out.println("" + i + " " + denom + " " + start + " " + h);
 
-			for (String t : dim)
+			for (String t : dim.tags())
 			{
 				Color c = Color.getHSBColor(h, 0.8f, 1.0f);
 				colors.put(t, new Color(c.getRed(), c.getBlue(), c.getGreen(), 128));

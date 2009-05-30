@@ -3,7 +3,6 @@ package editor.ui;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
-import java.util.Set;
 
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
@@ -152,11 +151,6 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 	{
 		doc.select(tag);
 		setText();
-	}
-
-	public void unselect(Set<String> dim) 
-	{
-		doc.unselect(dim);
 	}
 
 	public void newDoc() 

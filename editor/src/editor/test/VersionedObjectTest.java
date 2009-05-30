@@ -1,9 +1,5 @@
 package editor.test;
 
-import editor.Choice;
-import editor.Label;
-import editor.Let;
-import editor.Variable;
 import editor.VersionedObject;
 
 import static org.junit.Assert.*;

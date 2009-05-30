@@ -3,15 +3,19 @@ package editor.ui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
+
+import editor.Dimension;
+import editor.Dimensions;
 
 public class DimensionSelector extends JPanel 
 {
@@ -35,7 +39,6 @@ public class DimensionSelector extends JPanel
 		
 		public void actionPerformed(ActionEvent e) 
 		{
-			da.unselect(dim);
 			da.select(tag);
 		}
 	}
@@ -44,9 +47,11 @@ public class DimensionSelector extends JPanel
 	{
 		this.da = da;
 		this.colorManager = colorManager;
+		
+		setMaximumSize(new java.awt.Dimension(100,Integer.MAX_VALUE));
 	}
 	
-	public void setDimensions(Collection<Set<String>> dimensions, Collection<String> selectedTags)
+	public void setDimensions(Dimensions dimensions, Set<String> selectedTags)
 	{
 		colorManager.setDimensions(dimensions);
 		if (panel != null)
@@ -55,26 +60,52 @@ public class DimensionSelector extends JPanel
 		BoxLayout layout = new BoxLayout(panel, BoxLayout.Y_AXIS);
 		panel.setLayout(layout);
 
-		for (Set<String> d : dimensions)
+		for (Dimension d : dimensions)
 		{
+			JPopupMenu popup = getDimensionPopupMenu(d);
 			JPanel p = new JPanel();
-			p.setBackground(colorManager.getColor(d));
+			p.setComponentPopupMenu(popup);
+			p.setBackground(colorManager.getColor(d.tags()));
 			p.add(new JLabel("Dimension"));
 			ButtonGroup g = new ButtonGroup();
-			for (String t : d)
+			for (String t : d.tags())
 			{
 				JRadioButton r = new JRadioButton(t);
 				r.setBackground(new Color(0, 0, 0, 0));
 				TreeSet<String> d2 = new TreeSet<String>();
-				d2.addAll(d);
+				d2.addAll(d.tags());
 				d2.remove(t);
 				r.addActionListener(new RBLChecked(da, t, d2));
 				r.setSelected(selectedTags.contains(t));
+				r.setComponentPopupMenu(popup);
 				g.add(r);
 				p.add(r);
 			}
 			panel.add(p);
 		}
 		add(panel);
+	}
+
+	class TagAdder implements ActionListener
+	{
+		Dimension dim;
+		
+		public TagAdder(Dimension d)
+		{
+			this.dim = d;
+		}
+		
+		public void actionPerformed(ActionEvent e)
+		{
+			dim.addTag("T");
+		}
+	}
+	private JPopupMenu getDimensionPopupMenu(Dimension d)
+	{
+		JPopupMenu popup = new JPopupMenu();
+		JMenuItem mi = new JMenuItem("Add Tag");
+		mi.addActionListener(new TagAdder(d));
+		popup.add(mi);
+		return popup;
 	}
 }

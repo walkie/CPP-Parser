@@ -4,8 +4,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
@@ -21,6 +19,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 import editor.AbstractVersionedObject;
+import editor.Dimensions;
 import editor.ui.dialogs.AddAlternativeDialog;
 import editor.ui.dialogs.AddTextDialog;
 import editor.ui.dialogs.CreateChoiceDialog;
@@ -29,31 +28,32 @@ import editor.ui.dialogs.RemoveChoiceDialog;
 
 public class Editor extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private final JEditorPane e1 = new JEditorPane();
+	private final JEditorPane editorPane = new JEditorPane();
+	private final Gutter gutter = new Gutter();
+	private final ColorManager colorManager = new ColorManager();
 	private DimensionSelector dimensionSelector;
 	private DocumentAdapter da;
-	private ColorManager colorManager;
 	
 	public Editor(DocumentAdapter da)
 	{
 		this.da = da;
-		this.colorManager = new ColorManager();
 		this.dimensionSelector = new DimensionSelector(da, colorManager);
 		
 		setMenus();
 	}
 	
-	public void setDimensionList(Collection<Set<String>> dimensions) 
+	public void setDimensionList(Dimensions d) 
 	{
-		dimensionSelector.setDimensions(dimensions, new TreeSet<String>());
+		dimensionSelector.setDimensions(d, d.getSelectedTags());
 	}
 
-	public void setTopDoc(AbstractVersionedObject doc) {
-		da.setDocument(doc, e1, dimensionSelector, colorManager);
+	public void setDocument(AbstractVersionedObject doc) 
+	{
+		da.setDocument(doc, editorPane, dimensionSelector, colorManager);
 		DimensionHighlighter h = new DimensionHighlighter();
-		e1.setHighlighter(h);
-		e1.addMouseListener(da);
-		e1.getDocument().addDocumentListener(da);
+		editorPane.setHighlighter(h);
+		editorPane.addMouseListener(da);
+		editorPane.getDocument().addDocumentListener(da);
 		da.setText();
 	}
 
@@ -65,13 +65,14 @@ public class Editor extends JFrame {
 		JPanel inner = new JPanel();
 		inner.setLayout(new GridLayout(1,1));
 		
-		e1.setFont(new Font("Monospaced", 12, 12));
+		editorPane.setFont(new Font("Monospaced", 12, 12));
 		
-		JScrollPane sp1 = new JScrollPane(e1);
+		JScrollPane sp1 = new JScrollPane(editorPane);
 
 		inner.add(sp1);
 		
 		add(dimensionSelector);
+		add(gutter);
 		add(inner);
 		
 		setSize(new java.awt.Dimension(700,550));
@@ -85,7 +86,7 @@ public class Editor extends JFrame {
 		mb.add(fileMenu(new JMenu("File")));
 		mb.add(editMenu(new JMenu("Edit")));
 		
-		e1.setComponentPopupMenu((JPopupMenu)editMenu(new JPopupMenu()));
+		editorPane.setComponentPopupMenu((JPopupMenu)editMenu(new JPopupMenu()));
 		
 		this.setJMenuBar(mb);
 	}
