@@ -215,4 +215,16 @@ public class VersionedDocument
 			}
 		}
 	}
+
+	public void removeTagFromDim(String tag, Dimension dim)
+	{
+		ChoiceFinder cf = new ChoiceFinder();
+		doc.visit(cf);
+		for (Choice c : cf.getChoices())
+		{
+			c.removeAlternative(new Label(tag));
+		}
+		dim.removeTag(tag);
+		setSelectedLines();
+	}
 }

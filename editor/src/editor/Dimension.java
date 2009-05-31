@@ -26,9 +26,15 @@ public class Dimension
 	
 	public String getSelectedTag()
 	{
-		if (selectedTag == null && tags.size() > 0)
+		if (!hasSelectedTag() && tags.size() > 0)
 			selectedTag = tags.first();
+		
 		return selectedTag;
+	}
+
+	private boolean hasSelectedTag()
+	{
+		return selectedTag != null && tags.contains(selectedTag);
 	}
 
 	public Set<String> tags()

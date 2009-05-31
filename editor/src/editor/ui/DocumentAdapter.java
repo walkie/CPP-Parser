@@ -203,4 +203,10 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		doc.addTagToDim(newTag, oldTag, dim);
 		setText();
 	}
+
+	public void removeTagFromDim(String tag, Dimension dim)
+	{
+		doc.removeTagFromDim(tag, dim);
+		setText();
+	}
 }
