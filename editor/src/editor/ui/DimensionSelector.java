@@ -16,6 +16,7 @@ import javax.swing.JRadioButton;
 import editor.Dimension;
 import editor.Dimensions;
 import editor.ui.dialogs.CreateTagDialog;
+import editor.ui.dialogs.RemoveDimensionDialog;
 import editor.ui.dialogs.RemoveTagDialog;
 
 public class DimensionSelector extends JPanel 
@@ -64,7 +65,7 @@ public class DimensionSelector extends JPanel
 		for (Dimension d : dimensions)
 		{
 			JPanel p = new JPanel();
-			p.setComponentPopupMenu(getDimensionPopupMenu(d, null));
+			p.setComponentPopupMenu(getDimensionPopupMenu(dimensions, d, null));
 			p.setBackground(colorManager.getColor(d.tags()));
 			ButtonGroup g = new ButtonGroup();
 			for (String t : d.tags())
@@ -76,13 +77,36 @@ public class DimensionSelector extends JPanel
 				d2.remove(t);
 				r.addActionListener(new RBLChecked(da, t, d2));
 				r.setSelected(selectedTags.contains(t));
-				r.setComponentPopupMenu(getDimensionPopupMenu(d, t));
+				r.setComponentPopupMenu(getDimensionPopupMenu(dimensions, d, t));
 				g.add(r);
 				p.add(r);
 			}
 			panel.add(p);
 		}
 		add(panel);
+	}
+	
+	private JPopupMenu getDimensionPopupMenu(Dimensions dimensions, Dimension dim, String tag)
+	{
+		JMenuItem mi;
+		JPopupMenu popup = new JPopupMenu();
+
+		mi = new JMenuItem("Add Tag");
+		mi.addActionListener(new TagAdder(dim));
+		popup.add(mi);
+
+		if (tag != null)
+		{
+			mi = new JMenuItem("Remove " + tag);
+			mi.addActionListener(new TagRemover(tag, dim));
+			popup.add(mi);
+		}
+		
+		mi = new JMenuItem("Remove Dimension");
+		mi.addActionListener(new DimensionRemover(dim));
+		popup.add(mi);
+
+		return popup;
 	}
 
 	class TagAdder implements ActionListener
@@ -116,23 +140,19 @@ public class DimensionSelector extends JPanel
 			new RemoveTagDialog(tag, dim, da);
 		}
 	}
-	
-	private JPopupMenu getDimensionPopupMenu(Dimension d, String tag)
+
+	class DimensionRemover implements ActionListener
 	{
-		JMenuItem mi;
-		JPopupMenu popup = new JPopupMenu();
-
-		mi = new JMenuItem("Add Tag");
-		mi.addActionListener(new TagAdder(d));
-		popup.add(mi);
-
-		if (tag != null)
+		Dimension dim;
+		
+		public DimensionRemover(Dimension dim)
 		{
-			mi = new JMenuItem("Remove " + tag);
-			mi.addActionListener(new TagRemover(tag, d));
-			popup.add(mi);
+			this.dim = dim;
 		}
 		
-		return popup;
+		public void actionPerformed(ActionEvent e)
+		{
+			new RemoveDimensionDialog(dim, da);
+		}
 	}
 }

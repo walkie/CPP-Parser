@@ -227,4 +227,10 @@ public class VersionedDocument
 		dim.removeTag(tag);
 		setSelectedLines();
 	}
+
+	public void removeDimension(Dimension dim)
+	{
+		dimensions.remove(dim);
+		setSelectedLines();
+	}
 }
