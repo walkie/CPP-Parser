@@ -20,7 +20,6 @@ import javax.swing.JScrollPane;
 import editor.AbstractVersionedObject;
 import editor.Dimensions;
 import editor.ui.dialogs.AddAlternativeDialog;
-import editor.ui.dialogs.AddTextDialog;
 import editor.ui.dialogs.CreateChoiceDialog;
 import editor.ui.dialogs.RemoveAlternativeDialog;
 import editor.ui.dialogs.RemoveChoiceDialog;
@@ -135,14 +134,6 @@ public class Editor extends JFrame
 	{
 		JMenuItem mi;
 		
-		mi = new JMenuItem("Add Text");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new AddTextDialog(da);
-			}
-		});
-		m.add(mi);
-
 		mi = new JMenuItem("Create Choice");
 		mi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

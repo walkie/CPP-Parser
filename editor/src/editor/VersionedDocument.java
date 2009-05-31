@@ -177,11 +177,6 @@ public class VersionedDocument
 		doc.visit(ts);
 		selectedParts = ts.getTextParts();
 	}
-
-//	public Collection<String> getSelectedTags() 
-//	{
-//		return selectedTags;
-//	}
 	
 	private AbstractVersionedObject findVersionedObjectFromPos(int pos)
 	{
