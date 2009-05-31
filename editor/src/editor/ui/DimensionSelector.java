@@ -8,7 +8,6 @@ import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -67,7 +66,6 @@ public class DimensionSelector extends JPanel
 			JPanel p = new JPanel();
 			p.setComponentPopupMenu(popup);
 			p.setBackground(colorManager.getColor(d.tags()));
-			p.add(new JLabel("Dimension"));
 			ButtonGroup g = new ButtonGroup();
 			for (String t : d.tags())
 			{
@@ -91,21 +89,15 @@ public class DimensionSelector extends JPanel
 	{
 		Dimension dim;
 		
-		public TagAdder(Dimension d)
+		public TagAdder(Dimension dim)
 		{
-			this.dim = d;
+			this.dim = dim;
 		}
 		
 		public void actionPerformed(ActionEvent e)
 		{
-			new CreateTagDialog(dim);
-			refresh();
+			new CreateTagDialog(dim, da);
 		}
-	}
-	
-	protected void refresh()
-	{
-		
 	}
 	
 	private JPopupMenu getDimensionPopupMenu(Dimension d)

@@ -11,19 +11,22 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import editor.Dimension;
+import editor.ui.DocumentAdapter;
 
 public class CreateTagDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	
 	private final Dimension dim;
+	private final DocumentAdapter da;
 	JTextField textBox;
 	JButton okButton;
 	JButton cancelButton;
 	
-	public CreateTagDialog(Dimension dim)
+	public CreateTagDialog(Dimension dim, DocumentAdapter da)
 	{
 		this.dim = dim;
-	
+		this.da = da;
+		
 		textBox = new JTextField();
 
 		okButton = new JButton("Ok");
@@ -37,6 +40,7 @@ public class CreateTagDialog extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dim.addTag(textBox.getText());
+				da.setText();
 				setVisible(false);
 			}
 		});
