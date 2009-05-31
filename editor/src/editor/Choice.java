@@ -134,4 +134,17 @@ public class Choice extends AbstractVersionedObject {
 			return false;
 		}
 	}
+
+	@Override
+	public AbstractVersionedObject copy()
+	{
+		Choice c = new Choice();
+		
+		for (Label l : getLabels())
+		{
+			c.addAlternative(new Label(l), getAlternative(l).copy());
+		}
+		
+		return c;
+	}
 }

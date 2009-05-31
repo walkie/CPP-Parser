@@ -56,4 +56,10 @@ public class Variable extends AbstractVersionedObject {
 	{
 		return v.transform(this);
 	}
+
+	@Override
+	public AbstractVersionedObject copy()
+	{
+		return new Variable(name);
+	}
 }

@@ -200,4 +200,19 @@ public class VersionedDocument
 	{
 		return dimensions.getSelectedTags();
 	}
+
+	public void addTagToDim(String newTag, String oldTag, Dimension dim)
+	{
+		dim.addTag(newTag);
+		ChoiceFinder cf = new ChoiceFinder();
+		doc.visit(cf);
+		for (Choice c : cf.getChoices())
+		{
+			AbstractVersionedObject v = c.getAlternative(new Label(oldTag));
+			if (v != null)
+			{
+				c.addAlternative(new Label(newTag), v.copy());
+			}
+		}
+	}
 }

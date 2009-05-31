@@ -12,7 +12,8 @@ public abstract class AbstractVersionedObject {
 	public abstract void visit(VersionedObjectVisitor v);
 	public abstract AbstractVersionedObject transform(VersionedObjectTransformer v);
 	protected abstract AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound);
-
+	public abstract AbstractVersionedObject copy();
+	
 	public AbstractVersionedObject getParentObject() 
 	{
 		return parentObject;

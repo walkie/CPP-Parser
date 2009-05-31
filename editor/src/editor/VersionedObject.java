@@ -91,4 +91,16 @@ public class VersionedObject extends AbstractVersionedObject {
 			return false;
 		}
 	}
+
+	@Override
+	public AbstractVersionedObject copy()
+	{
+		VersionedObject v = new VersionedObject(value);
+		for (AbstractVersionedObject o : getSubObjects())
+		{
+			v.addSubObject(o.copy());
+		}
+		
+		return v;
+	}
 }

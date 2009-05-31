@@ -67,4 +67,11 @@ public class Let extends AbstractVersionedObject {
 	{
 		return v.transform(this);
 	}
+
+
+	@Override
+	public AbstractVersionedObject copy()
+	{
+		return new Let((Variable)var.copy(), bound.copy(), scope.copy());
+	}
 }

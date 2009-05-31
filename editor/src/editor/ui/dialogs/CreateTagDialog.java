@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -18,9 +20,10 @@ public class CreateTagDialog extends JDialog {
 	
 	private final Dimension dim;
 	private final DocumentAdapter da;
-	JTextField textBox;
-	JButton okButton;
-	JButton cancelButton;
+	private final JTextField textBox;
+	private final JButton okButton;
+	private final JButton cancelButton;
+	private final JComboBox list;
 	
 	public CreateTagDialog(Dimension dim, DocumentAdapter da)
 	{
@@ -28,7 +31,8 @@ public class CreateTagDialog extends JDialog {
 		this.da = da;
 		
 		textBox = new JTextField();
-
+		list = new JComboBox(dim.tags().toArray());
+		
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");
 
@@ -39,9 +43,11 @@ public class CreateTagDialog extends JDialog {
 	{
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dim.addTag(textBox.getText());
-				da.setText();
-				setVisible(false);
+				if (textBox.getText().length() > 0)
+				{
+					da.addTagToDim(textBox.getText(), list.getSelectedItem().toString(), dim);
+					setVisible(false);
+				}
 			}
 		});
 
@@ -53,19 +59,31 @@ public class CreateTagDialog extends JDialog {
 		
 		JPanel p = new JPanel();
 		p.setLayout(new GridLayout(2,1));
-		p.add(textBox);
 		
+		//
 		JPanel p2 = new JPanel();
+		p2.setLayout(new GridLayout(2,2));
 		
-		p2.setLayout(new FlowLayout());
+		p2.add(new JLabel("Tag Name:"));
+		p2.add(textBox);
 		
-		p2.add(okButton);
-		p2.add(cancelButton);
+		p2.add(new JLabel("Specializes:"));
+		
+		p2.add(list);
+		
 		p.add(p2);
+		
+		//
+		JPanel p3 = new JPanel();
+		p3.setLayout(new FlowLayout());
+		
+		p3.add(okButton);
+		p3.add(cancelButton);
+		p.add(p3);
 		
 		add(p);
 		
-		setSize(200,100);
+		setSize(200,120);
 		setVisible(true);
 	}
 }

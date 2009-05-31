@@ -11,6 +11,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
 import editor.AbstractVersionedObject;
+import editor.Dimension;
 import editor.VersionedDocument;
 import editor.util.TextPart;
 
@@ -195,5 +196,11 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		int pos = textBox.getCaretPosition();
 		doc.removeAlternative(pos);
 		setText();		
+	}
+
+	public void addTagToDim(String newTag, String oldTag, Dimension dim)
+	{
+		doc.addTagToDim(newTag, oldTag, dim);
+		setText();
 	}
 }
