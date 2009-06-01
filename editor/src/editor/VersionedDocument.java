@@ -20,21 +20,27 @@ public class VersionedDocument
 	{
 		doc = new VersionedObject("");
 		dimensions = new Dimensions(doc);
-		setSelectedLines();
+		setSelectedParts();
 	}
 
 	public void setDocument(AbstractVersionedObject doc)
 	{
 		this.doc = doc;
 		dimensions = new Dimensions(doc);
-		setSelectedLines();
+		setSelectedParts();
 	}
 
-	public Choice getChoice(int caretPosition) 
+	public String[] getTextWithHidden(int pos) 
 	{
-		ChoiceFinder cf = new ChoiceFinder();
-		doc.visit(cf);
-		return cf.getChoice();
+		for (TextPart p : selectedParts)
+		{
+			if (pos >= p.getStartPos() && pos < p.getEndPos())
+			{
+				return p.getTextWithHidden();
+			}
+		}
+		
+		return null;
 	}
 
 	public Dimensions getDimensions() 
@@ -72,7 +78,7 @@ public class VersionedDocument
 			v.setValue(str);
 			System.out.println("NEW: " + v.getValue());
 		}
-		setSelectedLines();
+		setSelectedParts();
 	}
 
 	public void removeText(int pos, int length) 
@@ -98,7 +104,7 @@ public class VersionedDocument
 			p -= part.getLength();
 		}
 
-		setSelectedLines();
+		setSelectedParts();
 	}
 
 	private int removeTextFromVersionedObject(int length, int pos, VersionedObject v)
@@ -131,7 +137,7 @@ public class VersionedDocument
 			Substituter s = new Substituter(v, c);
 			doc = doc.transform(s);
 		}
-		setSelectedLines();
+		setSelectedParts();
 	}
 
 	public void removeChoice(int pos)
@@ -148,7 +154,7 @@ public class VersionedDocument
 		{
 			Choice c = (Choice)v.getParentObject();
 			c.addAlternative(new Label(tag), new VersionedObject(text));
-			setSelectedLines();
+			setSelectedParts();
 			return true;
 		}
 		
@@ -168,10 +174,10 @@ public class VersionedDocument
 			d.select(tag);
 		}
 
-		setSelectedLines();
+		setSelectedParts();
 	}
 	
-	private void setSelectedLines() 
+	private void setSelectedParts() 
 	{
 		TagSelector ts = new TagSelector(dimensions);
 		doc.visit(ts);
@@ -220,12 +226,12 @@ public class VersionedDocument
 			c.removeAlternative(new Label(tag));
 		}
 		dim.removeTag(tag);
-		setSelectedLines();
+		setSelectedParts();
 	}
 
 	public void removeDimension(Dimension dim)
 	{
 		dimensions.remove(dim);
-		setSelectedLines();
+		setSelectedParts();
 	}
 }

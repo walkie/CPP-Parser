@@ -1,9 +1,12 @@
 package editor.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
 
+import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
@@ -70,20 +73,45 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 
 	public void mouseClicked(MouseEvent e) 
 	{
-		if (e.getButton() == MouseEvent.BUTTON1)
+		if (e.getButton() == MouseEvent.BUTTON1 && e.isControlDown())
 		{		
-			AbstractVersionedObject c = doc.getChoice(textBox.getCaretPosition());
-			if (c != null)
+			int pos = textBox.getCaretPosition();
+			String[] texts = doc.getTextWithHidden(pos);
+			if (texts != null)
 			{
-//				TagSelector ts = new TagSelector(doc.getSelectedTags());
-//				c.visit(ts);
+				// TODO: Move to own class
+				final javax.swing.JFrame d = new javax.swing.JFrame();
+				javax.swing.JPanel p = new javax.swing.JPanel();
+				p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 				
-//				Collection<TagSelector.TextPart> parts = ts.getTextParts();
+				for (String text : texts)
+				{
+					p.add(new javax.swing.JLabel(text));
+				}
 				
-//				for (TagSelector.TextPart part : parts)
-//				{
-//					System.out.println("ALT: " + part.getText().replace("\n", ""));
-//				}
+				d.add(p);
+				d.setLocationRelativeTo(textBox);
+				try
+				{
+					java.awt.Point pt = textBox.modelToView(pos).getLocation();
+					java.awt.Point pt2 = textBox.getLocationOnScreen();
+					
+					d.setLocation(pt.x+pt2.x, pt.y+pt2.y);
+				}
+				catch (BadLocationException e1)
+				{
+					e1.printStackTrace();
+				}
+				d.setUndecorated(true);
+				d.setSize(new java.awt.Dimension(200,200));
+				d.setVisible(true);
+				
+				new javax.swing.Timer(10000, new ActionListener() {
+					public void actionPerformed(ActionEvent e)
+					{
+						d.setVisible(false);
+					}
+				}).start();
 			}
 		}
 	}

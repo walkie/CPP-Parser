@@ -17,6 +17,7 @@ public class TagSelector extends VersionedObjectVisitor
 	private Dimensions dimensions;
 	Stack<Label> labels = new Stack<Label>();
 	boolean selected = false;
+	private ArrayList<TextPart> hiddenParts = new ArrayList<TextPart>();
 	
 	public TagSelector(Dimensions dimensions)
 	{
@@ -41,10 +42,15 @@ public class TagSelector extends VersionedObjectVisitor
 		
 		if (selected || tag == null)
 		{
-			parts.add(new TextPart(pos, end, tag, selected, v));
+			parts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
 			pos = end;
 			addBoundary();
 		}
+		else
+		{
+			hiddenParts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
+		}
+		
 		for (AbstractVersionedObject o : v.getSubObjects())
 		{
 			o.visit(this);
@@ -54,6 +60,7 @@ public class TagSelector extends VersionedObjectVisitor
 	@Override
 	public void visit(Choice choice) 
 	{
+		hiddenParts = new ArrayList<TextPart>();
 		if (intersects(dimensions.getSelectedTags(), choice.ctags()))
 		{
 			for (Label l : choice.getLabels())
@@ -64,6 +71,10 @@ public class TagSelector extends VersionedObjectVisitor
 					selected = true;
 					choice.getAlternative(l).visit(this);
 					selected = false;
+				}
+				else
+				{
+					choice.getAlternative(l).visit(this);
 				}
 				labels.pop();
 			}
@@ -77,6 +88,7 @@ public class TagSelector extends VersionedObjectVisitor
 				labels.pop();
 			}			
 		}
+		hiddenParts = null;
 	}
 
 	private boolean intersects(Collection<String> s1, Collection<String> s2)

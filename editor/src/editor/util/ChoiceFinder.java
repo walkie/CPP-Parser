@@ -26,14 +26,6 @@ public class ChoiceFinder extends VersionedObjectVisitor {
 		return choices;
 	}
 
-	public Choice getChoice()
-	{
-		if (choices.size() > 0)
-			return choices.get(0);
-		else
-			return null;
-	}
-	
 	@Override
 	public void visit(Choice choice)
 	{

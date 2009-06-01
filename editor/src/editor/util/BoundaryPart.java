@@ -6,7 +6,7 @@ public class BoundaryPart extends TextPart
 {
 	public BoundaryPart(int start)
 	{
-		super(start, start+1, null, true, null);
+		super(start, start+1, null, true, null, null);
 	}
 	
 	@Override
