@@ -36,19 +36,19 @@ public class TagSelector extends VersionedObjectVisitor
 	{
 		int end = pos + v.getValue().length();
 		
-		Label tag = null;
+		Label label = null;
 		if (labels.size() != 0)
-			tag = labels.peek();
+			label = labels.peek();
 		
-		if (selected || tag == null)
+		if (selected || label == null)
 		{
-			parts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
+			parts.add(new TextPart(pos, end, label, selected, v, hiddenParts));
 			pos = end;
 			addBoundary();
 		}
 		else
 		{
-			hiddenParts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
+			hiddenParts.add(new TextPart(pos, end, label, selected, v, hiddenParts));
 		}
 		
 		for (AbstractVersionedObject o : v.getSubObjects())

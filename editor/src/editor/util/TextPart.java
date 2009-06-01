@@ -43,16 +43,24 @@ public class TextPart
 	public String[] getTextWithHidden()
 	{
 		ArrayList<String> text = new ArrayList<String>();
-		text.add(getText());
+		text.add(toTextLabel());
 		if (hiddenParts != null)
 		{
 			for (TextPart p : hiddenParts)
 			{
-				text.add(p.getText());
+				text.add(p.toTextLabel());
 			}
 		}
 		
 		return text.toArray(new String[text.size()]);
 	}
 
+	private String toTextLabel()
+	{
+		String textLabel = "";
+		if (label != null)
+			textLabel += label.tags.first() + ": ";
+		textLabel += getText();
+		return textLabel;
+	}
 }
