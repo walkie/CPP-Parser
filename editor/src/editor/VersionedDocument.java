@@ -219,19 +219,52 @@ public class VersionedDocument
 
 	public void removeTagFromDim(String tag, Dimension dim)
 	{
+		removeTagFromDim2(tag, dim);
+		setSelectedParts();
+	}
+
+	private void removeTagFromDim2(String tag, Dimension dim)
+	{
 		ChoiceFinder cf = new ChoiceFinder();
 		doc.visit(cf);
 		for (Choice c : cf.getChoices())
 		{
 			c.removeAlternative(new Label(tag));
 		}
+		
 		dim.removeTag(tag);
-		setSelectedParts();
 	}
 
 	public void removeDimension(Dimension dim)
 	{
-		dimensions.remove(dim);
+		try
+		{
+			for (String tag : dim.tags())
+			{
+				if (tag != dim.getSelectedTag())
+				{
+					removeTagFromDim2(tag, dim);
+				}
+			}
+	
+			ChoiceFinder cf = new ChoiceFinder();
+			doc.visit(cf);
+			for (Choice c : cf.getChoices())
+			{
+				if (c.tags().contains(dim.getSelectedTag()))
+				{
+					doc = doc.transform(new Substituter(c, c.getAlternative(new Label(dim.getSelectedTag()))));
+				}
+			}
+
+			dimensions.remove(dim);
+		}
+		catch (java.util.ConcurrentModificationException ex)
+		{
+			// try-catch is magic
+			// TODO: remove try-catch
+		}
+
 		setSelectedParts();
 	}
 }
