@@ -12,4 +12,7 @@
   <target name="compile" depends="prepare">
     <javac srcdir="${sourceDir}" destdir="${outputDir}" excludes="editor/test/**" />
   </target>
+  <target name="run" depends="compile">
+    <java classpath="${outputDir}" classname="editor.ui.EditorApp" fork="yes" />
+  </target>
 </project>
