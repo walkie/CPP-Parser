@@ -86,7 +86,7 @@ public class Dimensions extends ArrayList<Dimension>
 	{
 		for (Dimension dim : this)
 		{
-			if (tags.containsAll(dim.tags()))
+			if (dim.tags().containsAll(tags))
 			{
 				return dim;
 			}

@@ -153,8 +153,9 @@ public class VersionedDocument
 		if (v.getParentObject() instanceof Choice)
 		{
 			Choice c = (Choice)v.getParentObject();
-			c.addAlternative(new Label(tag), new VersionedObject(text));
 			Dimension dim = dimensions.findByTags(c.tags());
+
+			c.addAlternative(new Label(tag), new VersionedObject(text));
 			dim.addTag(tag);
 			setSelectedParts();
 			return true;
@@ -165,8 +166,23 @@ public class VersionedDocument
 
 	public void removeAlternative(int pos)
 	{
-		AlternativeRemover ar = new AlternativeRemover(pos);		
-		doc = doc.transform(ar);
+		for (TextPart p : selectedParts)
+		{
+			pos -= p.getLength();
+			if (pos < 0)
+			{
+				System.out.println(p.getText());
+				AbstractVersionedObject v = p.getVersionedObject();
+				if (v.getParentObject() instanceof Choice)
+				{
+					Choice c = (Choice)v.getParentObject();
+					c.removeAlternative(v);
+				}
+				break;
+			}
+		}
+		
+		setSelectedParts();
 	}
 
 	public void select(String tag)

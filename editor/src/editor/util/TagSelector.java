@@ -88,7 +88,7 @@ public class TagSelector extends VersionedObjectVisitor
 				labels.pop();
 			}			
 		}
-		hiddenParts = null;
+		hiddenParts = new ArrayList<TextPart>();
 	}
 
 	private boolean intersects(Collection<String> s1, Collection<String> s2)

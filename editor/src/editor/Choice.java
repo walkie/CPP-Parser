@@ -33,6 +33,18 @@ public class Choice extends AbstractVersionedObject {
 		alternatives.remove(l);
 	}
 
+	public void removeAlternative(AbstractVersionedObject v)
+	{
+		for (Label l : alternatives.keySet())
+		{
+			if (v.equals(alternatives.get(l)))
+			{
+				removeAlternative(l);
+				break;
+			}
+		}
+	}
+
 	public Set<Label> getLabels()
 	{
 		return alternatives.keySet();
