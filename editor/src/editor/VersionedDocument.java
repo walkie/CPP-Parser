@@ -154,6 +154,8 @@ public class VersionedDocument
 		{
 			Choice c = (Choice)v.getParentObject();
 			c.addAlternative(new Label(tag), new VersionedObject(text));
+			Dimension dim = dimensions.findByTags(c.tags());
+			dim.addTag(tag);
 			setSelectedParts();
 			return true;
 		}

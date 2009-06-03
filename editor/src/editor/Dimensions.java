@@ -81,4 +81,17 @@ public class Dimensions extends ArrayList<Dimension>
 
 		return selectedTags;
 	}
+
+	public Dimension findByTags(Set<String> tags)
+	{
+		for (Dimension dim : this)
+		{
+			if (tags.containsAll(dim.tags()))
+			{
+				return dim;
+			}
+		}
+		
+		return null;
+	}
 }
