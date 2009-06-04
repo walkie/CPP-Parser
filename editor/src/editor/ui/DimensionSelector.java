@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -68,6 +69,7 @@ public class DimensionSelector extends JPanel
 			p.setComponentPopupMenu(getDimensionPopupMenu(dimensions, d, null));
 			p.setBackground(colorManager.getColor(d.tags()));
 			ButtonGroup g = new ButtonGroup();
+			p.add(new JLabel(d.getName()));
 			for (String t : d.tags())
 			{
 				JRadioButton r = new JRadioButton(t);

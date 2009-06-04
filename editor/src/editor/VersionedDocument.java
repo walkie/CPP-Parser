@@ -3,7 +3,6 @@ package editor;
 import java.util.Collection;
 import java.util.Set;
 
-import editor.util.AlternativeRemover;
 import editor.util.ChoiceFinder;
 import editor.util.ChoiceRemover;
 import editor.util.Substituter;

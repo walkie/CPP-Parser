@@ -5,8 +5,24 @@ import java.util.TreeSet;
 
 public class Dimension 
 {
+	private String name;
 	private TreeSet<String> tags = new TreeSet<String>();
 	private String selectedTag = null;
+	
+	public Dimension(String name)
+	{
+		this.name = name;
+		this.tags = new TreeSet<String>();
+		this.selectedTag = null;
+	}
+	
+	public Dimension(Dimension dim)
+	{
+		this.name = dim.name;
+		this.tags = new TreeSet<String>();
+		this.tags.addAll(dim.tags);
+		this.selectedTag = dim.selectedTag;
+	}
 	
 	public void addTag(String tag)
 	{
@@ -40,5 +56,10 @@ public class Dimension
 	public Set<String> tags()
 	{
 		return tags;
+	}
+
+	public String getName()
+	{
+		return name;
 	}
 }

@@ -22,27 +22,12 @@ public class Dimensions extends ArrayList<Dimension>
 
 	private void deriveDimesions()
 	{
-//		Dimension d1 = new Dimension();
-//		Dimension d2 = new Dimension();
-//		
-//		d1.addTag("4");
-//		d1.addTag("5");
-//		
-//		d2.addTag("t");
-//		d2.addTag("f");
-//		
-//		add(d1);
-//		add(d2);
-//	
-//		if (true)
-//			return;
-		
 		ChoiceFinder cf = new ChoiceFinder();
 		doc.visit(cf);
 		Collection<Choice> cs = cf.getChoices();
 		for (Choice c : cs)
 		{
-			Dimension d = new Dimension();
+			Dimension d = new Dimension("Dim");
 			d.tags().addAll(c.tags());
 			add(d);
 		}
