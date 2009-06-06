@@ -1,5 +1,6 @@
 package editor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -119,9 +120,9 @@ public class VersionedDocument
 		return len;
 	}
 
-	public void createChoice(int pos, String tag) 
+	public void createChoice(int start, int end, String tag) 
 	{
-		AbstractVersionedObject v = findVersionedObjectFromPos(pos);
+		VersionedObject v = getVersionedObject(start, end);
 		AbstractVersionedObject parent = v.getParentObject(); 
 		
 		Choice c = new Choice();
@@ -136,6 +137,24 @@ public class VersionedDocument
 			Substituter s = new Substituter(v, c);
 			doc = doc.transform(s);
 		}
+		
+		boolean inDim = false;
+		for (Dimension dim : dimensions)
+		{
+			if (dim.tags().contains(tag))
+			{
+				inDim = true;
+				break;
+			}
+		}
+		
+		if (!inDim)
+		{
+			Dimension d = new Dimension("dim");
+			d.addTag(tag);
+			dimensions.add(d);
+		}
+		
 		setSelectedParts();
 	}
 
@@ -151,7 +170,7 @@ public class VersionedDocument
 		
 		if (v.getParentObject() instanceof Choice)
 		{
-			Choice c = (Choice)v.getParentObject();
+			Choice c = getParentChoice(v);
 			Dimension dim = dimensions.findByTags(c.tags());
 
 			c.addAlternative(new Label(tag), new VersionedObject(text));
@@ -161,6 +180,21 @@ public class VersionedDocument
 		}
 		
 		return false;
+	}
+
+	private Choice getParentChoice(AbstractVersionedObject v)
+	{
+		if (v.getParentObject() == null)
+			return null;
+
+		if (v.getParentObject() instanceof Choice)
+		{
+			return (Choice)v.getParentObject();
+		}
+		else
+		{
+			return getParentChoice(v.getParentObject());
+		}
 	}
 
 	public void removeAlternative(int pos)
@@ -208,6 +242,64 @@ public class VersionedDocument
 			if (pos >= part.getStartPos() && pos <= part.getEndPos())
 			{
 				return part.getVersionedObject();
+			}
+		}
+
+		return null;
+	}
+
+	private VersionedObject getVersionedObject(int start, int end)
+	{
+		for (TextPart part : selectedParts)
+		{
+			if (start >= part.getStartPos() && start < part.getEndPos())
+			{
+				end = Math.min(part.getEndPos(), end);
+
+				if (start == end)
+				{
+					start = part.getStartPos();
+					end = part.getEndPos();
+				}
+
+				start -= part.getStartPos();
+				end -= part.getStartPos();
+				
+				ArrayList<String> ps = new ArrayList<String>();
+				
+				if (start > 0)
+				{
+					ps.add(part.getText().substring(0, start));
+				}
+				int idx = ps.size();
+				ps.add(part.getText().substring(start, end));
+				if (end < part.getEndPos()-part.getStartPos())
+				{
+					ps.add(part.getText().substring(end, part.getEndPos()-part.getStartPos()));
+				}
+				
+				VersionedObject v = (VersionedObject)part.getVersionedObject();
+				if (ps.size() > 1)
+				{
+					System.out.printf("'%s' ", part.getText());
+					for (String s : ps)
+						System.out.printf("'%s' ", s);
+					System.out.println();
+					
+					v.setValue(ps.get(0));
+					VersionedObject r = v;
+					for (int i = 1; i < ps.size(); i++)
+					{
+						VersionedObject v1 = new VersionedObject(ps.get(i));
+						v.addSubObject(i-1, v1);
+						if (idx == i)
+							r = v1;
+					}
+					
+					return r;
+				}
+				
+				return v;
 			}
 		}
 

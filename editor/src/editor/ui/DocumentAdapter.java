@@ -197,8 +197,9 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 
 	public void createChoice(String tag)
 	{
-		int pos = textBox.getCaretPosition();
-		doc.createChoice(pos, tag);
+		int start = textBox.getSelectionStart();
+		int end = textBox.getSelectionEnd();
+		doc.createChoice(start, end, tag);
 		setText();		
 	}
 

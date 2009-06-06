@@ -33,6 +33,12 @@ public class VersionedObject extends AbstractVersionedObject {
 		subObjects.add(v);
 	}
 
+	public void addSubObject(int i, AbstractVersionedObject v)
+	{
+		v.setParentObject(this);
+		subObjects.add(i, v);
+	}
+
 	public void removeSubObject(AbstractVersionedObject o) 
 	{
 		subObjects.remove(o);
