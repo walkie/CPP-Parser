@@ -10,7 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import editor.Dimension;
+import editor.model.Dimension;
 import editor.ui.DocumentAdapter;
 
 public class RemoveDimensionDialog extends JDialog {

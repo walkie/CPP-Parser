@@ -1,9 +1,9 @@
 package editor.util;
 
-import editor.AbstractVersionedObject;
-import editor.Choice;
-import editor.Label;
-import editor.VersionedObject;
+import editor.model.AbstractVersionedObject;
+import editor.model.Choice;
+import editor.model.Label;
+import editor.model.VersionedObject;
 
 public class AlternativeAdder extends VersionedObjectTransformer
 {

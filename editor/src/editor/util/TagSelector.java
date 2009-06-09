@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Stack;
 
-import editor.AbstractVersionedObject;
-import editor.Choice;
-import editor.Dimensions;
-import editor.Label;
-import editor.VersionedObject;
+import editor.model.AbstractVersionedObject;
+import editor.model.Choice;
+import editor.model.Dimensions;
+import editor.model.Label;
+import editor.model.VersionedObject;
 
 public class TagSelector extends VersionedObjectVisitor
 {

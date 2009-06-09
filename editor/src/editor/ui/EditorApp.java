@@ -2,7 +2,7 @@ package editor.ui;
 
 import javax.swing.WindowConstants;
 
-import editor.*;
+import editor.controller.VersionedDocument;
 import editor.util.*;
 
 public class EditorApp {
@@ -15,11 +15,7 @@ public class EditorApp {
 	{
 		Editor e = new Editor(new DocumentAdapter());
 				
-		AbstractVersionedObject v = Temp.getTestDoc();
-		Dimensions d = new Dimensions(v);
-		
-		e.setDimensionList(d);
-
+		VersionedDocument v = new VersionedDocument(Temp.getTestDoc());
 		e.setDocument(v);
 		e.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		e.showit();

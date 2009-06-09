@@ -3,9 +3,9 @@ package editor.util;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import editor.AbstractVersionedObject;
-import editor.Label;
-import editor.VersionedObject;
+import editor.model.AbstractVersionedObject;
+import editor.model.Label;
+import editor.model.VersionedObject;
 
 public class TextPart 
 {

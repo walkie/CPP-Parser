@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
-import editor.AbstractVersionedObject;
-import editor.Dimensions;
+import editor.controller.VersionedDocument;
+import editor.model.Dimensions;
 import editor.ui.dialogs.AddAlternativeDialog;
 import editor.ui.dialogs.CreateChoiceDialog;
 import editor.ui.dialogs.RemoveAlternativeDialog;
@@ -46,7 +46,7 @@ public class Editor extends JFrame
 		dimensionSelector.setDimensions(d, d.getSelectedTags());
 	}
 
-	public void setDocument(AbstractVersionedObject doc) 
+	public void setDocument(VersionedDocument doc) 
 	{
 		da.setDocument(doc, editorPane, dimensionSelector, colorManager);
 		DimensionHighlighter h = new DimensionHighlighter();

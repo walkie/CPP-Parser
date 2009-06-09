@@ -13,9 +13,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
-import editor.AbstractVersionedObject;
-import editor.Dimension;
-import editor.VersionedDocument;
+import editor.model.Dimension;
+import editor.controller.VersionedDocument;
 import editor.util.TextPart;
 
 public class DocumentAdapter implements DocumentListener, MouseListener {
@@ -30,9 +29,9 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 		this.doc = new VersionedDocument();
 	}
 	
-	public void setDocument(AbstractVersionedObject doc, JEditorPane textBox, DimensionSelector dimensionSelecter, ColorManager colorManager)
+	public void setDocument(VersionedDocument doc, JEditorPane textBox, DimensionSelector dimensionSelecter, ColorManager colorManager)
 	{
-		this.doc.setDocument(doc);
+		this.doc = doc;
 		this.textBox = textBox;
 		this.dimensionSelecter = dimensionSelecter;
 		this.colorManager = colorManager;

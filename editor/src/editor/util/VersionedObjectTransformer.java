@@ -1,11 +1,12 @@
 package editor.util;
 
-import editor.AbstractVersionedObject;
-import editor.Choice;
-import editor.Label;
-import editor.Let;
-import editor.Variable;
-import editor.VersionedObject;
+import editor.model.AbstractVersionedObject;
+import editor.model.Choice;
+import editor.model.EmptyVersionedObject;
+import editor.model.Label;
+import editor.model.Let;
+import editor.model.Variable;
+import editor.model.VersionedObject;
 
 public class VersionedObjectTransformer 
 {
@@ -45,5 +46,10 @@ public class VersionedObjectTransformer
 		}
 		
 		return v2;
+	}
+
+	public AbstractVersionedObject transform(EmptyVersionedObject e)
+	{
+		return e.transform(this);
 	}
 }

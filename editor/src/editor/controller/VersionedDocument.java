@@ -1,9 +1,10 @@
-package editor;
+package editor.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import editor.model.*;
 import editor.util.ChoiceFinder;
 import editor.util.ChoiceRemover;
 import editor.util.Substituter;
@@ -23,7 +24,7 @@ public class VersionedDocument
 		setSelectedParts();
 	}
 
-	public void setDocument(AbstractVersionedObject doc)
+	public VersionedDocument(AbstractVersionedObject doc)
 	{
 		this.doc = doc;
 		dimensions = new Dimensions(doc);

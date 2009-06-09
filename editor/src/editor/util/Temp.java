@@ -1,6 +1,6 @@
 package editor.util;
 
-import editor.AbstractVersionedObject;
+import editor.model.AbstractVersionedObject;
 import editor.VersionedDocumentBuilder;
 
 public class Temp 

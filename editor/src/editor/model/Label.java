@@ -1,4 +1,4 @@
-package editor;
+package editor.model;
 
 import java.util.Iterator;
 import java.util.TreeSet;

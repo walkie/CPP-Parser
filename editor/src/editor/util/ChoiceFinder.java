@@ -3,8 +3,8 @@ package editor.util;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import editor.Choice;
-import editor.VersionedObject;
+import editor.model.Choice;
+import editor.model.VersionedObject;
 
 public class ChoiceFinder extends VersionedObjectVisitor {
 

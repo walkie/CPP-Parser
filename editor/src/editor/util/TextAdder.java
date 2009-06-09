@@ -1,7 +1,7 @@
 package editor.util;
 
-import editor.AbstractVersionedObject;
-import editor.VersionedObject;
+import editor.model.AbstractVersionedObject;
+import editor.model.VersionedObject;
 
 public class TextAdder extends VersionedObjectTransformer
 {

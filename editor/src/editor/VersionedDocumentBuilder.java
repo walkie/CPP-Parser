@@ -2,6 +2,8 @@ package editor;
 
 import java.util.ArrayList;
 
+import editor.model.*;
+
 public class VersionedDocumentBuilder {
 
 	private final ArrayList<AbstractVersionedObject> objs;

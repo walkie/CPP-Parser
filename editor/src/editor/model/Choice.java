@@ -1,4 +1,4 @@
-package editor;
+package editor.model;
 
 import java.util.Collection;
 import java.util.Set;

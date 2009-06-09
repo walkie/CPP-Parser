@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 
-import editor.Dimension;
-import editor.Dimensions;
+import editor.model.Dimension;
+import editor.model.Dimensions;
 import editor.ui.dialogs.CreateTagDialog;
 import editor.ui.dialogs.RemoveDimensionDialog;
 import editor.ui.dialogs.RemoveTagDialog;

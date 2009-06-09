@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import editor.Dimension;
+import editor.model.Dimension;
 import editor.ui.DocumentAdapter;
 
 public class CreateTagDialog extends JDialog {

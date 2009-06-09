@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Set;
 
-import editor.Dimension;
-import editor.Dimensions;
-import editor.Label;
+import editor.model.Dimension;
+import editor.model.Dimensions;
+import editor.model.Label;
 
 public class ColorManager 
 {

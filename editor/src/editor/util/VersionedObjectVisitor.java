@@ -1,10 +1,11 @@
 package editor.util;
 
-import editor.AbstractVersionedObject;
-import editor.Choice;
-import editor.Let;
-import editor.Variable;
-import editor.VersionedObject;
+import editor.model.AbstractVersionedObject;
+import editor.model.Choice;
+import editor.model.EmptyVersionedObject;
+import editor.model.Let;
+import editor.model.Variable;
+import editor.model.VersionedObject;
 
 public class VersionedObjectVisitor {
 
@@ -32,5 +33,9 @@ public class VersionedObjectVisitor {
 	{
 		let.getBound().visit(this);
 		let.getScope().visit(this);
+	}
+
+	public void visit(EmptyVersionedObject emptyVersionedObject)
+	{
 	}
 }
