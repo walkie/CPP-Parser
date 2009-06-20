@@ -3,24 +3,22 @@ package editor.util;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import editor.model.AbstractVersionedObject;
-import editor.model.Label;
 import editor.model.VersionedObject;
 
 public class TextPart 
 {
 	private final int start;
 	private final int end;
-	private final Label label;
+	private final String tag;
 	private final boolean visible;
 	private final VersionedObject v;
 	private final Collection<TextPart> hiddenParts;
 	
-	public TextPart(int start, int end, Label label, boolean visible, VersionedObject v, Collection<TextPart> hiddenParts)
+	public TextPart(int start, int end, String tag, boolean visible, VersionedObject v, Collection<TextPart> hiddenParts)
 	{
 		this.start = start;
 		this.end = end;
-		this.label = label;
+		this.tag = tag;
 		this.visible = visible;
 		this.v = v;
 		this.hiddenParts = hiddenParts;
@@ -29,10 +27,10 @@ public class TextPart
 	public int getStartPos() { return start; }
 	public int getEndPos() { return end; }
 	public String getText() { return v.getValue(); }
-	public Label getLabel() { return label; }
-	public boolean isAlt() { return label != null; }
+	public String getTag() { return tag; }
+	public boolean isAlt() { return tag != null; }
 	public boolean isVisible() { return visible; }
-	public AbstractVersionedObject getVersionedObject() { return v; }
+	public VersionedObject getVersionedObject() { return v; }
 	public int getLength() { return v.getValue().length(); }
 
 	public void addHiddenPart(TextPart p)
@@ -58,8 +56,8 @@ public class TextPart
 	private String toTextLabel()
 	{
 		String textLabel = "";
-		if (label != null)
-			textLabel += label.tags.first() + ": ";
+		if (tag != null)
+			textLabel += tag + ": ";
 		textLabel += getText();
 		return textLabel;
 	}

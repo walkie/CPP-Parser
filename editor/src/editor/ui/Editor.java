@@ -8,11 +8,11 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -105,7 +105,13 @@ public class Editor extends JFrame
 		mi = new JMenuItem("Open");
 		mi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "not implemented yet");
+				JFileChooser fc = new JFileChooser();
+				int returnVal = fc.showOpenDialog(Editor.this);
+
+		        if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            String fileName = fc.getSelectedFile().getAbsolutePath();
+		            new editor.io.IO().read(fileName);
+		        }
 			}
 		});
 		m.add(mi);
@@ -113,7 +119,13 @@ public class Editor extends JFrame
 		mi = new JMenuItem("Save");
 		mi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "not implemented yet");
+				JFileChooser fc = new JFileChooser();
+				int returnVal = fc.showSaveDialog(Editor.this);
+
+		        if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            String fileName = fc.getSelectedFile().getAbsolutePath();
+		            new editor.io.IO().write(fileName);
+		        }
 			}
 		});
 		m.add(mi);

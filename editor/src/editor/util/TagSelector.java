@@ -6,86 +6,86 @@ import java.util.Stack;
 
 import editor.model.AbstractVersionedObject;
 import editor.model.Choice;
-import editor.model.Dimensions;
-import editor.model.Label;
+import editor.model.Document;
 import editor.model.VersionedObject;
 
-public class TagSelector extends VersionedObjectVisitor
+public class TagSelector
 {
 	int pos = 0;
 	ArrayList<TextPart> parts = new ArrayList<TextPart>();
-	private Dimensions dimensions;
-	Stack<Label> labels = new Stack<Label>();
+	Stack<String> tags = new Stack<String>();
 	boolean selected = false;
 	private ArrayList<TextPart> hiddenParts = new ArrayList<TextPart>();
+	private final Document doc;
 	
-	public TagSelector(Dimensions dimensions)
+	public TagSelector(Document doc)
 	{
-		this.dimensions = dimensions;
-		addBoundary();
-	}
-	
-	private void addBoundary() 
-	{
-		//parts.add(new BoundaryPart(pos));
-		//pos++;
+		this.doc = doc;
+		findParts(doc.getObj());
 	}
 
-	@Override
-	public void visit(VersionedObject v)
+	public void findParts(AbstractVersionedObject obj)
+	{
+		if (obj instanceof VersionedObject)
+			findParts((VersionedObject)obj);
+		else if (obj instanceof Choice)
+			findParts((Choice)obj);
+		else
+			throw new IllegalArgumentException("expecting Choice or VersionedObject");
+	}
+
+	public void findParts(VersionedObject v)
 	{
 		int end = pos + v.getValue().length();
 		
-		Label label = null;
-		if (labels.size() != 0)
-			label = labels.peek();
+		String tag = null;
+		if (tags.size() != 0)
+			tag = tags.peek();
 		
-		if (selected || label == null)
+		if (selected || tag == null)
 		{
-			parts.add(new TextPart(pos, end, label, selected, v, hiddenParts));
+			parts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
 			pos = end;
-			addBoundary();
 		}
 		else
 		{
-			hiddenParts.add(new TextPart(pos, end, label, selected, v, hiddenParts));
+			hiddenParts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
 		}
 		
 		for (AbstractVersionedObject o : v.getSubObjects())
 		{
-			o.visit(this);
+			findParts(o);
 		}
 	}
 
-	@Override
-	public void visit(Choice choice) 
+	public void findParts(Choice choice) 
 	{
 		hiddenParts = new ArrayList<TextPart>();
-		if (intersects(dimensions.getSelectedTags(), choice.ctags()))
+		if (intersects(doc.getDimensions().getSelectedTags(), choice.ctags()))
 		{
-			for (Label l : choice.getLabels())
+			for (String tag : choice.tags())
 			{
-				labels.push(l);
-				if (intersects(dimensions.getSelectedTags(), l.tags))
+				tags.push(tag);
+				if (doc.getDimensions().getSelectedTags().contains(tag))
 				{
 					selected = true;
-					choice.getAlternative(l).visit(this);
+					findParts(choice.getAlternative(tag));
 					selected = false;
 				}
 				else
 				{
-					choice.getAlternative(l).visit(this);
+					findParts(choice.getAlternative(tag));
 				}
-				labels.pop();
+				tags.pop();
 			}
 		}
 		else
 		{
-			for (Label l : choice.getLabels())
+			for (String tag : choice.tags())
 			{
-				labels.push(l);
-				choice.getAlternative(l).visit(this);
-				labels.pop();
+				tags.push(tag);
+				findParts(choice.getAlternative(tag));
+				tags.pop();
 			}			
 		}
 		hiddenParts = new ArrayList<TextPart>();

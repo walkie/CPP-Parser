@@ -67,15 +67,15 @@ public class DimensionSelector extends JPanel
 		{
 			JPanel p = new JPanel();
 			p.setComponentPopupMenu(getDimensionPopupMenu(dimensions, d, null));
-			p.setBackground(colorManager.getColor(d.tags()));
+			p.setBackground(colorManager.getColor(d.getTags()));
 			ButtonGroup g = new ButtonGroup();
 			p.add(new JLabel(d.getName()));
-			for (String t : d.tags())
+			for (String t : d.getTags())
 			{
 				JRadioButton r = new JRadioButton(t);
 				r.setBackground(new Color(0, 0, 0, 0));
 				TreeSet<String> d2 = new TreeSet<String>();
-				d2.addAll(d.tags());
+				d2.addAll(d.getTags());
 				d2.remove(t);
 				r.addActionListener(new RBLChecked(da, t, d2));
 				r.setSelected(selectedTags.contains(t));

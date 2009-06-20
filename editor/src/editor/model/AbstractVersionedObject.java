@@ -2,25 +2,30 @@ package editor.model;
 
 import java.util.Set;
 
-import editor.util.VersionedObjectTransformer;
-import editor.util.VersionedObjectVisitor;
+public abstract class AbstractVersionedObject
+{
+	Tree tree;
 
-public abstract class AbstractVersionedObject {
-	AbstractVersionedObject parentObject = null;
-	
-	public abstract Set<String> tags();
-	public abstract void visit(VersionedObjectVisitor v);
-	public abstract AbstractVersionedObject transform(VersionedObjectTransformer v);
-	protected abstract AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound);
-	public abstract AbstractVersionedObject copy();
-	
-	public AbstractVersionedObject getParentObject() 
+	public void setTree(Tree tree)
 	{
-		return parentObject;
+		this.tree = tree;
 	}
 	
-	public void setParentObject(AbstractVersionedObject parentObject)
+	public Choice findChoice()
 	{
-		this.parentObject = parentObject;
+		return tree.findChoice();
+	}
+	
+	public abstract String getText();
+	public abstract void removeTag(String tag);
+	public abstract Set<String> tags();
+	public abstract AbstractVersionedObject copy();
+
+	public void cloneAlternative(String newTag, String oldTag)
+	{
+		for (AbstractVersionedObject v : tree.getChildren())
+		{
+			v.cloneAlternative(newTag, oldTag);
+		}
 	}
 }

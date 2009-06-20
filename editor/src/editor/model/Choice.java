@@ -1,160 +1,112 @@
 package editor.model;
 
-import java.util.Collection;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
-import editor.util.VersionedObjectTransformer;
-import editor.util.VersionedObjectVisitor;
-
-public class Choice extends AbstractVersionedObject {
-
-	TreeMap<Label,AbstractVersionedObject> alternatives = new TreeMap<Label,AbstractVersionedObject>();
+public class Choice extends AbstractVersionedObject
+{
+	Dimension dimension;
 	
-	public void addAlternative(Label l, AbstractVersionedObject p)
+	public Choice(Dimension dimension)
 	{
-		p.setParentObject(this);
-		alternatives.put(l,p);
+		this.dimension = dimension;
 	}
 	
-	public Collection<AbstractVersionedObject> getAlternatives()
+	public void addAlternative(String tag, AbstractVersionedObject v)
 	{
-		return alternatives.values();
+		dimension.addTag(tag);
+		tree.addChild(tag, v);
 	}
-
-	public AbstractVersionedObject getAlternative(Label l)
+	
+	public void replace(AbstractVersionedObject v)
 	{
-		return alternatives.get(l);
+		tree.setObj(v);
 	}
-
-	public void removeAlternative(Label l) 
+	
+	@Override public String getText()
 	{
-		alternatives.remove(l);
-	}
-
-	public void removeAlternative(AbstractVersionedObject v)
-	{
-		for (Label l : alternatives.keySet())
+		String text = "{";
+		boolean first = true;
+		for (AbstractVersionedObject v : tree.getChildren())
 		{
-			if (v.equals(alternatives.get(l)))
-			{
-				removeAlternative(l);
-				break;
-			}
+			if (first) { first = false; } else { text += ","; }
+			text += v.getText();
+		}
+		return text + "}";
+	}
+
+	@Override public Choice findChoice()
+	{
+		return this;
+	}
+
+	@Override public void removeTag(String tag)
+	{
+		tree.removeChild(tag);
+		for (AbstractVersionedObject v : tree.getChildren())
+		{
+			v.removeTag(tag);
+		}
+		
+		if (tree.getChildren().size() == 0)
+		{
+			tree.remove();
 		}
 	}
 
-	public Set<Label> getLabels()
+	public Set<String> domain()
 	{
-		return alternatives.keySet();
-	}
-	
-	public Set<AbstractVersionedObject> range()
-	{
-		TreeSet<AbstractVersionedObject> t = new TreeSet<AbstractVersionedObject>();
-		t.addAll(alternatives.values());
-		return t;
-	}
-	
-	public Set<Label> domain()
-	{
-		return alternatives.keySet();
+		return tree.getTags();
 	}
 	
 	public Set<String> ctags()
 	{
 		TreeSet<String> ts = new TreeSet<String>();
-		for (Label l : domain())
+		for (String t : domain())
 		{
-			ts.addAll(l.tags);
+			ts.add(t);
 		}
 		
 		return ts;
 	}
 	
-	@Override
-	public Set<String> tags()
+	@Override public Set<String> tags()
 	{
 		TreeSet<String> t = new TreeSet<String>();
 		t.addAll(ctags());
 		
-		for (AbstractVersionedObject v : alternatives.values())
+		for (AbstractVersionedObject v : tree.getChildren())
 		{
 			t.addAll(v.tags());
 		}
 		
 		return t;
 	}
-	
-	public AbstractVersionedObject lift()
+
+	public AbstractVersionedObject getAlternative(String tag)
 	{
-		for (Label l : domain())
-		{
-			if (l.tags.size() == 0)
-				return alternatives.get(l);
-		}
-		return this;
-	}
-	
-	@Override
-	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound)
-	{
-		Choice c = new Choice();
-		for (Label l : alternatives.keySet())
-		{
-			Label l2 = new Label(l);
-			c.addAlternative(l2, alternatives.get(l).replace(var, bound));
-		}
-		return c;
+		return tree.getChild(tag);
 	}
 
-	@Override
-	public void visit(VersionedObjectVisitor v)
+	public void removeSelectedAlternative()
 	{
-		v.visit(this);
+		String tag = dimension.getSelectedTag();
+		tree.removeChild(tag);
 	}
 
-	@Override
-	public AbstractVersionedObject transform(VersionedObjectTransformer v) 
+	@Override public void cloneAlternative(String newTag, String oldTag)
 	{
-		return v.transform(this);
+		AbstractVersionedObject v = tree.getChild(oldTag);
+		tree.addChild(newTag, v.copy());
+		super.cloneAlternative(newTag, oldTag);
 	}
 	
-	@Override
-	public boolean equals(Object o)
+	@Override public AbstractVersionedObject copy()
 	{
-		if (o instanceof Choice)
+		Choice c = new Choice(dimension);
+		for (String tag : dimension.getTags())
 		{
-			Choice c = (Choice)o;
-
-			if (!( getLabels().containsAll(c.getLabels()) && c.getLabels().containsAll(getLabels())) )
-			{
-				return false;
-			}
-			
-			for (Label l : getLabels())
-			{
-				if (!getAlternative(l).equals(c.getAlternative(l)))
-					return false;
-			}
-		
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	@Override
-	public AbstractVersionedObject copy()
-	{
-		Choice c = new Choice();
-		
-		for (Label l : getLabels())
-		{
-			c.addAlternative(new Label(l), getAlternative(l).copy());
+			c.addAlternative(tag, tree.getChild(tag).copy());
 		}
 		
 		return c;

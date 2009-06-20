@@ -31,7 +31,7 @@ public class CreateTagDialog extends JDialog {
 		this.da = da;
 		
 		textBox = new JTextField();
-		list = new JComboBox(dim.tags().toArray());
+		list = new JComboBox(dim.getTags().toArray());
 		
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");

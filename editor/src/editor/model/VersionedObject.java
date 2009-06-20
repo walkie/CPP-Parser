@@ -1,110 +1,154 @@
 package editor.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import editor.util.VersionedObjectTransformer;
-import editor.util.VersionedObjectVisitor;
-
-public class VersionedObject extends AbstractVersionedObject {
+public class VersionedObject extends AbstractVersionedObject
+{
 	String value;
-	ArrayList<AbstractVersionedObject> subObjects = new ArrayList<AbstractVersionedObject>();
-
-	public VersionedObject(String value)
+	Document doc;
+	
+	public VersionedObject(Document doc, String value)
 	{
+		this.doc = doc;
 		this.value = value;
+		setTree(new Tree(this));
 	}
 	
-	public String getValue()
-	{
-		return value;
-	}
-	
-	public void setValue(String value) 
-	{
-		this.value = value;	
-	}
-
 	public void addSubObject(AbstractVersionedObject v)
 	{
-		v.setParentObject(this);
-		subObjects.add(v);
-	}
-
-	public void addSubObject(int i, AbstractVersionedObject v)
-	{
-		v.setParentObject(this);
-		subObjects.add(i, v);
-	}
-
-	public void removeSubObject(AbstractVersionedObject o) 
-	{
-		subObjects.remove(o);
+		tree.addChild(v);
 	}
 	
-	@Override
-	public Set<String> tags()
+	@Override public String getText()
+	{
+		String text = value;
+		for (AbstractVersionedObject v : tree.getChildren())
+		{
+			text += v.getText();
+		}
+		return text;
+	}
+	
+	public Choice createChoice(String tag)
+	{
+		Dimension dim = doc.findDimension(tag);
+		Choice c = new Choice(dim);
+		tree.setObj(c);
+		c.addAlternative(tag, this);
+		return c;
+	}
+
+	public Choice createChoice(String tag, String tag2, VersionedObject v)
+	{
+		Dimension dim = doc.findDimension(tag, tag2);
+		Choice c = new Choice(dim);
+		tree.setObj(c);
+		c.addAlternative(tag, this);
+		c.addAlternative(tag2, v);
+		return c;
+	}
+	
+	public void removeChoice()
+	{
+		Choice c = tree.findChoice();
+		if (c != null)
+		{
+			c.replace(this);
+		}
+	}
+	
+	@Override public void removeTag(String tag)
+	{
+		for (AbstractVersionedObject v : tree.getChildren())
+		{
+			v.removeTag(tag);
+		}
+	}
+
+	public int removeText(int start, int len)
+	{
+		int i1 = Math.max(0, Math.min(start, value.length()));
+		int j1 = Math.max(0, Math.min(start+len, value.length()));
+		value = value.substring(0,i1) + value.substring(j1);
+		
+		return len - (j1 - i1);
+	}
+
+	public void addText(int i, String text)
+	{
+		int i1 = Math.max(0, Math.min(i, value.length()));
+		value = value.substring(0,i1) + text + value.substring(i1);
+	}
+	
+	
+	@Override public Set<String> tags()
 	{
 		TreeSet<String> ts = new TreeSet<String>();
-		for (AbstractVersionedObject v : subObjects)
+		for (AbstractVersionedObject v : tree.getChildren())
 		{
 			ts.addAll(v.tags());
 		}
 		
 		return ts;
 	}
-		
-	@Override
-	public AbstractVersionedObject replace(Variable var, AbstractVersionedObject bound) {
-		VersionedObject v = new VersionedObject(value);
-		for (AbstractVersionedObject vo : subObjects)
-		{
-			v.subObjects.add(vo.replace(var, bound));
-		}
 
-		return v;
-	}
-	
-	@Override
-	public void visit(VersionedObjectVisitor v)
+	public String getValue()
 	{
-		v.visit(this);
+		return value;
 	}
 
-	public Collection<AbstractVersionedObject> getSubObjects() {
-		return subObjects;
-	}
-
-	@Override
-	public AbstractVersionedObject transform(VersionedObjectTransformer v) {
-		return v.transform(this);
-	}
-	
-	@Override
-	public boolean equals(Object o)
+	public Collection<AbstractVersionedObject> getSubObjects()
 	{
-		if (o instanceof VersionedObject)
+		return tree.getChildren();
+	}
+
+	public VersionedObject splitInTree(int start, int end)
+	{
+		if (start == end || (start == 0 && end == value.length()))
 		{
-			VersionedObject v = (VersionedObject)o;
-			return getValue().equals(v.getValue()) 
-			    && getSubObjects().containsAll(v.getSubObjects()) 
-			    && v.getSubObjects().containsAll(getSubObjects());
+			return this;
 		}
 		else
 		{
-			return false;
+			VersionedObject newObj = new VersionedObject(doc, "");
+			tree.setObj(newObj);
+
+			if (start > 0)
+			{
+				VersionedObject startObj = new VersionedObject(doc, value.substring(0,start));
+				newObj.addSubObject(startObj);
+			}
+
+			VersionedObject midObj = new VersionedObject(doc, value.substring(start,end)); 
+			newObj.addSubObject(midObj);
+
+			if (end < value.length())
+			{
+				VersionedObject endObj = new VersionedObject(doc, value.substring(end)); 
+				newObj.addSubObject(endObj);
+			}
+
+			return midObj;
 		}
 	}
 
-	@Override
-	public AbstractVersionedObject copy()
+	public void removeAlternative()
 	{
-		VersionedObject v = new VersionedObject(value);
-		for (AbstractVersionedObject o : getSubObjects())
+		Choice c = findChoice();
+		if (c != null)
 		{
-			v.addSubObject(o.copy());
+			c.removeSelectedAlternative();
+		}
+	}
+	
+	@Override public AbstractVersionedObject copy()
+	{
+		VersionedObject v = new VersionedObject(doc, value);
+		for (AbstractVersionedObject v1 : tree.getChildren())
+		{
+			v.addSubObject(v1.copy());
 		}
 		
 		return v;

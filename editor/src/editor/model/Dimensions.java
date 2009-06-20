@@ -1,82 +1,52 @@
 package editor.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import editor.util.ChoiceFinder;
-
-public class Dimensions extends ArrayList<Dimension>
+public class Dimensions extends TreeSet<Dimension>
 {
 	private static final long serialVersionUID = 1L;
-
-	AbstractVersionedObject doc;
 	
-	
-	public Dimensions(AbstractVersionedObject doc)
+	public Dimensions()
 	{
-		this.doc = doc;
-		deriveDimesions();
+	}
+	
+	public void addDimension(Dimension dim)
+	{
+		add(dim);
+	}
+	
+	public void removeDimension(Dimension dim)
+	{
+		remove(dim);
 	}
 
-	private void deriveDimesions()
+	public void removeTag(String tag)
 	{
-		ChoiceFinder cf = new ChoiceFinder();
-		doc.visit(cf);
-		Collection<Choice> cs = cf.getChoices();
-		for (Choice c : cs)
+		for (Dimension dim : this)
 		{
-			Dimension d = new Dimension("Dim");
-			d.tags().addAll(c.tags());
-			add(d);
-		}
-		
-		for (int i = 0;  i < size(); i++)
-		{
-			for (int j = size()-1; j > i; j--)
-			{
-				if (intersects(get(i).tags(), get(j).tags()))
-				{
-					get(i).tags().addAll(get(j).tags());
-					remove(j);
-				}
-			}
+			dim.removeTag(tag);
 		}
 	}
-
-	private boolean intersects(Set<String> tags1, Set<String> tags2) 
+	
+	public void select(String tag)
 	{
-		for (String t : tags2)
+		for (Dimension dim : this)
 		{
-			if (tags1.contains(t))
-				return true;
+			dim.select(tag);
 		}
-		return false;
 	}
 
 	public Set<String> getSelectedTags()
 	{
-		Set<String> selectedTags = new TreeSet<String>();
-		for (Dimension d : this)
-		{
-			String t = d.getSelectedTag();
-			selectedTags.add(t);
-		}
-
-		return selectedTags;
-	}
-
-	public Dimension findByTags(Set<String> tags)
-	{
+		TreeSet<String> selectedTags = new TreeSet<String>();
+		
 		for (Dimension dim : this)
 		{
-			if (dim.tags().containsAll(tags))
-			{
-				return dim;
-			}
+			if (dim.getSelectedTag() != null)
+				selectedTags.add(dim.getSelectedTag());
 		}
 		
-		return null;
+		return selectedTags;
 	}
 }

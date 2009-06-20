@@ -3,10 +3,10 @@ package editor.model;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-public class Label implements Comparable<Label> {
+public class LabelOld implements Comparable<LabelOld> {
 	public TreeSet<String> tags = new TreeSet<String>();
 	
-	public Label(String[] ts)
+	public LabelOld(String[] ts)
 	{
 		for (String t : ts)
 		{
@@ -14,12 +14,12 @@ public class Label implements Comparable<Label> {
 		}
 	}
 
-	public Label(String tag) 
+	public LabelOld(String tag) 
 	{
 		tags.add(tag);
 	}
 	
-	public Label(Label l) 
+	public LabelOld(LabelOld l) 
 	{
 		for (String t : l.tags)
 		{
@@ -40,15 +40,15 @@ public class Label implements Comparable<Label> {
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o instanceof Label)
+		if (o instanceof LabelOld)
 		{
-			Label l = (Label)o;
+			LabelOld l = (LabelOld)o;
 			return compareTo(l) == 0;
 		}
 		return false;
 	}
 	
-	public int compareTo(Label l) 
+	public int compareTo(LabelOld l) 
 	{
 		Iterator<String> i1 = tags.iterator();
 		Iterator<String> i2 = l.tags.iterator();

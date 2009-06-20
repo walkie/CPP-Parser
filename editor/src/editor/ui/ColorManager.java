@@ -6,17 +6,11 @@ import java.util.Set;
 
 import editor.model.Dimension;
 import editor.model.Dimensions;
-import editor.model.Label;
 
 public class ColorManager 
 {
 	HashMap<String, Color> colors = new HashMap<String,Color>();
 
-	public Color getColor(Label label)
-	{
-		return getColor(label.tags);
-	}
-	
 	public Color getColor(Set<String> s)
 	{
 		for (String t : colors.keySet())
@@ -26,6 +20,16 @@ public class ColorManager
 				return colors.get(t);
 			}
 		}
+		return new Color(255,255,255);
+	}
+
+	public Color getColor(String tag)
+	{
+		if (colors.keySet().contains(tag))
+		{
+			return colors.get(tag);
+		}
+		
 		return new Color(255,255,255);
 	}
 
@@ -49,7 +53,7 @@ public class ColorManager
 
 			float h = i / denom;
 
-			for (String t : dim.tags())
+			for (String t : dim.getTags())
 			{
 				Color c = Color.getHSBColor(h, 0.8f, 1.0f);
 				colors.put(t, new Color(c.getRed(), c.getBlue(), c.getGreen(), 128));

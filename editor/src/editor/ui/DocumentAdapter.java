@@ -17,8 +17,8 @@ import editor.model.Dimension;
 import editor.controller.VersionedDocument;
 import editor.util.TextPart;
 
-public class DocumentAdapter implements DocumentListener, MouseListener {
-
+public class DocumentAdapter implements DocumentListener, MouseListener
+{
 	private VersionedDocument doc;
 	private JEditorPane textBox;
 	private DimensionSelector dimensionSelecter;
@@ -139,7 +139,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener {
 			try {
 				DimensionHighlighter h = null;
 				h = (DimensionHighlighter)textBox.getHighlighter();
-				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getLabel()));
+				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getTag()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
