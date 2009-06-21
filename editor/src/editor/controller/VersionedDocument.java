@@ -65,9 +65,9 @@ public class VersionedDocument
 		int p = pos;
 		for (TextPart part : selectedParts)
 		{
-			if (pos >= part.getStartPos() && pos < part.getEndPos() && part.getVersionedObject() instanceof VersionedObject)
+			if (pos >= part.getStartPos())
 			{
-				VersionedObject v = (VersionedObject)part.getVersionedObject();
+				VersionedObject v = part.getVersionedObject();
 				int len = v.removeText(p, length);
 				
 				if (len == length)
@@ -176,5 +176,10 @@ public class VersionedDocument
 	{
 		doc.removeDimension(dim);
 		setSelectedParts();
+	}
+	
+	public void debugPrint()
+	{
+		System.out.println(doc.getText());
 	}
 }

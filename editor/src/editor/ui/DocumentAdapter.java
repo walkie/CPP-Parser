@@ -243,4 +243,9 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 		doc.removeDimension(dim);
 		setText();
 	}
+
+	public void debugPrint()
+	{
+		doc.debugPrint();
+	}
 }

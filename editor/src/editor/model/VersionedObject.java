@@ -73,9 +73,9 @@ public class VersionedObject extends AbstractVersionedObject
 		int j1 = Math.max(0, Math.min(start+len, value.length()));
 		value = value.substring(0,i1) + value.substring(j1);
 		
-		return len - (j1 - i1);
+		return j1 - i1;
 	}
-
+	
 	public void addText(int i, String text)
 	{
 		int i1 = Math.max(0, Math.min(i, value.length()));

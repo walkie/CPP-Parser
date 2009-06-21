@@ -84,6 +84,7 @@ public class Editor extends JFrame
 				
 		mb.add(fileMenu(new JMenu("File")));
 		mb.add(editMenu(new JMenu("Edit")));
+		mb.add(debugMenu(new JMenu("Debug")));
 		
 		editorPane.setComponentPopupMenu((JPopupMenu)editMenu(new JPopupMenu()));
 		
@@ -178,6 +179,21 @@ public class Editor extends JFrame
 		});
 		m.add(mi);
 		
+		return m;
+	}
+
+	private JComponent debugMenu(JComponent m)
+	{
+		JMenuItem mi;
+		
+		mi = new JMenuItem("Print");
+		mi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				da.debugPrint();
+			}
+		});
+		m.add(mi);
+
 		return m;
 	}
 }
