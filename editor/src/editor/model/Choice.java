@@ -27,10 +27,11 @@ public class Choice extends AbstractVersionedObject
 	{
 		String text = "{";
 		boolean first = true;
-		for (AbstractVersionedObject v : tree.getChildren())
+		for (String tag : tree.getTags())
 		{
+			AbstractVersionedObject v = tree.getChild(tag);
 			if (first) { first = false; } else { text += ","; }
-			text += v.getText();
+			text += tag + ":" + v.getText();
 		}
 		return text + "}";
 	}

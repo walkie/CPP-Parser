@@ -28,7 +28,7 @@ public class VersionedObject extends AbstractVersionedObject
 		{
 			text += v.getText();
 		}
-		return text;
+		return "[" + text + "]";
 	}
 	
 	public Choice createChoice(String tag)
@@ -72,6 +72,12 @@ public class VersionedObject extends AbstractVersionedObject
 		int i1 = Math.max(0, Math.min(start, value.length()));
 		int j1 = Math.max(0, Math.min(start+len, value.length()));
 		value = value.substring(0,i1) + value.substring(j1);
+		
+		// if empty and not the root remove this object
+		if (value.length() == 0 && !tree.isRoot() && tree.getChildren().size() == 0)
+		{
+			tree.remove();
+		}
 		
 		return j1 - i1;
 	}

@@ -44,4 +44,9 @@ public class HashTree implements TreeCollection
 	{
 		return children.get(tag).getObject();
 	}
+	
+	@Override public boolean isEmpty()
+	{
+		return children.isEmpty();
+	}
 }

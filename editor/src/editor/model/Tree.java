@@ -32,7 +32,8 @@ public class Tree
 	
 	public void remove()
 	{
-		getParent().remove(this);
+		if (!isRoot())
+			getParent().remove(this);
 	}
 	
 	public void setObj(AbstractVersionedObject obj)
@@ -51,6 +52,12 @@ public class Tree
 	private void remove(Tree tree)
 	{
 		children.remove(tree);
+		
+		if (children.isEmpty() && !isRoot())
+		{
+			
+			getParent().remove();
+		}
 	}
 
 	public void setParent(Tree parent)
@@ -123,5 +130,10 @@ public class Tree
 		{
 			throw new IllegalArgumentException("expecting HashTree");
 		}
+	}
+
+	public boolean isRoot()
+	{
+		return getParent() == null;
 	}
 }

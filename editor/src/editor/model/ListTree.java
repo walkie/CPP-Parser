@@ -28,4 +28,9 @@ public class ListTree implements TreeCollection
 	{
 		children.remove(tree);
 	}
+	
+	@Override public boolean isEmpty()
+	{
+		return children.isEmpty();
+	}
 }
