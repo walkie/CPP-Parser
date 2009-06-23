@@ -3,6 +3,11 @@ package editor.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -156,6 +161,19 @@ public class VersionedDocumentTests
 		
 		assertEquals(1, docWithJustText.getDimensions().size());
 		assertTrue(docWithJustText.getDimensions().first().getTags().contains("t"));
+	}
+	
+	@Test public void testIOUnmarshall() throws FileNotFoundException, JAXBException
+	{
+		try {
+			String path = new java.io.File(".").getCanonicalPath();
+			System.out.println(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		editor.io.IO testIO = new editor.io.IO();
+		testIO.read("src/editor/test/TestIO.xml");
 	}
 //
 ////	public void removeChoice(int pos)
