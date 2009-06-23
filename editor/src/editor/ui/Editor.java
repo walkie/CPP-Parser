@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -16,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.xml.bind.JAXBException;
 
 import editor.controller.VersionedDocument;
 import editor.model.Dimensions;
@@ -111,7 +113,16 @@ public class Editor extends JFrame
 
 		        if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            String fileName = fc.getSelectedFile().getAbsolutePath();
-		            new editor.io.IO().read(fileName);
+		            
+		            try {
+						new editor.io.IO().read(fileName);
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (JAXBException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 		        }
 			}
 		});
