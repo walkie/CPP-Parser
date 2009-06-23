@@ -5,36 +5,29 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 public class IO
 {
-	public void read(String fileName)
+	public void read(String fileName) throws JAXBException, FileNotFoundException
 	{
-		try 
-		{
-			JAXBContext jc = JAXBContext.newInstance(Document.class);
+
+			JAXBContext jc = JAXBContext.newInstance(Document.class,Dimensions.class,Dimension.class,Tags.class);
 			Unmarshaller u = jc.createUnmarshaller();
 			FileInputStream fs = new FileInputStream(fileName);
-			java.lang.Object doc = u.unmarshal(fs);
-			editor.io.Document d = (editor.io.Document) doc;
+			JAXBElement<?> doc = (JAXBElement<?>)u.unmarshal(fs);
+			System.out.println(doc.getClass().toString());
+			editor.io.Document d = (Document)doc.getValue();
 			Dimensions dims = d.getDimensions();
 			for (int i=0;i<dims.getDimension().size();i++)
 			{
 				Dimension dim = dims.getDimension().get(i);
 				System.out.printf("Name: %s Default %s", dim.getName(), dim.getDefault());
 			}
-		} 
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (JAXBException e)
-		{
-			e.printStackTrace();
-		}
+
 	}
 
 	public void write(String fileName)
