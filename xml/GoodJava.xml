@@ -107,7 +107,7 @@
 													<alternatives>
 														<alternative>
 															<part>
-																<data>break</data>
+																<data>if (++trialCount > 5) break;</data>
 															</part>
 															<label>
 																<tag>Trial</tag>
@@ -130,13 +130,23 @@
 												<alternatives>
 													<alternative>
 														<part>
-															<data>for (Job j : jobs) {</data>
-                                                                                                                        <subObjects>
-                                                                                                                          <variable>r</variable>
-                                                                                                                          <part><data>,</data></part>
-                                                                                                                          <variable>i</variable>
-                                                                                                                          <part><data>)</data></part>
-                                                                                                                        </subObjects>
+															<data/>
+															<subObjects>
+																<part>
+																	<data>for (Job j: jobs)</data>
+																	<subObjects>
+																		<part><data>{</data></part>
+																		<part>
+																			<data/>
+																			<subObjects>
+																				<variable>r</variable>
+																				<variable>i</variable>
+																			</subObjects>
+																		</part>
+																		<part><data>}</data></part>
+																	</subObjects>
+																</part>
+															</subObjects>
 														</part>
 														<label>
 															<tag>5.0</tag>
@@ -144,7 +154,29 @@
 													</alternative>
 													<alternative>
 														<part>
-															<data>Iter,while(Job,r,i)</data>
+															<data/>
+															<subObjects>
+																<part><data>Iterator it = jobs.iterator();</data></part>
+																<part>
+																	<data>while(it.hasNext())</data>
+																	<subObjects>
+																		<part>
+																			<data>{</data>
+																		</part>
+																		<part>
+																			<data/>
+																			<subObjects>
+																				<part><data>j = (Job) it.next();</data></part>
+																				<variable>r</variable>
+																				<variable>i</variable>
+																			</subObjects>
+																		</part>
+																		<part>
+																			<data>}</data>
+																		</part>
+																	</subObjects>
+																</part>
+															</subObjects>
 														</part>
 														<label>
 															<tag>1.4</tag>
