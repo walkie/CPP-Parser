@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="Schema4Css.css"?>
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<dimensions>
+		<dimension>
+			<name>Release</name>
+			<tags>
+				<tag>Full</tag>
+				<tag>Trial</tag>
+			</tags>
+			<default>Trial</default>
+		</dimension>
+		<dimension>
+			<name>Java Version</name>
+			<tags>
+				<tag>1.4</tag>
+				<tag>5</tag>
+			</tags>
+			<default>1.4</default>
+		</dimension>
+	</dimensions>
+</document>
