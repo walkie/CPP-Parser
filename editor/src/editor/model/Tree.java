@@ -43,7 +43,7 @@ public class Tree
 		else if(obj instanceof Choice)
 			children = new HashTree();
 		else
-			throw new IllegalArgumentException("expecting Versioned Object or Choice");
+			throw new IllegalArgumentException("expecting VersionedObject or Choice");
 		
 		this.obj = obj;
 		this.obj.setTree(this);
