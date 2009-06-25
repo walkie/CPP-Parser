@@ -9,6 +9,7 @@ import editor.model.Dimensions;
 
 public class ColorManager 
 {
+	private static Color defaultColor = new Color(255,255,255);
 	HashMap<String, Color> colors = new HashMap<String,Color>();
 
 	public Color getColor(Set<String> s)
@@ -20,7 +21,7 @@ public class ColorManager
 				return colors.get(t);
 			}
 		}
-		return new Color(255,255,255);
+		return defaultColor;
 	}
 
 	public Color getColor(String tag)
@@ -30,34 +31,47 @@ public class ColorManager
 			return colors.get(tag);
 		}
 		
-		return new Color(255,255,255);
+		return defaultColor;
 	}
 
 	public void setDimensions(Dimensions dimensions)
 	{
-		float i = 0.0f;
-		float denom = 1.0f;
-		float start = 0.5f;
-		
-		colors.clear();
+		//colors.clear();
 		
 		for (Dimension dim : dimensions)
 		{
-			i += 1.0f;
-			if (i >= denom)
+			Color c;
+			
+			c = getColor(dim.getTags());
+			
+			if (c.equals(defaultColor))
 			{
-				denom *= 2.0f;
-				start /= 2.0f;
-				i = start;
+				c = nextColor();
 			}
-
-			float h = i / denom;
-
+			
 			for (String t : dim.getTags())
 			{
-				Color c = Color.getHSBColor(h, 0.8f, 1.0f);
-				colors.put(t, new Color(c.getRed(), c.getBlue(), c.getGreen(), 128));
+				colors.put(t, c);
 			}
 		}
+	}
+	
+	float i = 0.0f;
+	float denom = 1.0f;
+	float start = 0.5f;
+
+	private Color nextColor()
+	{
+		i += 1.0f;
+		if (i >= denom)
+		{
+			denom *= 2.0f;
+			start /= 2.0f;
+			i = start;
+		}
+
+		float h =  i / denom;
+		Color c = Color.getHSBColor(h, 0.8f, 1.0f);
+		return new Color(c.getRed(), c.getBlue(), c.getGreen(), 128);
 	}
 }
