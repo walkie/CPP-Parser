@@ -33,4 +33,10 @@ public class ListTree implements TreeCollection
 	{
 		return children.isEmpty();
 	}
+
+	@Override
+	public Collection<Tree> getChildTrees()
+	{
+		return children;
+	}
 }

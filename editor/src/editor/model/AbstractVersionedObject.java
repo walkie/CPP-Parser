@@ -15,11 +15,6 @@ public abstract class AbstractVersionedObject
 	{
 		return tree.findChoice();
 	}
-	
-	public abstract String getText();
-	public abstract void removeTag(String tag);
-	public abstract Set<String> tags();
-	public abstract AbstractVersionedObject copy();
 
 	public void cloneAlternative(String newTag, String oldTag)
 	{
@@ -28,4 +23,14 @@ public abstract class AbstractVersionedObject
 			v.cloneAlternative(newTag, oldTag);
 		}
 	}
+
+	public Tree getTree()
+	{
+		return tree;
+	}
+	
+	public abstract String getText();
+	public abstract void removeTag(String tag);
+	public abstract Set<String> tags();
+	public abstract AbstractVersionedObject copy();
 }

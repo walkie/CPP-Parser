@@ -32,8 +32,8 @@ public class Editor extends JFrame
 	private final JEditorPane editorPane = new JEditorPane();
 	private final Gutter gutter = new Gutter();
 	private final ColorManager colorManager = new ColorManager();
-	private DimensionSelector dimensionSelector;
-	private DocumentAdapter da;
+	private final DimensionSelector dimensionSelector;
+	private final DocumentAdapter da;
 	
 	public Editor(DocumentAdapter da)
 	{
@@ -115,12 +115,13 @@ public class Editor extends JFrame
 		            String fileName = fc.getSelectedFile().getAbsolutePath();
 		            
 		            try {
-						new editor.io.IO().read(fileName);
+		            	VersionedDocument doc = new VersionedDocument();
+		            	doc.setDocument(new editor.io.IO().read(fileName));
+						da.setDocument(doc, editorPane, dimensionSelector, colorManager);
+						da.setText();
 					} catch (FileNotFoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (JAXBException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 		        }
@@ -136,7 +137,7 @@ public class Editor extends JFrame
 
 		        if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            String fileName = fc.getSelectedFile().getAbsolutePath();
-		            new editor.io.IO().write(fileName);
+		            new editor.io.IO().write(fileName, da.getDocument());
 		        }
 			}
 		});
@@ -205,6 +206,14 @@ public class Editor extends JFrame
 		});
 		m.add(mi);
 
+		mi = new JMenuItem("Print tags");
+		mi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				da.debugPrintTags();
+			}
+		});
+		m.add(mi);
+		
 		return m;
 	}
 }

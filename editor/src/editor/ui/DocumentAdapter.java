@@ -14,6 +14,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
 import editor.model.Dimension;
+import editor.model.Document;
 import editor.controller.VersionedDocument;
 import editor.util.TextPart;
 
@@ -247,5 +248,20 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 	public void debugPrint()
 	{
 		doc.debugPrint();
+	}
+
+
+	public void debugPrintTags()
+	{
+		for (String tag : doc.getDocument().getObject().tags())
+		{
+			System.out.print(tag);
+		}
+		System.out.println();
+	}
+
+	public Document getDocument()
+	{
+		return doc.getDocument();
 	}
 }

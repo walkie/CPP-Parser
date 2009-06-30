@@ -8,4 +8,5 @@ public interface TreeCollection
 	void remove(String tag);
 	void remove(Tree tree);
 	boolean isEmpty();
+	Collection<Tree> getChildTrees();
 }

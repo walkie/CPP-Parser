@@ -1,5 +1,6 @@
 package editor.model;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,6 +11,7 @@ public class Choice extends AbstractVersionedObject
 	public Choice(Dimension dimension)
 	{
 		this.dimension = dimension;
+		setTree(new Tree(this));
 	}
 	
 	public void addAlternative(String tag, AbstractVersionedObject v)
@@ -20,7 +22,7 @@ public class Choice extends AbstractVersionedObject
 	
 	public void replace(AbstractVersionedObject v)
 	{
-		tree.setObj(v);
+		tree.setObject(v);
 	}
 	
 	@Override public String getText()
@@ -111,5 +113,10 @@ public class Choice extends AbstractVersionedObject
 		}
 		
 		return c;
+	}
+
+	public Collection<String> getTags()
+	{ 
+		return tree.getTags();
 	}
 }

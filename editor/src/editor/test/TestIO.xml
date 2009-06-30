@@ -19,6 +19,7 @@
 			<default>1.4</default>
 		</dimension>
 	</dimensions>
+
 	<part>
 		<data>class GoodApp{</data>
 		<subObjects>
@@ -194,4 +195,5 @@
 			</part>
 		</subObjects>
 	</part>
+
 </document>

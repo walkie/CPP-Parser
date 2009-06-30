@@ -49,4 +49,9 @@ public class HashTree implements TreeCollection
 	{
 		return children.isEmpty();
 	}
+
+	@Override public Collection<Tree> getChildTrees()
+	{
+		return children.values();
+	}
 }

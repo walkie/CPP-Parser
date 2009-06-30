@@ -11,7 +11,8 @@ public class Tree
 	
 	public Tree(AbstractVersionedObject obj)
 	{
-		setObj(obj);
+		this.obj = obj;
+		setChildren(obj);
 	}
 	
 	public void removeChild(String tag)
@@ -36,7 +37,18 @@ public class Tree
 			getParent().remove(this);
 	}
 	
-	public void setObj(AbstractVersionedObject obj)
+	public void setObject(AbstractVersionedObject obj2)
+	{
+		this.children = obj2.tree.children;
+		this.obj = obj2;
+		this.obj.tree = this;
+		for (Tree child : obj2.tree.getChildTrees())
+		{
+			child.parent = this;
+		}
+	}
+	
+	public void setChildren(AbstractVersionedObject c)
 	{
 		if (obj instanceof VersionedObject)
 			children = new ListTree();
@@ -44,11 +56,8 @@ public class Tree
 			children = new HashTree();
 		else
 			throw new IllegalArgumentException("expecting VersionedObject or Choice");
-		
-		this.obj = obj;
-		this.obj.setTree(this);
 	}
-	
+
 	private void remove(Tree tree)
 	{
 		children.remove(tree);
@@ -84,7 +93,7 @@ public class Tree
 	{
 		if (children instanceof ListTree)
 		{
-			Tree tree = new Tree(v);
+			Tree tree = v.getTree();
 			tree.setParent(this);
 			((ListTree)children).add(tree);
 		}
@@ -94,11 +103,17 @@ public class Tree
 		}
 	}
 
+	public Collection<Tree> getChildTrees()
+	{
+		return children.getChildTrees();
+	}
+	
 	public void addChild(String tag, AbstractVersionedObject v)
 	{
 		if (children instanceof HashTree)
 		{
 			Tree tree = new Tree(v);
+			v.setTree(tree);
 			tree.setParent(this);
 			((HashTree)children).add(tag, tree);
 		}

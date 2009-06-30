@@ -5,12 +5,12 @@ import java.util.Set;
 public class Document
 {
 	private Dimensions dimensions;
-	private Tree tree;
+    private Tree tree;
 	
 	public Document()
 	{
 		this.dimensions = new Dimensions();
-		tree = new Tree(new VersionedObject(this, ""));
+		tree = new VersionedObject(this, "").getTree();
 	}
 	
 	public void addDimension(Dimension dim)
@@ -27,12 +27,12 @@ public class Document
 		dimensions.removeDimension(dim);
 	}
 	
-	public Dimensions getDimensions()
-	{
-		return dimensions;
-	}
+    public Dimensions getDimensions() 
+    {
+        return dimensions;
+    }
 	
-	public AbstractVersionedObject getObj()
+	public AbstractVersionedObject getObject()
 	{
 		return tree.getObject();
 	}
@@ -42,11 +42,11 @@ public class Document
 		return tree.getObject().getText();
 	}
 
-	public void setObj(AbstractVersionedObject obj)
+	public void setObject(AbstractVersionedObject obj)
 	{
-		tree.setObj(obj);
+		tree.setObject(obj);
 	}
-
+	
 	public void removeTag(String tag)
 	{
 		tree.getObject().removeTag(tag);

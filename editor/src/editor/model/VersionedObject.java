@@ -35,7 +35,7 @@ public class VersionedObject extends AbstractVersionedObject
 	{
 		Dimension dim = doc.findDimension(tag);
 		Choice c = new Choice(dim);
-		tree.setObj(c);
+		tree.setObject(c);
 		c.addAlternative(tag, this);
 		return c;
 	}
@@ -44,7 +44,7 @@ public class VersionedObject extends AbstractVersionedObject
 	{
 		Dimension dim = doc.findDimension(tag, tag2);
 		Choice c = new Choice(dim);
-		tree.setObj(c);
+		tree.setObject(c);
 		c.addAlternative(tag, this);
 		c.addAlternative(tag2, v);
 		return c;
@@ -119,8 +119,9 @@ public class VersionedObject extends AbstractVersionedObject
 		else
 		{
 			VersionedObject newObj = new VersionedObject(doc, "");
-			tree.setObj(newObj);
-
+			tree.setChildren(newObj);
+			tree.setObject(newObj);
+			
 			if (start > 0)
 			{
 				VersionedObject startObj = new VersionedObject(doc, value.substring(0,start));

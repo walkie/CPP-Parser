@@ -21,7 +21,7 @@ public class VersionedDocument
 	public VersionedDocument(AbstractVersionedObject obj)
 	{
 		doc = new Document();
-		doc.setObj(obj);
+		doc.setObject(obj);
 		setSelectedParts();
 	}
 
@@ -180,6 +180,19 @@ public class VersionedDocument
 	
 	public void debugPrint()
 	{
+		System.out.println(doc.getText());
+	}
+
+	public Document getDocument()
+	{
+		return doc;
+	}
+
+	public void setDocument(Document doc)
+	{
+		this.doc = doc;
+		setSelectedParts();
+		System.out.println(doc.getDimensions().size());
 		System.out.println(doc.getText());
 	}
 }

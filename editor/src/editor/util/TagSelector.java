@@ -21,7 +21,7 @@ public class TagSelector
 	public TagSelector(Document doc)
 	{
 		this.doc = doc;
-		findParts(doc.getObj());
+		findParts(doc.getObject());
 	}
 
 	public void findParts(AbstractVersionedObject obj)
