@@ -134,11 +134,14 @@ public class Convert
 		editor.model.VersionedObject v = new editor.model.VersionedObject(mDocument, part.getData().toString());
 		
 		SubObjects subObjects = part.getSubObjects();
-		for (JAXBElement<?> elem : subObjects.getObject())
+		if (subObjects != null)
 		{
-			v.addSubObject(toModelObject(mDocument, elem.getValue()));
+			for (JAXBElement<?> elem : subObjects.getObject())
+			{
+				if (elem != null)
+					v.addSubObject(toModelObject(mDocument, elem.getValue()));
+			}
 		}
-		
 		return v;
 	}
 
