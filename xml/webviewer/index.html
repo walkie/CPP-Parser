@@ -26,8 +26,8 @@ $(document).ready(function(){
 
 function on_select_change()
 {
-	alert($(this).text());
-	alert("hello world");
+//	alert($(this).text());
+//	alert("hello world");
 	state.loadState(ViewerUIState.getConstant("UPDATE_ACTIVE_TAG"),"#editorCanvas",this);
 	state.updateDimensionsPanel("#editorCanvas");
 	state.updateActualDocument("#editorCanvas");
