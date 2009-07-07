@@ -14,7 +14,7 @@
       <name>Java Version</name>
       <tags>
         <tag>1.4</tag>
-        <tag>5</tag>
+        <tag>5.0</tag>
       </tags>
       <default>1.4</default>
     </dimension>

@@ -1,6 +1,7 @@
 <html>
 <head>
 <!-- <link href="Schema.css" rel="stylesheet" type="text/css" /> -->
+<link href="GoodJava.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -23,28 +24,31 @@ $(document).ready(function(){
 	});
 });
 
+function on_select_change()
+{
+	alert($(this).text());
+	alert("hello world");
+	state.loadState(ViewerUIState.getConstant("UPDATE_ACTIVE_TAG"),"#editorCanvas",this);
+	state.updateDimensionsPanel("#editorCanvas");
+	state.updateActualDocument("#editorCanvas");
+};
 
 function readXML(xml)
 {
-	state.clearActiveTags();
-	$(xml).find("dimension").each(function(){
-		var dim = new Dimension($(this).children("name").text(), $(this).children("default").text());
-		$(this).find("tag").each(function(){
-			dim.addTag($(this).text());
-		});
-		state.addActiveTag($(this).children("default").text());
-		state.addDimension(dim);
-	});
-	loadState(xml);
-	$("#editorCanvas").append(xml);
-	$("#editorCanvas").children("document").children("dimensions").hide();
-	$("#editorCanvas").children("document").children("part").find("choice").each(function(){
-		$(this).children("alternatives").children("alternative").each(function(){
-			if ($.inArray($(this).children("label").children("tag").text(),state.ActiveTags())==-1)
-			{
-				$(this).hide();
-			}
-		});
+	state = new ViewerUIState(xml);
+	state.loadState(ViewerUIState.getConstant("INIT_LOAD"),"#editorCanvas");
+	state.updateDimensionsPanel("#editorCanvas");
+	state.updateActualDocument("#editorCanvas");
+
+	var currVar = null;
+	$("#editorCanvas").children("document").children("part").find("variable").each(function(){ currVar=this; return this;}).parents("let").each(function(){
+	    if ($(this).children("binding").children("name").text() == $(currVar).text())
+    	{
+			//TODO: Need to able to propergate the correct "data" field into the variable area and subsitute that. 
+      	//	var properData = $(this).children("binding").children("value").find("data").each(function(){alert($(this).text());
+		//	}));
+     		 //$(currVar).text($(this).children("binding").children("value").children("part").children("data").text());
+    	}
 	});
 };
 
@@ -62,42 +66,134 @@ Dimension.prototype.Tags = function(){
 	return this._tags;
 };
 
-var ViewerUIState = function(){
-	this._dimensions = new Array();
-	this._activeTags = new Array();
+var ViewerUIState = (function(){
 
-}
+	var constants = {
+		INIT_LOAD:"INIT_LOAD_STATE",
+		UPDATE_ACTIVE_TAG:"UPDATE_ACTIVE_TAG_STATE"
+	}
 
-ViewerUIState.prototype.ActiveTags = function()
-{
-	return this._activeTags;
-};
+	this.getConstant=function(name){
+		return constants[name];
+	}
 
-ViewerUIState.prototype._Dimensions = function()
-{
-	return this._dimensions;
-};
+	var constructor = function(xml){
+		this._dimensions = new Array();
+		this._activeTags = new Array();
 
-ViewerUIState.prototype.addDimension = function(dim){
-	this._dimensions.push(dim);
-};
+		if (xml != null)
+			this._xml = xml;
+		else 
+			throw new Error('The retriving XML cannot be empty.');
 
-ViewerUIState.prototype.clearActiveTags = function(tags){
-	this._activeTags = new Array();
-};
+		this.ActiveTags = function(){
+			return this._activeTags;
+		}
 
-ViewerUIState.prototype.addActiveTag = function(tag){
-	this._activeTags.push(tag);
-};
+		this.Dimensions = function(){
+			return this._dimensions;
+		}
+	
+		this.addDimension = function(dim){
+			this._dimensions.push(dim);
+		}
+	
+		this.clearActiveTags = function(tags)
+		{
+			this._activeTags = new Array();
+		}
+	
+		this.addActiveTag = function(tag){
+			this._activeTags.push(tag);
+		}
 
-ViewerUIState.prototype.updateActiveTags = function(tags){
-	this._activeTags = tags;
-};
+		this.updateActiveTags = function(tags){
+			this._activeTags =tags;
+		}
+
+		this._updateActiveTags = function()
+		{
+		}
+
+		this.loadState = function(stateFlow,canvas)
+		{
+			if (stateFlow == ViewerUIState.getConstant("INIT_LOAD")){
+				state.clearActiveTags();
+				$(this._xml).find("dimension").each(function(){
+					var dim = new Dimension($(this).children("name").text(), $(this).children("default").text());
+					$(this).find("tag").each(function(){
+						dim.addTag($(this).text());
+					});
+					state.addActiveTag($(this).children("default").text());
+					state.addDimension(dim);
+				});
+				$(canvas).append(this._xml);
+			}
+			else if (stateFlow == ViewerUIState.getConstant("UPDATE_ACTIVE_TAG"))
+			{
+				var selected=null;
+				if (arguments.length != 3) throw new Error("Must have three parameter for the load state function to work properly");
+				{
+					selected = arguments[2];
+				}
+				var foundDim = null;
+				$.each(this.Dimensions(), function(){
+					if ($.inArray($(selected).text(),this.Tags()) != -1){
+						foundDim = this;
+						return false;
+					}
+				});
+				if (foundDim == null) throw new Error("The selected tag does not belong to any dimension");
+				var oldActiveTags = this.ActiveTags();
+				this.clearActiveTags();
+				this.addActiveTag($(selected).text());
+				for (var i in oldActiveTags)
+				{
+					if (oldActiveTags[i] != $(selected).text() && $.inArray(oldActiveTags[i], foundDim.Tags()) == -1)
+						this.addActiveTag(oldActiveTags[i]);
+				}
+				$(canvas).empty();
+				$(canvas).append(this._xml);
+			}		
+		}
+		this.updateDimensionsPanel = function(canvas)
+		{
+			$(canvas).children("document").children("dimensions").find("tag").each(function(){
+				if ($.inArray($(this).text(),state.ActiveTags())==-1){
+					if ($(this).hasClass("selected"))
+						$(this).removeClass("selected");
+					$(this).addClass('potential');
+					$(this).click(on_select_change);
+				}else{
+					if($(this).hasClass("potential"))
+						$(this).removeClass("potential");
+					$(this).addClass("selected");
+					$(this).unbind('click',on_select_change);
+				}
+			});
+		}
+		this.updateActualDocument = function(canvas)
+		{
+			$("#editorCanvas").children("document").children("part").find("choice").each(function(){
+				$(this).children("alternatives").children("alternative").each(function(){
+					if ($.inArray($(this).children("label").children("tag").text(),state.ActiveTags())==-1)
+						$(this).hide();
+					else
+						$(this).show();	
+				});
+			});
+		}
+	};
+	
+	constructor.getConstant = getConstant;
+
+	return constructor;
+})();
 
 
-var state = new ViewerUIState();
+var state = null;
 
-function loadState(xml)
+function loadState(stateFlow)
 {
 	//$(xml).children("dimensions").hide();
 //	$(xml).("document > dimensions 
