@@ -54,6 +54,16 @@ public class Tree
 			children = new ListTree();
 		else if(obj instanceof Choice)
 			children = new HashTree();
+		else if (obj instanceof Let)
+		{
+			// TODO let
+			children = null;
+		}
+		else if (obj instanceof Variable)
+		{
+			// TODO variable
+			children = null;
+		}
 		else
 			throw new IllegalArgumentException("expecting VersionedObject or Choice");
 	}

@@ -18,7 +18,6 @@ public class IO
 		Unmarshaller u = jc.createUnmarshaller();
 		FileInputStream fs = new FileInputStream(fileName);
 		JAXBElement<?> doc = (JAXBElement<?>)u.unmarshal(fs);
-		System.out.println(doc.getClass().toString());
 		editor.io.Document d = (Document)doc.getValue();
 		return Convert.toModel(d);
 	}

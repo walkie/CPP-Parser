@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
+import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
+
 import editor.io.Part.SubObjects;
 
 public class Convert
@@ -43,6 +45,8 @@ public class Convert
 			return fromModelVersionedObject((editor.model.VersionedObject)mObject);
 		if (mObject instanceof editor.model.Choice)
 			return fromModelChoice((editor.model.Choice)mObject);
+		if (mObject instanceof editor.model.Let)
+			return fromModelLet((editor.model.Let)mObject);
 		return null;
 	}
 
@@ -79,7 +83,15 @@ public class Convert
 		ObjectFactory fact = new ObjectFactory();
 		return fact.createChoice(choice);
 	}
-	
+
+	private static JAXBElement<?> fromModelLet(editor.model.Let mLet)
+	{
+		editor.io.Let let = new editor.io.Let();
+
+		ObjectFactory fact = new ObjectFactory();
+		return fact.createLet(let);
+	}
+
 	public static editor.model.Document toModel(editor.io.Document document)
 	{
 		editor.model.Document mDocument = new editor.model.Document();
@@ -125,13 +137,20 @@ public class Convert
 			return toModelFromPart(mDocument, (editor.io.Part)object);
 		if (object instanceof editor.io.Choice)
 			return toModelFromChoice(mDocument, (editor.io.Choice)object);
-			
-		return new editor.model.VersionedObject(mDocument, "");
+		if (object instanceof editor.io.Let)
+			return toModelFromLet(mDocument, (editor.io.Let)object);
+		if (object instanceof editor.io.Variable)
+			return toModelFromVariable((editor.io.Variable)object);
+		
+		return new editor.model.VersionedObject(mDocument, "ERROR: " + object.getClass().toString());
 	}
 
 	private static editor.model.AbstractVersionedObject toModelFromPart(editor.model.Document mDocument, editor.io.Part part)
 	{
-		editor.model.VersionedObject v = new editor.model.VersionedObject(mDocument, part.getData().toString());
+		String data = part.getData() instanceof ElementNSImpl ? "" : part.getData().toString();
+		editor.model.VersionedObject v = new editor.model.VersionedObject(mDocument, data);
+		
+		System.out.print(data);
 		
 		SubObjects subObjects = part.getSubObjects();
 		if (subObjects != null)
@@ -159,5 +178,26 @@ public class Convert
 		}
 
 		return mChoice;
+	}
+
+	private static editor.model.AbstractVersionedObject toModelFromLet(editor.model.Document mDocument, editor.io.Let let)
+	{
+		editor.model.Variable variable = new editor.model.Variable(let.getBinding().getName());
+		editor.model.AbstractVersionedObject bound = toModelObject(mDocument, let.getBinding().getValue().getObject().getValue());
+		//System.out.println("bound: " + bound.getText());
+		editor.model.AbstractVersionedObject scope = toModelObject(mDocument, let.getBody().getObject().getValue());
+		//System.out.println("scope: " + scope.getText());
+		
+		editor.model.Let mLet = new editor.model.Let(variable, bound, scope);
+		
+		//System.out.println("let ("+variable.getName()+"): " + mLet.getText());
+		return mLet;
+	}
+	
+	private static editor.model.AbstractVersionedObject toModelFromVariable(editor.io.Variable variable)
+	{
+		editor.model.Variable mVariable = new editor.model.Variable(variable.getName());
+		System.out.print(variable.getName());
+		return mVariable;
 	}
 }

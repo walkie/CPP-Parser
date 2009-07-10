@@ -7,6 +7,7 @@ import java.util.Stack;
 import editor.model.AbstractVersionedObject;
 import editor.model.Choice;
 import editor.model.Document;
+import editor.model.Let;
 import editor.model.VersionedObject;
 
 public class TagSelector
@@ -30,6 +31,10 @@ public class TagSelector
 			findParts((VersionedObject)obj);
 		else if (obj instanceof Choice)
 			findParts((Choice)obj);
+		else if (obj instanceof Let)
+		{
+			// TODO let
+		}
 		else
 			throw new IllegalArgumentException("expecting Choice or VersionedObject");
 	}
