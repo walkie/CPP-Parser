@@ -41,15 +41,15 @@ function readXML(xml)
 	state.updateActualDocument("#editorCanvas");
 
 	var currVar = null;
-	$("#editorCanvas").children("document").children("part").find("variable").each(function(){ currVar=this; return this;}).parents("let").each(function(){
-	    if ($(this).children("binding").children("name").text() == $(currVar).text())
-    	{
+	//$("#editorCanvas").children("document").children("part").find("variable").each(function(){ currVar=this; return this;}).parents("let").each(function(){
+	//    if ($(this).children("binding").children("name").text() == $(currVar).text())
+    //	{
 			//TODO: Need to able to propergate the correct "data" field into the variable area and subsitute that. 
       	//	var properData = $(this).children("binding").children("value").find("data").each(function(){alert($(this).text());
 		//	}));
      		 //$(currVar).text($(this).children("binding").children("value").children("part").children("data").text());
-    	}
-	});
+    //	}
+	//});
 };
 
 var Dimension = function(name, defaultTag){
@@ -174,12 +174,33 @@ var ViewerUIState = (function(){
 		}
 		this.updateActualDocument = function(canvas)
 		{
-			$("#editorCanvas").children("document").children("part").find("choice").each(function(){
+			$(canvas).children("document").children("part").find("let").each(function(){
+				var letElem = this;
+				var varName = $(letElem).children("binding").children("name").text();
+				var varValue = $(letElem).children("binding").children("value");
+				$("#editorCanvas").children("document").find("variable").each(function(){
+					if (varName == $(this).text())
+					{
+						//alert("Look at Variable Content "+ $(this).text());
+						
+						$(this).empty().append(varValue.clone());
+						//alert($(varValue).text());
+						//$(this).append(varValue);
+						//alert("Look at After Variable Content "+$(this).text());
+					}
+				});
+			});
+
+			$(canvas).children("document").children("part").find("let").each(function(){
+				$(this).children("binding").hide();
+			});
+
+			$(canvas).children("document").children("part").find("choice").each(function(){
 				$(this).children("alternatives").children("alternative").each(function(){
 					if ($.inArray($(this).children("label").children("tag").text(),state.ActiveTags())==-1)
 						$(this).hide();
 					else
-						$(this).show();	
+						$(this).show();
 				});
 			});
 		}

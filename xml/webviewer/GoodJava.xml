@@ -20,8 +20,12 @@
     </dimension>
   </dimensions>
   <part>
-    <data>class GoodApp{</data>
+    <data/>
     <subObjects>
+	<part>
+		<data>class GoodApp{</data></part>
+	<part><data />
+		<subObjects>
       <choice>
         <alternatives>
           <alternative>
@@ -202,4 +206,7 @@
       </part>
     </subObjects>
   </part>
+<part><data>}</data></part>
+</subObjects>
+</part>
 </document>
