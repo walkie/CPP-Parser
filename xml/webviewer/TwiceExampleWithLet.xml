@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Schema4.xsd">
+<dimensions>
+	<dimension>
+		<name>Variable</name>
+		<tags>
+			<tag>X</tag>
+			<tag>Y</tag>
+		</tags>
+		<default>X</default>
+	</dimension>
+	<dimension>
+		<name>Implementation</name>
+		<tags>
+			<tag>Plus</tag>
+			<tag>Times</tag>
+		</tags>
+		<default>Plus</default>
+	</dimension>
+</dimensions>
+<part>
+	<data/>
+	<subObjects>
+		<let>
+			<binding>
+				<name>v</name>
+				<value>
+					<choice>
+					<alternatives>
+						<alternative><part><data>x</data></part><label><tag>X</tag></label></alternative>
+						<alternative><part><data>y</data></part><label><tag>Y</tag></label></alternative>
+					</alternatives>
+					</choice>
+				</value>
+			</binding>
+			<body>
+				<part>
+					<data>twice</data>
+					<subObjects>
+						<variable>v</variable>
+						<part><data>=</data></part>
+						<choice>
+							<alternatives>
+								<alternative>
+									<part>
+										<data/>
+										<subObjects>
+											<variable>v</variable>
+											<part><data>+</data></part>
+											<variable>v</variable>
+										</subObjects>
+									</part>
+									<label><tag>Plus</tag></label>
+								</alternative>
+								<alternative>
+									<part>
+										<data/>
+										<subObjects>
+											<part><data>2*</data></part>
+											<variable>v</variable>
+										</subObjects>
+									</part>
+									<label><tag>Times</tag></label>
+								</alternative>
+							</alternatives>
+						</choice>
+					</subObjects>
+				</part>
+			</body>
+		</let>
+	</subObjects>
+</part>
+</document>

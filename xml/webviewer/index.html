@@ -7,9 +7,11 @@
 $(document).ready(function(){
 	$("#loadGoodApp").click(function(){
 	//$("#editorCanvas").append("Hello Two").css("color","red");
+	var fileName = $("#txtFileName").get(0).value;
+	//alert(fileName);
 	$.ajax({
 		type: "GET",
-		url: "GoodJava.xml",
+		url: fileName,
 		cache: false,
 		success: readXML/* function(xml){
 			$("#editorCanvas").append(xml);
@@ -223,7 +225,7 @@ function loadState(stateFlow)
 </script>
 </head>
 <body>
-<a id="loadGoodApp" href="#">Link</a>
+<input type="textbox" name="fileName" value="GoodJava.xml" id="txtFileName" /><a id="loadGoodApp" href="#">Link</a>
 <div id="editorCanvas"></div>
 </body>
 </html>
