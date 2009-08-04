@@ -45,8 +45,6 @@ public class Convert
 			return fromModelVersionedObject((editor.model.VersionedObject)mObject);
 		if (mObject instanceof editor.model.Choice)
 			return fromModelChoice((editor.model.Choice)mObject);
-		if (mObject instanceof editor.model.Let)
-			return fromModelLet((editor.model.Let)mObject);
 		return null;
 	}
 
@@ -82,14 +80,6 @@ public class Convert
 		
 		ObjectFactory fact = new ObjectFactory();
 		return fact.createChoice(choice);
-	}
-
-	private static JAXBElement<?> fromModelLet(editor.model.Let mLet)
-	{
-		editor.io.Let let = new editor.io.Let();
-
-		ObjectFactory fact = new ObjectFactory();
-		return fact.createLet(let);
 	}
 
 	public static editor.model.Document toModel(editor.io.Document document)
@@ -137,8 +127,6 @@ public class Convert
 			return toModelFromPart(mDocument, (editor.io.Part)object);
 		if (object instanceof editor.io.Choice)
 			return toModelFromChoice(mDocument, (editor.io.Choice)object);
-		if (object instanceof editor.io.Let)
-			return toModelFromLet(mDocument, (editor.io.Let)object);
 		if (object instanceof editor.io.Variable)
 			return toModelFromVariable((editor.io.Variable)object);
 		
@@ -178,20 +166,6 @@ public class Convert
 		}
 
 		return mChoice;
-	}
-
-	private static editor.model.AbstractVersionedObject toModelFromLet(editor.model.Document mDocument, editor.io.Let let)
-	{
-		editor.model.Variable variable = new editor.model.Variable(let.getBinding().getName());
-		editor.model.AbstractVersionedObject bound = toModelObject(mDocument, let.getBinding().getValue().getObject().getValue());
-		//System.out.println("bound: " + bound.getText());
-		editor.model.AbstractVersionedObject scope = toModelObject(mDocument, let.getBody().getObject().getValue());
-		//System.out.println("scope: " + scope.getText());
-		
-		editor.model.Let mLet = new editor.model.Let(variable, bound, scope);
-		
-		//System.out.println("let ("+variable.getName()+"): " + mLet.getText());
-		return mLet;
 	}
 	
 	private static editor.model.AbstractVersionedObject toModelFromVariable(editor.io.Variable variable)
