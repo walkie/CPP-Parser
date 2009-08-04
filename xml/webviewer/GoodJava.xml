@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/css" href="Schema.css"?>
 <document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Schema4.xsd">
   <dimensions>
     <dimension>
@@ -23,14 +22,15 @@
     <data/>
     <subObjects>
 	<part>
-		<data>class GoodApp{</data></part>
+		<data xml:space="preserve">class GoodApp{     
+     </data></part>
 	<part><data />
 		<subObjects>
       <choice>
         <alternatives>
           <alternative>
             <part>
-              <data>List &lt;Job&gt;</data>
+              <data>	List &lt;Job&gt;</data>
             </part>
             <label>
               <tag>5.0</tag>
@@ -61,7 +61,8 @@
               </alternative>
               <alternative>
                 <part>
-                  <data>new LinkedList();</data>
+                  <data>new LinkedList();
+</data>
                 </part>
                 <label>
                   <tag>1.4</tag>
@@ -70,14 +71,15 @@
             </alternatives>
           </choice>
           <part>
-            <data>void runJobs(){</data>
+            <data>	void runJobs(){
+</data>
             <subObjects>
               <choice>
                 <!-- trialCount^T, NULL^F -->
                 <alternatives>
                   <alternative>
                     <part>
-                      <data>int trialCount=0;</data>
+                      <data>		int trialCount=0;</data>
                     </part>
                     <label>
                       <tag>Trial</tag>
@@ -145,8 +147,8 @@
                                     <part>
                                       <data/>
                                       <subObjects>
-                                        <variable>r</variable>
-                                        <variable>i</variable>
+                                        <variable><name>r</name></variable>
+                                        <variable><name>i</name></variable>
                                       </subObjects>
                                     </part>
                                     <part>
@@ -179,8 +181,8 @@
                                         <part>
                                           <data>j = (Job) it.next();</data>
                                         </part>
-                                        <variable>r</variable>
-                                        <variable>i</variable>
+                                        <variable><name>r</name></variable>
+                                        <variable><name>i</name></variable>
                                       </subObjects>
                                     </part>
                                     <part>

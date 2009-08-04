@@ -141,8 +141,8 @@
                                     <part>
                                       <data/>
                                       <subObjects>
-                                        <variable>r</variable>
-                                        <variable>i</variable>
+                                        <variable><name>r</name></variable>
+                                        <variable><name>i</name></variable>
                                       </subObjects>
                                     </part>
                                     <part>
@@ -175,8 +175,8 @@
                                         <part>
                                           <data>j = (Job) it.next();</data>
                                         </part>
-                                        <variable>r</variable>
-                                        <variable>i</variable>
+                                        <variable><name>r</name></variable>
+                                        <variable><name>i</name></variable>
                                       </subObjects>
                                     </part>
                                     <part>

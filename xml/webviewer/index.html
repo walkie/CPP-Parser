@@ -84,7 +84,9 @@ var ViewerUIState = (function(){
 		this._activeTags = new Array();
 
 		if (xml != null)
+		{
 			this._xml = xml;
+		}
 		else 
 			throw new Error('The retriving XML cannot be empty.');
 
@@ -181,7 +183,7 @@ var ViewerUIState = (function(){
 				var varName = $(letElem).children("binding").children("name").text();
 				var varValue = $(letElem).children("binding").children("value");
 				$("#editorCanvas").children("document").find("variable").each(function(){
-					if (varName == $(this).text())
+					if (varName == $(this).children("name").text())
 					{
 						//alert("Look at Variable Content "+ $(this).text());
 						
@@ -204,6 +206,13 @@ var ViewerUIState = (function(){
 					else
 						$(this).show();
 				});
+			});
+
+			$(canvas).find("data").each(function(){
+				var replacedText = $(this).text().replace(/ /gi, "&nbsp;").replace(/\n/gi,"<br />").replace(/\t/gi,"&nbsp;&nbsp;&nbsp;&nbsp;");
+				//alert(replacedText);
+				$(this).empty();
+				$(this).html(replacedText);
 			});
 		}
 	};
