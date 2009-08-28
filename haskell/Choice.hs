@@ -2,7 +2,8 @@
 
 module Choice where
 
-import Data.List (elemIndex, intersperse)
+import Data.List (elemIndex, intersperse, nub)
+import Maybe (fromMaybe)
 
 import Color
 import PrintList
@@ -15,8 +16,10 @@ data Expr t a =
   | Let (Bind (Expr t a)) (Expr t a) -- let expression
   | Dim (Bind [t]) (Expr t a)        -- dimension declaration
   | Name :? [Expr t a]               -- choice
+    deriving Eq
 
 data Bind a = Name := a
+              deriving Eq
 
 var :: Bind a -> Name
 var (n := _) = n
@@ -38,12 +41,50 @@ emap f (Let b e) = Let (fmap f b) (f e)
 emap f (Dim b e) = Dim b (f e)
 emap f (n :? es) = n :? map f es
 
-type Map v = [(Name,v)]
+type Map a = [(Name,a)]
+
+dom :: Map a -> [Name]
+dom = map fst
+
+type Dims t = Map [t]
+
+type QTag t      = (Name,t)
+type Decision t  = [QTag t]
+type Variety t a = [(Decision t, Expr t a)]
+
+
+-- Note:
+--
+--   Map a is basically the same as [Bind a]
+--
 
 -- 
 -- Static analysis
 -- TODO Global dimension uniqueness check.
 --
+wellFormed :: Expr t a -> Bool
+wellFormed e = ds == nub ds
+               where ds = dom (dims e)
+
+dims :: Expr t a -> Dims t
+dims (Var _)           = []
+dims (_ :< es)         = concatMap dims es
+dims (Let (_ := e) e') = dims e++dims e'
+dims (Dim (n := ts) e) = (n,ts):dims e
+dims (_ :? es)         = concatMap dims es
+
+equiv :: (Eq t, Eq a) => Variety t a -> [[Decision t]]
+equiv = map fst . groupRight
+
+groupRight :: Eq b => [(a,b)] -> [([a],b)]
+groupRight ps = scan ps []
+  where scan []         g = g
+        scan ((x,y):ps) g = 
+          case break ((==y).snd) g of
+              (_, [])        -> scan ps (g++[([x],y)])
+              (g1,(xs,_):g2) -> scan ps (g1++(xs++[x],y):g2)
+
+
 
 -- Checks to make sure each choice contains the correct number
 -- of alternatives.
@@ -61,24 +102,44 @@ checkWith m (n :? es) =
     Nothing -> error $ "Undefined dimension: " ++ n
 checkWith m e = all (checkWith m) (subs e)
 
+
 --
--- Selection
+-- Selection and Semantics
 -- (assumes check has been performed)
 -- 
+
+sem :: (Show t,Eq t) => Expr t a -> Variety t a
+sem = variants . expand []
+
+variants :: (Eq t, Show t) =>  Expr t a -> Variety t a
+variants e = selectAll (dims e) e
+
+selectAll :: (Eq t, Show t) => Dims t -> Expr t a -> Variety t a
+selectAll []          e = [([],e)]
+selectAll ((d,ts):ds) e = [((d,t):qs,select d t e') | 
+                           (qs,e') <- selectAll ds e, t <- ts]
 
 select :: (Eq t, Show t) => Name -> t -> Expr t a -> Expr t a
 select d t (Dim (n := ts) e) | n == d =
   case elemIndex t ts of
     Just i  -> selectIx d i e
-    Nothing -> error $ "Invalid selection: " ++ n ++ "." ++ show t
+    Nothing -> error $ "Invalid selection: " ++ n ++ "." ++ showPlain t
 select d t e = emap (select d t) e
 
 selectIx :: Name -> Int -> Expr t a -> Expr t a
 selectIx d i (n :? es) | n == d = selectIx d i (es !! i)
 selectIx d i e = emap (selectIx d i) e
 
-selectAll :: (Eq t, Show t) => Map t -> Expr t a -> Expr t a
-selectAll m e = foldr (uncurry select) e m
+selectMany :: (Eq t, Show t) => Map t -> Expr t a -> Expr t a
+selectMany m e = foldr (uncurry select) e m
+
+expand :: Map (Expr t a) -> Expr t a -> Expr t a
+expand m (Var v) = fromMaybe (error ("Undefined var: "++v)) (lookup v m)
+expand m (a :< es)         = a :< map (expand m) es
+expand m (Let (v := e) e') = expand ((v,expand m e):m) e'
+expand m (Dim b e)         = Dim b (expand m e)
+expand m (n :? es)         = n :? map (expand m) es
+
 
 {- 
 -- An ugly, one-pass selectAll that doesn't use select.
@@ -130,6 +191,25 @@ twice = Dim ("Par" := ["x","y"])
       $ Let ("i" := ("Imp" :? [parse "@p + @p", parse "2 * @p"]))
       $ parse "twice @p = @i"
 
+nest1 = Dim ("A" := ["a","b"])
+      $ Dim ("X" := ["x","y"])
+      $ "A" :? [leaf "1", "X" :? [leaf "8", leaf "9"]]
+
+nest2 = Dim ("A" := ["a","b"])
+      $ Dim ("X" := ["x","y"])
+      $ Let ("v" := ("X" :? [leaf "8", leaf "9"]))
+      $ "A" :? [leaf "1", parse "@v"]
+
+noChoice1 = Dim ("A" := ["a","b"]) (leaf "constant")
+
+noChoice2 = Dim ("A" := ["a","b"]) ("A" :? [leaf "1", leaf "1"])
+
+noChoice3 = Dim ("A" := ["a","b"]) 
+          $ Let ("v" := ("A" :? [leaf "1", leaf "2"]))
+          $ Let ("w" := ("A" :? [leaf "2", leaf "1"]))
+          $ "A" :? [parse "@v + @w", parse "@w + @v"]
+
+
 --
 -- Functor instances
 --
@@ -147,6 +227,15 @@ instance Functor Bind where
 --
 -- Show instances
 --
+showPlain :: Show a => a -> String
+showPlain = filter (/='"') . show
+
+pv :: (ShowNesting a,ShowNesting t, Eq t) => Expr t a -> IO()
+pv = putStr . printList ["\n","\n\n","\n\n"] showPair . variants 
+     where showPair (qs,e) = asList (\(d,t)->d++"."++showPlain t) qs
+                             ++":\n"++show e
+psem:: (ShowNesting a,ShowNesting t, Eq t) => Expr t a -> IO()
+psem = pv . expand []
 
 instance (ShowNesting t, ShowNesting a) => Show (Expr t a) where
   show (Var v)   = colVar v
