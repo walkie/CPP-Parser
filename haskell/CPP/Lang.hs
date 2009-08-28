@@ -16,6 +16,15 @@ data Line = Data String
           | Control Directive
           deriving Eq
 
+fileName :: File -> Name
+fileName (File n _) = n
+
+fileText :: File -> Text
+fileText (File _ t) = t
+
+textLines :: Text -> [Line]
+textLines (Text ls) = ls
+
 ----------------
 -- Directives --
 ----------------
