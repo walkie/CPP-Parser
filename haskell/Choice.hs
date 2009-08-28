@@ -1,142 +1,182 @@
-{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
 
 module Choice where
 
-import Data.Maybe (fromMaybe)
-import Data.List  (elemIndex, intersperse)
+import Data.List (elemIndex, intersperse)
 
 import Color
 import PrintList
 
 type Name = String
 
-data Expr t a = Var Name
-              | a :< [Expr t a]
-              | Choose [t] [Bind t a] (Expr t a)
-              | Expr t a :! t
+data Expr t a = 
+    Var Name                         -- variable reference
+  | a :< [Expr t a]                  -- object branching
+  | Let (Bind (Expr t a)) (Expr t a) -- let expression
+  | Dim (Bind [t]) (Expr t a)        -- dimension declaration
+  | Name :? [Expr t a]               -- choice
 
-data Bind t a = Name := [Expr t a]
+data Bind a = Name := a
 
-var :: Bind t a -> Name
+var :: Bind a -> Name
 var (n := _) = n
 
-alts :: Bind t a -> [Expr t a]
-alts (_ := as) = as
+val :: Bind a -> a
+val (_ := a) = a
 
--- Static analysis:
--- Check to make sure each choice is well-defined.
+subs :: Expr t a -> [Expr t a]
+subs (Var _)   = []
+subs (_ :< es) = es
+subs (Let b e) = val b : [e]
+subs (Dim _ e) = [e]
+subs (_ :? es) = es
 
+emap :: (Expr t a -> Expr t a) -> Expr t a -> Expr t a
+emap f v@(Var _) = v
+emap f (a :< es) = a :< map f es
+emap f (Let b e) = Let (fmap f b) (f e)
+emap f (Dim b e) = Dim b (f e)
+emap f (n :? es) = n :? map f es
+
+type Map v = [(Name,v)]
+
+-- 
+-- Static analysis
+-- TODO Global dimension uniqueness check.
+--
+
+-- Checks to make sure each choice contains the correct number
+-- of alternatives.
 check :: Expr t a -> Bool
-check (e :! _)  = check e
-check (_ :< es) = all check es
-check (Choose ts bs e) = all (checkB (length ts)) bs && check e
-check _ = True
+check = checkWith []
 
-checkB :: Int -> Bind t a -> Bool
-checkB n (_ := as) = length as == n && all check as
+checkWith :: Map Int -> Expr t a -> Bool
+checkWith m (Dim (n := ts) e) =
+  case lookup n m of
+    Just _  -> error $ "Non-unique dimension: " ++ n
+    Nothing -> checkWith ((n, length ts):m) e
+checkWith m (n :? es) =
+  case lookup n m of
+    Just l  -> length es == l && all (checkWith m) es
+    Nothing -> error $ "Undefined dimension: " ++ n
+checkWith m e = all (checkWith m) (subs e)
 
--- Big-step semantics:
--- Assumes "local selection".
+--
+-- Selection
+-- (assumes check has been performed)
+-- 
 
-type Map t a = [(Name, Expr t a)]
+select :: (Eq t, Show t) => Name -> t -> Expr t a -> Expr t a
+select d t (Dim (n := ts) e) | n == d =
+  case elemIndex t ts of
+    Just i  -> selectIx d i e
+    Nothing -> error $ "Invalid selection: " ++ n ++ "." ++ show t
+select d t e = emap (select d t) e
 
-eval :: (Eq t, Show t) => Expr t a -> Expr t a
-eval = evalWith []
+selectIx :: Name -> Int -> Expr t a -> Expr t a
+selectIx d i (n :? es) | n == d = selectIx d i (es !! i)
+selectIx d i e = emap (selectIx d i) e
 
-evalWith :: (Eq t, Show t) => Map t a -> Expr t a -> Expr t a
-evalWith m v@(Var n) = fromMaybe v (lookup n m)
-evalWith m (a :< es) = a :< map (evalWith m) es
-evalWith m (Choose ts bs e) = Choose ts (map (evalWithB m) bs) (evalWith m e)
-evalWith m (e :! t) = 
-  case evalWith m e of
-    Choose ts bs body -> 
+selectAll :: (Eq t, Show t) => Map t -> Expr t a -> Expr t a
+selectAll m e = foldr (uncurry select) e m
+
+{- 
+-- An ugly, one-pass selectAll that doesn't use select.
+selectAll :: (Eq t, Show t) => Map t -> Expr t a -> Expr t a
+selectAll = selectWith []
+
+selectWith :: (Eq t, Show t) => Map Int -> Map t -> Expr t a -> Expr t a
+selectWith _ _ v@(Var _) = v
+selectWith ixs sel (a :< es) = 
+  a :< map (selectWith ixs sel) es
+selectWith ixs sel (Let (n := e) f) = 
+  Let (n := selectWith ixs sel e) (selectWith ixs sel f)
+selectWith ixs sel (Dim (n := ts) e) =
+  case lookup n sel of
+    Just t  -> 
       case elemIndex t ts of
-        Just i  -> evalWith (map (bind i) bs ++ m) body
-        Nothing -> error ("Selected tag not in choice: " ++ show t)
-    _ -> error ("Selection not applied to choice:\n") -- ++ show e)
-
-bind :: Int -> Bind t a -> (Name, Expr t a)
-bind i (n := as) = (n, as !! i)
-
-evalWithB :: (Eq t, Show t) => Map t a -> Bind t a -> Bind t a
-evalWithB m (n := as) = n := map (evalWith m) as
+        Just ix -> selectWith ((n,ix):ixs) sel e
+        Nothing -> error $ "Invalid selection: " ++ n ++ "." ++ show t
+    Nothing -> selectWith ixs sel e
+selectWith ixs sel (n :? es) =
+  case lookup n ixs of
+    Just ix -> selectWith ixs sel (es !! ix)
+    Nothing -> n :? map (selectWith ixs sel) es
+-}
 
 --
--- Following adapted from last round of code from Martin.
---
+-- Smart constructors
+-- 
 
--- smart constructors
---
 text :: [Expr t String] -> Expr t String
-text = ("":<)
+text = ("" :<)
 
 leaf :: a -> Expr t a
 leaf = (:<[])
 
--- turning textual code into an Expr value by extracting choice variables
---
+-- Turn textual code into Exprs by extracting choice variables.
 parse :: String -> Expr t String
 parse = text . map filterVars . intersperse " " . words
         where filterVars ('@':s) = Var s
               filterVars s       = leaf s
 
--- example code
 --
-x = leaf "x"
-y = leaf "y"
+-- Examples
+--
 
-vv  = parse "@v + @v"
-vvv = parse "@v + @v + @v"
-cv  = parse "@c + @v"
-v2  = parse "2 * @v"
-v3  = parse "3 * @v"
+twice = Dim ("Par" := ["x","y"])
+      $ Dim ("Imp" := ["+","*"])
+      $ Let ("p" := ("Par" :? [leaf "x", leaf "y"]))
+      $ Let ("i" := ("Imp" :? [parse "@p + @p", parse "2 * @p"]))
+      $ parse "twice @p = @i"
 
-twice = Choose ["x","y"] ["v" := [x,y]]
-      $ Choose ["+","*"] ["c" := [vv,v2]]
-      $ parse "twice @v = @c"
+--
+-- Functor instances
+--
 
-thrice = Choose ["x","y"] ["v" := [x,y]]
-       $ Choose ["+","*"] ["c" := [vv,v2], "d" := [vvv,v3]]
-       $ text (map parse ["twice @v = @c", "thrice @v = @d"])
+instance Functor (Expr t) where
+  fmap _ (Var n)   = Var n
+  fmap f (a :< es) = f a :< map (fmap f) es
+  fmap f (Let b e) = Let (fmap (fmap f) b) (fmap f e)
+  fmap f (Dim b e) = Dim b (fmap f e)
+  fmap f (n :? es) = n :? map (fmap f) es
 
-thrice2 = Choose ["x","y"] ["v" := [x,y]]
-        $ Choose ["+","*"] ["c" := [vv,v2], "d" := [cv,v3]]
-        $ text (map parse ["twice @v = @c", "thrice @v = @d"])
+instance Functor Bind where
+  fmap f (n := a) = n := f a
 
--- 
+--
 -- Show instances
 --
 
 instance (ShowNesting t, ShowNesting a) => Show (Expr t a) where
-  show (Var v)   = metaV v
+  show (Var v)   = colVar v
   show (a :< []) = showS a
   show (a :< es) = showS a ++ opAng a ++ showas es ++ clAng a
-  show (e :! t)  = show e ++ metaOp " ! " ++ (metaT (showS t))
-  show (Choose ts bs e) = 
-    metaKey "choose" ++ metaOp " <" ++ 
-    showss (map (metaT . showS) ts) ++ 
-    metaOp "> : " ++ 
-    printList (map metaOp ["",";",""]) show bs ++
-    metaKey " in\n" ++ show e
+  show (Let b e) = colKey "let " ++ show b ++ colKey " in\n" ++ show e
+  show (d :? es) = showdim d (map show es)
+  show (Dim (d := ts) e) = 
+    colKey "dim " ++ showdim d (map (colTag . showS) ts) ++
+    colKey " in\n" ++ show e
 
-instance (ShowNesting t, ShowNesting a) => Show (Bind t a) where
-  show (v := es) = metaV v ++ metaOp " = " ++ 
-    printList (map (metaOp . (:[])) "<,>") show es
-  
+instance Show a => Show (Bind a) where
+  show (v := a) = colVar v ++ colOp " = " ++ show a
+
+showdim :: Name -> [String] -> String
+showdim d ss = colDim d ++ colOp "<" ++ showss ss ++ colOp ">"
+
 showas :: (ShowNesting t, ShowNesting a) => [Expr t a] -> String
-showas xs@(x:_) = printList ["",comma (getA x),""] show xs
-
-getA :: Expr t a -> a
-getA (a :< _)                   = a
-getA (Var _)                    = error "getA fails on Var"
+showas xs = printList ["", comma (getA (head xs)), ""] show xs
+  where getA :: Expr t a -> a
+        getA = undefined
 
 showss :: [String] -> String
 showss = concat . intersperse ","
 
-metaOp  = colorString blue 
-metaKey = colorString (blue ++ boldOn)
-metaV   = colorString red 
-metaT   = colorString green
+colOp  = colorString blue 
+colKey = colorString (blue ++ boldOn)
+colVar = colorString red 
+colDim = colorString green
+colTag = colorString green
 
 class Show a => ShowNesting a where
   showS :: a -> String
@@ -144,15 +184,15 @@ class Show a => ShowNesting a where
   clAng :: a -> String
   comma :: a -> String
   showS = show
-  opAng _ = "<"
+  opAng _ = "{"
   comma _ = ", "
-  clAng _ = ">"
+  clAng _ = "}"
 
 instance ShowNesting Char where
   showS = (:[])
-  opAng _ = "<"
+  opAng _ = "{"
   comma _ = ","
-  clAng _ = ">"
+  clAng _ = "}"
 
 instance ShowNesting String where
   showS = id
