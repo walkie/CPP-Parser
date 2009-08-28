@@ -47,7 +47,7 @@ data Directive =
   | DF  DF  Include
   | DM  DM  Macro
   | DT  DT  Tokens
-  | DE  DE  Expression
+  | DE  DE  CExpr
   | DMT DMT Macro Tokens -- TODO handle function macros separately?
   | NonStandard Name Tokens
   deriving Eq
@@ -63,14 +63,14 @@ data DMT = Define  | Assert                       deriving Eq
 -- Expressions --
 -----------------
 
-data Expression = 
+data CExpr = 
     Defined Macro 
   | IntConst Int
   | CharConst Char
   | Macro Macro
-  | UnOp  UnOp  Expression
-  | BinOp BinOp Expression Expression
-  | TerIf       Expression Expression Expression
+  | UnOp  UnOp  CExpr
+  | BinOp BinOp CExpr CExpr
+  | TerIf       CExpr CExpr CExpr
   deriving Eq
 
 data UnOp  = Not | Pos | Neg | Com
@@ -84,7 +84,7 @@ data BinOp = Add | Sub | Mul | Div | Mod
 
 -- Expression evaluation
 
-eval :: Expression -> Int
+eval :: CExpr -> Int
 eval (Defined m)   = undefined -- 0 if undefined, 1 if defined
 eval (IntConst i)  = i
 eval (CharConst c) = fromEnum c
@@ -100,7 +100,7 @@ evalUnOp Pos n = n
 evalUnOp Neg n = -n
 evalUnOp Com n = complement n
 
-evalBinOp :: BinOp -> Int -> Expression -> Int
+evalBinOp :: BinOp -> Int -> CExpr -> Int
 -- Arithmetic
 evalBinOp Add = strict (+)
 evalBinOp Sub = strict (-)
@@ -128,11 +128,11 @@ dot :: (c -> d) -> (a -> b -> c) -> a -> b -> d
 dot = ((.).(.))
 
 -- For strict operators.
-strict :: (Int -> Int -> a) -> Int -> Expression -> a
+strict :: (Int -> Int -> a) -> Int -> CExpr -> a
 strict o i e = i `o` eval e
 
 -- For short circuiting operators.
-onZero :: (Expression -> a) -> (Expression -> a) -> Int -> Expression -> a
+onZero :: (CExpr -> a) -> (CExpr -> a) -> Int -> CExpr -> a
 onZero z _ 0 e = z e
 onZero _ n _ e = n e
 
@@ -171,7 +171,7 @@ instance Show Include where
   show (System n) = "<" ++ n ++ ">"
   show (Local n) = "\"" ++ n ++ "\""
 
-instance Show Expression where
+instance Show CExpr where
   show (Defined m)   = "defined " ++ m
   show (IntConst i)  = show i
   show (CharConst c) = show c

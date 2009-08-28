@@ -135,7 +135,7 @@ file = many space >> (system <|> local)
             char close
             return (f n)
 
-expr :: Parser Expression
+expr :: Parser CExpr
 expr = do e <- expr'
           cond e <|> return e
   where cond c = do reservedOp "?"
@@ -145,7 +145,7 @@ expr = do e <- expr'
                     return (TerIf c t e)
 
 -- Everything except ternary conditional operator
-expr' :: Parser Expression
+expr' :: Parser CExpr
 expr' = buildExpressionParser ops factor
   where pre s o = Prefix (reservedOp s >> return (UnOp o))
         inf s o = Infix (reservedOp s >> return (BinOp o)) AssocLeft
@@ -158,14 +158,14 @@ expr' = buildExpressionParser ops factor
                [inf "&" And'], [inf "^" Xor], [inf "|" Or'],
                [inf "&&" And], [inf "||" Or]]
 
-factor :: Parser Expression
+factor :: Parser CExpr
 factor = parens expr <|> defined <|> literal <|> macro'
   where macro' = liftM Macro macro
 
-defined :: Parser Expression
+defined :: Parser CExpr
 defined = reserved "defined" >> (parens macro <|> macro) >>= return . Defined
 
-literal :: Parser Expression
+literal :: Parser CExpr
 literal = int <|> char
   where int  = liftM (IntConst . fromInteger) integer
         char = liftM CharConst charLiteral
