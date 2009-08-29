@@ -127,7 +127,8 @@ select d t (Dim (n := ts) e) | n == d =
 select d t e = emap (select d t) e
 
 selectIx :: Name -> Int -> Expr t a -> Expr t a
-selectIx d i (n :? es) | n == d = selectIx d i (es !! i)
+selectIx d i (n :? es)          | n == d = selectIx d i (es !! i)
+selectIx d i e@(Dim (n := _) _) | n == d = e
 selectIx d i e = emap (selectIx d i) e
 
 selectMany :: (Eq t, Show t) => Map t -> Expr t a -> Expr t a
