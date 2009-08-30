@@ -1,33 +1,122 @@
 
 module CPP.Translator where
 
-import Control.Monad (liftM2, replicateM)
-
+import Control.Monad (liftM, liftM2, replicateM)
 import Text.ParserCombinators.Parsec hiding (Line)
-import Text.ParserCombinators.Parsec.Pos (incSourceLine)
 
-import Choice hiding (Name, parse, text)
-import CPP.Lang
+import CPP.Cond
 
-type CPPExpr    = Expr Expression Text
-type Translator = GenParser Line Int
+import CPP.Lang hiding (Name, UnOp(..), BinOp(..))
+import qualified CPP.Lang as C
+
+--import Choice hiding (parse, text)
+--import PointFree
+
+-- First pass: Extract conditional structure.
+
+type Extract a = GenParser Line (ES a)
+type LinesTo a = Int -> [Line] -> a
+type ES a = (Int, LinesTo a)
+
+keepText :: LinesTo Text
+keepText _ = Text
+
+discardText :: LinesTo Int
+discardText = const
+
+-- The primitive line parser.  Match a line for which the predicate is true.
+line :: (Line -> Bool) -> GenParser Line s Line
+line f = tokenPrim show (\p _ _ -> incSourceLine p 1) 
+                   (\l -> if f l then Just l else Nothing)
+
+-- Match a block of lines at the same nesting level.
+block :: Extract a [Cond CExpr a]
+block = (liftM2 (:) text block)
+    <|> (liftM2 (:) cond block)
+    <|> return []
+
+-- Match one or more non-conditional lines.
+text :: Extract a (Cond c a)
+text = do ls <- many1 (line (not . isConditional))
+          (i,f) <- getState
+          setState (i+1,f)
+          return (CD (f i ls))
+
+-- Match a conditional expression.
+cond :: Extract a (Cond CExpr a)
+cond = do ifL   <- condLine isIf
+          thenB <- block
+          elifs <- many (liftM2 (,) (condLine isElif) block)
+          melse <- option [] (line isElse >> block)
+          return (buildCond ifL thenB elifs melse)
+  where condLine f = liftM condition (line f)
+
+buildCond :: CExpr -> [Cond CExpr a] -> 
+             [(CExpr, [Cond CExpr a])] -> [Cond CExpr a] -> Cond CExpr a
+buildCond c t [] [] = IT  c t
+buildCond c t [] e  = ITE c t e
+buildCond c t ((eic,eit):eis) e = ITE c t [buildCond eic eit eis e]
+
+isIf :: Line -> Bool
+isIf (Control (DM Ifdef  _)) = True
+isIf (Control (DM Ifndef _)) = True
+isIf (Control (DE If     _)) = True
+isIf _                       = False
+
+isElif :: Line -> Bool
+isElif (Control (DE Elif _)) = True
+isElif _                     = False
+
+isElse :: Line -> Bool
+isElse (Control (D Else)) = True
+isElse _                  = False
+
+isEndif :: Line -> Bool
+isEndif (Control (D Endif)) = True
+isEndif _                   = False
+
+isConditional :: Line -> Bool
+isConditional l = any ($ l) [isIf, isElif, isElse, isEndif]
+
+condition :: Line -> CExpr
+condition (Control (DM Ifdef  m)) = Defined m
+condition (Control (DM Ifndef m)) = UnOp C.Not (Defined m)
+condition (Control (DE _      e)) = e
+condition (Control (D  Else    )) = IntConst 1
+
+{-
+type CPPExpr    = Expr CExpr Text
+type Translator = GenParser Line TS
+
+data TS = TS Int [Name]
+
+initTS :: TS
+initTS = undefined
+
+runTranslator :: Translator a -> TS -> Name -> [Line] -> (a, TS)
+runTranslator t = either (error . show) id `o3` runParser t'
+  where t' = liftM2 (,) t getState
 
 translate :: Translator a -> Name -> [Line] -> a
-translate t n ls = either (error . show) id (runParser t 0 n ls)
+translate t = fst `o2` runTranslator t initTS
+-}
 
+{-
 newId :: String -> Translator Name
 newId v = do i <- getState
              setState (i+1)
              return (v ++ show i)
 
-cppToChoice :: File -> CPPExpr
-cppToChoice (File n (Text ls)) = 
-    Text [Data title] :< translate parts n ls
-  where title = "/* FILE: " ++ n ++ " */"
+cppToChoice :: [File] -> CPPExpr
+cppToChoice fs = concatMap 
 
-line :: (Line -> Bool) -> Translator Line
-line f = tokenPrim show (\p _ _ -> incSourceLine p 1) 
-                   (\l -> if f l then Just l else Nothing)
+files :: [File] -> Translator CPPExpr
+
+file :: Name -> Translator CPPExpr
+file n = do setPosition (newPos n 0 0)
+            ps <- parts
+            return (Text [Data title] :< ps)
+  where title = "/* FILE: " ++ n ++ " */"
 
 parts :: Translator [CPPExpr]
 parts = (liftM2 (:) text parts)
@@ -53,38 +142,14 @@ cond = do ifL <- line isIf
 
 block :: (Line -> Bool) -> Translator (Line, [CPPExpr])
 block p = liftM2 (,) (line p) parts
+-}
 
-tag :: Line -> Expression
-tag (Control (DM Ifdef  m)) = Defined m
-tag (Control (DM Ifndef m)) = UnOp Not (Defined m)
-tag (Control (DE _      e)) = e
-tag (Control (D  Else    )) = IntConst 1
-
+{-
 body :: [CPPExpr] -> CPPExpr
 body []  = leaf (Text [])
 body [e] = e
 body es  = Text [] :< es
-
-isIf :: Line -> Bool
-isIf (Control (DM Ifdef  _)) = True
-isIf (Control (DM Ifndef _)) = True
-isIf (Control (DE If     _)) = True
-isIf _                       = False
-
-isElif :: Line -> Bool
-isElif (Control (DE Elif _)) = True
-isElif _                     = False
-
-isElse :: Line -> Bool
-isElse (Control (D Else)) = True
-isElse _                  = False
-
-isEndif :: Line -> Bool
-isEndif (Control (D Endif)) = True
-isEndif _                   = False
-
-isConditional :: Line -> Bool
-isConditional l = any ($ l) [isIf, isElif, isElse, isEndif]
+-}
 
 {-
 when :: (a -> Bool) -> (a -> b) -> a -> Maybe b
