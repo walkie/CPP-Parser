@@ -136,6 +136,41 @@ onZero :: (CExpr -> a) -> (CExpr -> a) -> Int -> CExpr -> a
 onZero z _ 0 e = z e
 onZero _ n _ e = n e
 
+---------------
+-- Functions --
+---------------
+
+-- Predicates for identifying conditional directives.
+
+isIf :: Line -> Bool
+isIf (Control (DM Ifdef  _)) = True
+isIf (Control (DM Ifndef _)) = True
+isIf (Control (DE If     _)) = True
+isIf _                       = False
+
+isElif :: Line -> Bool
+isElif (Control (DE Elif _)) = True
+isElif _                     = False
+
+isElse :: Line -> Bool
+isElse (Control (D Else)) = True
+isElse _                  = False
+
+isEndif :: Line -> Bool
+isEndif (Control (D Endif)) = True
+isEndif _                   = False
+
+isConditional :: Line -> Bool
+isConditional l = any ($ l) [isIf, isElif, isElse, isEndif]
+
+-- Extract the condition from a conditional directive.
+condition :: Line -> CExpr
+condition (Control (DM Ifdef  m)) = Defined m
+condition (Control (DM Ifndef m)) = UnOp Not (Defined m)
+condition (Control (DE _      e)) = e
+condition (Control (D  Else    )) = IntConst 1
+condition l = error $ "Not a conditional directive: " ++ show l
+
 ---------------------
 -- Pretty printing --
 ---------------------

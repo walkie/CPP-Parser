@@ -57,33 +57,6 @@ buildCond c t [] [] = IT  c t
 buildCond c t [] e  = ITE c t e
 buildCond c t ((eic,eit):eis) e = ITE c t [buildCond eic eit eis e]
 
-isIf :: Line -> Bool
-isIf (Control (DM Ifdef  _)) = True
-isIf (Control (DM Ifndef _)) = True
-isIf (Control (DE If     _)) = True
-isIf _                       = False
-
-isElif :: Line -> Bool
-isElif (Control (DE Elif _)) = True
-isElif _                     = False
-
-isElse :: Line -> Bool
-isElse (Control (D Else)) = True
-isElse _                  = False
-
-isEndif :: Line -> Bool
-isEndif (Control (D Endif)) = True
-isEndif _                   = False
-
-isConditional :: Line -> Bool
-isConditional l = any ($ l) [isIf, isElif, isElse, isEndif]
-
-condition :: Line -> CExpr
-condition (Control (DM Ifdef  m)) = Defined m
-condition (Control (DM Ifndef m)) = UnOp C.Not (Defined m)
-condition (Control (DE _      e)) = e
-condition (Control (D  Else    )) = IntConst 1
-
 {-
 type CPPExpr    = Expr CExpr Text
 type Translator = GenParser Line TS
