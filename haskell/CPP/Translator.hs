@@ -12,11 +12,16 @@ import qualified CPP.Lang as C
 --import Choice hiding (parse, text)
 --import PointFree
 
--- First pass: Extract conditional structure.
+--
+-- Phase 1: Extract conditional structure from parsed CPP.
+--
 
 type Extract a = GenParser Line (ES a)
 type LinesTo a = Int -> [Line] -> a
 type ES a = (Int, LinesTo a)
+
+-- The following two functions are used to indicate whether the controlled text
+-- should be retained, or whether this data should be replaced with integer ids.
 
 keepText :: LinesTo Text
 keepText _ = Text
@@ -25,7 +30,7 @@ discardText :: LinesTo Int
 discardText = const
 
 -- The primitive line parser.  Match a line for which the predicate is true.
-line :: (Line -> Bool) -> GenParser Line s Line
+line :: (Line -> Bool) -> Extract a Line
 line f = tokenPrim show (\p _ _ -> incSourceLine p 1) 
                    (\l -> if f l then Just l else Nothing)
 
@@ -48,14 +53,11 @@ cond = do ifL   <- condLine isIf
           thenB <- block
           elifs <- many (liftM2 (,) (condLine isElif) block)
           melse <- option [] (line isElse >> block)
-          return (buildCond ifL thenB elifs melse)
+          return (build ifL thenB elifs melse)
   where condLine f = liftM condition (line f)
-
-buildCond :: CExpr -> [Cond CExpr a] -> 
-             [(CExpr, [Cond CExpr a])] -> [Cond CExpr a] -> Cond CExpr a
-buildCond c t [] [] = IT  c t
-buildCond c t [] e  = ITE c t e
-buildCond c t ((eic,eit):eis) e = ITE c t [buildCond eic eit eis e]
+        build c t [] [] = IT  c t
+        build c t [] e  = ITE c t e
+        build c t ((eic,eit):eis) e = ITE c t [build eic eit eis e]
 
 {-
 type CPPExpr    = Expr CExpr Text
