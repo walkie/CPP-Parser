@@ -11,7 +11,13 @@ import CPP.Lang
 import CPP.Parser
 import CPP.Translator
 
-main = do ps <- getArgs
+getPaths :: IO [FilePath]
+getPaths = do as <- getArgs
+              case as of
+                ("-f":[f]) -> readFile f >>= return . lines
+                _ -> return as
+
+main = do ps <- getPaths
           fs <- mapM (unsafeInterleaveIO . parseFile) ps
           let cs = extract discardText fs
           --let cs = extract keepText fs
