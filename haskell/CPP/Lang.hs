@@ -1,7 +1,7 @@
 module CPP.Lang where
 
 import Data.Bits
-import Data.List (intersperse)
+import Data.List (intersperse,nub)
 
 
 type Name = String
@@ -81,6 +81,14 @@ data BinOp = Add | Sub | Mul | Div | Mod
            | CEq | NEq | And | Or
            | ShL | ShR | And'| Or' | Xor
   deriving Eq
+
+macros :: CExpr -> [Macro]
+macros (Defined m) = [m]
+macros (Macro   m) = [m]
+macros (UnOp  _ e)   = nub (macros e)
+macros (BinOp _ e f) = nub (concatMap macros [e,f])
+macros (TerIf e f g) = nub (concatMap macros [e,f,g])
+macros _ = []
 
 -- Expression evaluation
 
