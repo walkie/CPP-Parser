@@ -45,14 +45,15 @@ boolize (BinOp C.And l r) = boolize l `mand` boolize r
 boolize (BinOp C.Or  l r) = boolize l `mor`  boolize r
 boolize _ = Nothing
 
--- Extract all of the variable names from a boolean expression.
-vars :: BExpr -> [Name]
-vars (Con _) = []
-vars (Var v) = [v]
-vars (Not e) = vars e
-vars (And e f) = vars e ++ vars f
-vars (Or  e f) = vars e ++ vars f
+-- Extract all variable names from a boolean expression.
+exprVars :: BExpr -> [Name]
+exprVars (Con _) = []
+exprVars (Var v) = [v]
+exprVars (Not e) = exprVars e
+exprVars (And e f) = nub $ exprVars e ++ exprVars f
+exprVars (Or  e f) = nub $ exprVars e ++ exprVars f
 
+-- Extract all of the conditions from a conditional expression.
 conditions :: Cond c a -> [c]
 conditions (CD _) = []
 conditions (IT c t) = c : concatMap conditions t
@@ -78,5 +79,5 @@ simplify = concatMap simp
         simp (ITE (Con False) t e) = simplify e
         simp (ITE (Var v) t e) = [SC v (simplify t) (simplify e)]
         simp (ITE (Not c) t e) = simp (ITE c e t)
-        simp (ITE (And c d) t e) = simp (ITE c [ITE d t e] e)
+        simp (ITE (And c d) t e) = simp (ITE c [ITE d t e] e) -- data duplication!
         simp (ITE (Or  c d) t e) = simp (ITE c t [ITE d t e]) -- data duplication!
