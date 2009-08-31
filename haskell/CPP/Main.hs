@@ -11,18 +11,25 @@ import CPP.Lang
 import CPP.Parser
 import CPP.Translator
 
-getPaths :: IO [FilePath]
-getPaths = do as <- getArgs
-              case as of
-                ("-f":[f]) -> readFile f >>= return . lines
-                _ -> return as
+parseAndTranslate :: Stored a => LinesTo a -> [FilePath] -> IO (Expr Bool a,[CExpr])
+parseAndTranslate f ps = do
+    fs <- mapM (unsafeInterleaveIO . parseFile) ps
+    let cs = extract f fs
+    let (cs',bad) = convert cs
+    let e = translate cs'
+    return (e,bad)
 
-main = do ps <- getPaths
-          fs <- mapM (unsafeInterleaveIO . parseFile) ps
-          let cs = extract discardText fs
-          --let cs = extract keepText fs
-          let (cs',bad) = convert cs
-          let e = translate cs'
+readPathsFromFile :: FilePath -> IO [FilePath]
+readPathsFromFile f = readFile f >>= return . lines
+
+mainGetPaths :: IO [FilePath]
+mainGetPaths = do as <- getArgs
+                  case as of
+                    ("-f":[f]) -> readPathsFromFile f
+                    _ -> return as
+
+main = do ps <- mainGetPaths
+          (e,bad) <- parseAndTranslate discardText ps
           let ds = dom (dims e)
           let badms = nub (concatMap macros bad)
           let overlap = ds `intersect` badms
