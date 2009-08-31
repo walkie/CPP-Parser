@@ -14,6 +14,8 @@ type Name = String
 data Cond c a = CD  a
               | IT  c [Cond c a]
               | ITE c [Cond c a] [Cond c a]
+              -- following needed for translation into Choice-calc (kinda hacky)
+              | CRef Name
               deriving (Eq, Show)
 
 -------------------------
@@ -39,10 +41,15 @@ boolize :: CExpr -> Maybe BExpr
 boolize (IntConst  i) = mcon (i /= 0)
 boolize (CharConst c) = mcon (fromEnum c /= 0)
 boolize (Defined   v) = mvar v
+boolize (Macro     m) = mvar m
 boolize (TerIf c t e) = boolize c `mand` boolize t `mor` boolize e
 boolize (UnOp  C.Not e)   = mnot (boolize e)
 boolize (BinOp C.And l r) = boolize l `mand` boolize r
 boolize (BinOp C.Or  l r) = boolize l `mor`  boolize r
+boolize (BinOp C.CEq (Macro m) (IntConst 0)) = mnot (mvar m)
+boolize (BinOp C.CEq (IntConst 0) (Macro m)) = mnot (mvar m)
+boolize (BinOp C.NEq (Macro m) (IntConst 0)) = mvar m
+boolize (BinOp C.NEq (IntConst 0) (Macro m)) = mvar m
 boolize _ = Nothing
 
 -- Extract all variable names from a boolean expression.
