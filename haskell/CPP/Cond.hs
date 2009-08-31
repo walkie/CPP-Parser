@@ -4,13 +4,12 @@ module CPP.Cond where
 import Control.Monad (liftM,liftM2)
 import Data.List (nub)
 
-import Choice hiding (Var)
-import qualified Choice (Expr(..))
-
 import CPP.Lang (CExpr(..))
 import qualified CPP.Lang as C
 
 -- Conditional expressions.
+
+type Name = String
 
 data Cond c a = CD  a
               | IT  c [Cond c a]
@@ -59,26 +58,9 @@ conditions (CD _) = []
 conditions (IT c t) = c : concatMap conditions t
 conditions (ITE c t e) = c : concatMap conditions (t ++ e)
 
-
-
-ref = Choice.Var
-
-dim :: Name -> Expr Bool a -> Expr Bool a
-dim n = Dim (n := [True,False])
-
-asChoice :: ([Expr Bool a] -> Expr Bool a) -> [Cond BExpr a] -> Expr Bool a
-asChoice f cs = foldr ($) (body cs) dims
-  where dims = map dim (nub (concatMap vars (concatMap conditions cs)))
-        body = f . conds
-        conds = concatMap cond
-        cond (CD d) = [leaf d]
-        cond (IT c t) = cond (ITE c t [])
-        cond (ITE (Con True)  t e) = conds t
-        cond (ITE (Con False) t e) = conds e
-        cond (ITE (Var v) t e) = [v :? [body t, body e]]
-        cond (ITE (Not c) t e) = cond (ITE c e t)
-        cond (ITE (And c d) t e) = cond (ITE c [ITE d t e] e)
-        cond (ITE (Or  c d) t e) = [Let ("v" := body t) (body [ITE c t [ITE d t e]])] -- messed up
+-- Extract all variable names from a list of conditional expression.
+condVars :: [Cond BExpr a] -> [Name]
+condVars = nub . concatMap exprVars . concatMap conditions
 
 --
 -- Translating into "simple" conditional expressions.
