@@ -6,6 +6,7 @@ import Data.List (dropWhile, isPrefixOf)
 
 import Text.ParserCombinators.Parsec hiding (Line)
 import Text.ParserCombinators.Parsec.Expr
+import Text.ParserCombinators.Parsec.Pos (newPos)
 import Text.ParserCombinators.Parsec.Token (LanguageDef(..),TokenParser,makeTokenParser)
 import qualified Text.ParserCombinators.Parsec.Token as Lex
 
@@ -26,7 +27,7 @@ import CPP.Lang
 -- ToSC project.
 
 parseCPP :: FilePath -> String -> File
-parseCPP p = File p . text p . splice . lines
+parseCPP p = File p . parseLines p . splice . lines
 
 parseFile :: FilePath -> IO File
 parseFile p = liftM (parseCPP p) (readFile p)
@@ -78,8 +79,12 @@ reserved = Lex.reserved lexer
 -- Parser --
 ------------
 
-text :: FilePath -> [String] -> Text
-text p = Text . map (either (error . show) id . parse line p)
+parseLines :: FilePath -> [String] -> Text
+parseLines p ls = Text $ map (try . parseLine line p) (zip [1..] ls)
+  where try = either (error . show) id
+
+parseLine :: Parser a -> FilePath -> (Int, String) -> Either ParseError a
+parseLine p f (l,s) = parse (setPosition (newPos f l 0) >> p) f s
 
 line :: Parser Line
 line = do sp <- many space
