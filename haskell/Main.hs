@@ -1,20 +1,24 @@
-{-# LANGUAGE FlexibleInstances #-}
-module CPP.Main where
+{-# LANGUAGE FlexibleContexts, FlexibleInstances, TypeFamilies #-}
+module Main where
 
 import Data.List (intersect,nub)
 
 import System.Environment
 import System.IO.Unsafe
 
-import Choice
 import CPP.Lang
 import CPP.Parser
 import CPP.Translator
 
-parseAndTranslate :: Stored a => LinesTo a -> [FilePath] -> IO (Expr Bool a,[CExpr])
-parseAndTranslate f ps = do
-    fs <- mapM (unsafeInterleaveIO . parseFile) ps
-    let cs = extract f fs
+import Choice
+import Transform
+
+parseAndTranslate :: (DataIs a, Stored (StoreAs a)) => 
+                     KeepData a -> [FilePath] -> 
+                     IO (Expr Bool (StoreAs a),[CExpr])
+parseAndTranslate k ps = do
+    fs <- mapM (unsafeInterleaveIO . parseFile k) ps
+    let cs = extract fs
     let (cs',bad) = convert cs
     let e = translate cs'
     return (e,bad)
@@ -29,7 +33,8 @@ mainGetPaths = do as <- getArgs
                     _ -> return as
 
 main = do ps <- mainGetPaths
-          (e,bad) <- parseAndTranslate discardText ps
+          --(e,bad) <- parseAndTranslate keep ps
+          (e,bad) <- parseAndTranslate discard ps
           let ds = dom (dims e)
           let badms = nub (concatMap macros bad)
           let overlap = ds `intersect` badms
@@ -48,7 +53,7 @@ instance ShowNesting Bool
 instance ShowNesting (Maybe Int) where
   showS (Just i) = show i
   showS Nothing  = "X"
-instance ShowNesting Text where
+instance ShowData a => ShowNesting (Text a) where
   showS = show
   opAng _ = ""
   comma _ = ""

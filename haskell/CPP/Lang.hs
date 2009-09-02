@@ -1,3 +1,5 @@
+{-# LANGUAGE TypeSynonymInstances #-}
+
 module CPP.Lang where
 
 import Data.Bits
@@ -6,23 +8,23 @@ import Data.List (intersperse,nub)
 
 type Name = String
 
-data File = File Name Text deriving Eq
+data File a = File Name (Text a) deriving Eq
 
 -- A block of input which may or may not contain directives.
-data Text = Text [Line] deriving Eq
+data Text a = Text [Line a] deriving Eq
 
 -- A line of input, post gluing of slash-lines.
-data Line = Data String 
-          | Control Directive
-          deriving Eq
+data Line a = Data a
+            | Control Directive
+            deriving Eq
 
-fileName :: File -> Name
+fileName :: File a -> Name
 fileName (File n _) = n
 
-fileText :: File -> Text
+fileText :: File a -> Text a
 fileText (File _ t) = t
 
-textLines :: Text -> [Line]
+textLines :: Text a -> [Line a]
 textLines (Text ls) = ls
 
 ----------------
@@ -151,29 +153,29 @@ onZero _ n _ e = n e
 
 -- Predicates for identifying conditional directives.
 
-isIf :: Line -> Bool
+isIf :: Line a -> Bool
 isIf (Control (DM Ifdef  _)) = True
 isIf (Control (DM Ifndef _)) = True
 isIf (Control (DE If     _)) = True
 isIf _                       = False
 
-isElif :: Line -> Bool
+isElif :: Line a -> Bool
 isElif (Control (DE Elif _)) = True
 isElif _                     = False
 
-isElse :: Line -> Bool
+isElse :: Line a -> Bool
 isElse (Control (D Else)) = True
 isElse _                  = False
 
-isEndif :: Line -> Bool
+isEndif :: Line a -> Bool
 isEndif (Control (D Endif)) = True
 isEndif _                   = False
 
-isConditional :: Line -> Bool
+isConditional :: Line a -> Bool
 isConditional l = any ($ l) [isIf, isElif, isElse, isEndif]
 
 -- Extract the condition from a conditional directive.
-condition :: Line -> CExpr
+condition :: ShowData a => Line a -> CExpr
 condition (Control (DM Ifdef  m)) = Defined m
 condition (Control (DM Ifndef m)) = UnOp Not (Defined m)
 condition (Control (DE _      e)) = e
@@ -190,14 +192,23 @@ sep = concat . intersperse " "
 paren :: Show a => a -> String
 paren a = "(" ++ show a ++ ")"
 
-instance Show Line where
-  show (Data s)    = s
+class Show a => ShowData a where
+  showData :: a -> String
+  showData = show
+
+instance ShowData String where
+  showData s = s
+
+instance ShowData ()
+
+instance ShowData a => Show (Line a) where
+  show (Data a)    = showData a
   show (Control d) = show d
 
-instance Show Text where
+instance ShowData a => Show (Text a) where
   show (Text ls) = unlines (map show ls)
 
-instance Show File where
+instance ShowData a => Show (File a) where
   show (File p t) = name ++ show t
     where name = "/** GREPME File: " ++ p ++ " */"
 

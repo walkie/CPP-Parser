@@ -27,11 +27,11 @@ import CPP.Lang
 -- would pass through to later stages).  Phase 4 is outside the scope of the 
 -- ToSC project.
 
-parseCPP :: FilePath -> String -> File
-parseCPP p = File p . parseLines p . splice . lines
+parseCPP :: KeepData a -> FilePath -> String -> File a
+parseCPP k p = File p . parseLines k p . splice . lines
 
-parseFile :: FilePath -> IO File
-parseFile p = liftM (parseCPP p) (readFile p)
+parseFile :: KeepData a -> FilePath -> IO (File a)
+parseFile k p = liftM (parseCPP k p) (readFile p)
 
 -------------------
 -- Line Splicing --
@@ -81,8 +81,16 @@ comma = Lex.comma lexer
 -- Parser --
 ------------
 
-parseLines :: FilePath -> [String] -> Text
-parseLines p ls = Text $ map (try . parseLine line p) (zip [1..] ls)
+type KeepData a = String -> a
+
+keep :: KeepData String
+keep = id
+
+discard :: KeepData ()
+discard = const ()
+
+parseLines :: KeepData a -> FilePath -> [String] -> Text a
+parseLines k p ls = Text $ map (try . parseLine (line k) p) (zip [1..] ls)
   where try = either (error . show) id
 
 parseLine :: Parser a -> FilePath -> (Int, String) -> Either ParseError a
@@ -91,11 +99,11 @@ parseLine p f (l,s) = case parse (setPosition (newPos f l 0) >> p) f s of
     Left err -> if (Expect "end of comment") `elem` errorMessages err
                 then parseLine p f (l,s++"*/") else Left err
 
-line :: Parser Line
-line = do sp <- many space
-          control <|> text sp
+line :: KeepData a -> Parser (Line a)
+line k = do sp <- many space
+            control <|> text sp
   where control = directive >>= return . Control
-        text sp = rest >>= return . Data . (sp ++)
+        text sp = rest >>= return . Data . k . (sp++)
 
 directive :: Parser Directive
 directive = do

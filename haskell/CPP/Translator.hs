@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeFamilies, TypeSynonymInstances #-}
 
 module CPP.Translator where
 
@@ -16,46 +17,57 @@ import qualified Choice
 -- Phase 1: Extract conditional structure from parsed CPP.
 --
 
-type Extract a = GenParser Line (ES a)
-type LinesTo a = Int -> [Line] -> a
-type ES a = (Int, LinesTo a)
+type Extract a = GenParser (Line a) Int
 
 -- Execute this phase of translation.
-extract :: LinesTo a -> [File] -> [Cond CExpr a]
-extract l fs = either (error . show) id $
-               runParser block (0,l) "" (concatMap fileText fs)
-  where fileText (File n (Text ls)) = Data ("/* GREPME File: " ++ n ++ " */") : ls
+extract :: DataIs a => [File a] -> [Cond CExpr (StoreAs a)]
+extract fs = either (error . show) id $
+             runParser top 0 "" (concatMap (textLines . fileText) fs)
+  --where fileText (File n (Text ls)) = Data ("/* GREPME File: " ++ n ++ " */") : ls
 
--- The following two functions are used to indicate whether the controlled text
+-- The following two classes are used to determine whether the controlled text
 -- should be retained, or whether this data should be replaced with integer ids.
 
-keepText :: LinesTo Text
-keepText _ = Text
+class ShowData a => DataIs a where
+  type StoreAs a
+  storeData :: Int -> [Line a] -> StoreAs a
 
-discardText :: LinesTo (Maybe Int)
-discardText _ [] = Nothing
-discardText i _  = Just i
+instance DataIs String where
+  type StoreAs String = Text String
+  storeData _ = Text
+
+instance DataIs () where
+  type StoreAs () = Maybe Int
+  storeData _ [] = Nothing
+  storeData i _  = Just i
 
 -- The primitive line parser.  Match a line for which the predicate is true.
-line :: (Line -> Bool) -> Extract a Line
+line :: DataIs a => (Line a -> Bool) -> Extract a (Line a)
 line f = tokenPrim show (\p _ _ -> incSourceLine p 1) 
                    (\l -> if f l then Just l else Nothing)
 
+top :: DataIs a => Extract a [Cond CExpr (StoreAs a)]
+top = do b <- block 
+         case b of
+           [] -> (line isEndif >> top) -- GCC allows extra #endifs...
+                 <|> (eof >> return [])
+           _  -> liftM (b ++) top
+
 -- Match a block of lines at the same nesting level.
-block :: Extract a [Cond CExpr a]
+block :: DataIs a => Extract a [Cond CExpr (StoreAs a)]
 block = (liftM2 (:) text block)
     <|> (liftM2 (:) cond block)
     <|> return []
 
 -- Match one or more non-conditional lines.
-text :: Extract a (Cond c a)
+text :: DataIs a => Extract a (Cond c (StoreAs a))
 text = do ls <- many1 (line (not . isConditional))
-          (i,f) <- getState
-          setState (i+1,f)
-          return (CD (f i ls))
+          i  <- getState
+          setState (i+1)
+          return (CD (storeData i ls))
 
 -- Match a conditional expression.
-cond :: Extract a (Cond CExpr a)
+cond :: DataIs a => Extract a (Cond CExpr (StoreAs a))
 cond = do ifL   <- condLine isIf
           thenB <- block
           elifs <- many (liftM2 (,) (condLine isElif) block)
@@ -101,7 +113,7 @@ fmap2 = fmap . fmap
 type Translate = State Int
 
 class    Stored a         where empty :: a
-instance Stored Text      where empty = Text []
+instance Stored (Text a)  where empty = Text []
 instance Stored (Maybe a) where empty = Nothing
 
 translate :: Stored a => [Cond BExpr a] -> Expr Bool a
