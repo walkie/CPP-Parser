@@ -68,6 +68,7 @@ data CExpr =
   | IntConst Int
   | CharConst Char
   | Macro Macro
+  | MFun Macro [CExpr]
   | UnOp  UnOp  CExpr
   | BinOp BinOp CExpr CExpr
   | TerIf       CExpr CExpr CExpr
@@ -220,6 +221,7 @@ instance Show CExpr where
   show (IntConst i)  = show i
   show (CharConst c) = show c
   show (Macro m)     = m
+  show (MFun m as)   = m ++ (paren . concat . intersperse "," . map show) as
   show (UnOp o e)    = show o ++ paren e
   show (BinOp o l r) = sep [paren l, show o, paren r]
   show (TerIf c t e) = sep [paren c, "?", paren t, ":", paren e]

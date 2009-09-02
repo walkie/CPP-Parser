@@ -75,6 +75,7 @@ integer = Lex.integer lexer
 parens = Lex.parens lexer
 reservedOp = Lex.reservedOp lexer
 reserved = Lex.reserved lexer
+comma = Lex.comma lexer
 
 ------------
 -- Parser --
@@ -170,7 +171,12 @@ expr' = buildExpressionParser ops factor
 
 factor :: Parser CExpr
 factor = parens expr <|> defined <|> literal <|> macro'
-  where macro' = liftM Macro macro
+  where macro' = do m <- macro
+                    as <- try (parens args) <|> return []
+                    return (if null as then Macro m else MFun m as)
+        args = do a <- expr
+                  as <- try (comma >> args) <|> return []
+                  return (a:as)
 
 defined :: Parser CExpr
 defined = reserved "defined" >> (parens macro <|> macro) >>= return . Defined
