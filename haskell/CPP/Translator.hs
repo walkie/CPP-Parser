@@ -24,7 +24,7 @@ type ES a = (Int, LinesTo a)
 extract :: LinesTo a -> [File] -> [Cond CExpr a]
 extract l fs = either (error . show) id $
                runParser block (0,l) "" (concatMap fileText fs)
-  where fileText (File n (Text ls)) = Data ("/* FILE: " ++ n ++ " */") : ls
+  where fileText (File n (Text ls)) = Data ("/* GREPME File: " ++ n ++ " */") : ls
 
 -- The following two functions are used to indicate whether the controlled text
 -- should be retained, or whether this data should be replaced with integer ids.

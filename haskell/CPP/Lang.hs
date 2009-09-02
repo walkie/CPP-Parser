@@ -199,8 +199,7 @@ instance Show Text where
 
 instance Show File where
   show (File p t) = name ++ show t
-    where name = unlines ['/':stars, " * "++p++" *", ' ':stars++"/"]
-          stars = replicate (length p + 4) '*'
+    where name = "/** GREPME File: " ++ p ++ " */"
 
 instance Show Directive where
   show (D d) = show d
