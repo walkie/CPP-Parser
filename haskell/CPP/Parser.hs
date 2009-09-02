@@ -96,7 +96,7 @@ directive :: Parser Directive
 directive = do
     char '#'
     many space
-    directive <- identifier
+    directive <- identifier <|> string ""
     case directive of
       "else"         -> d Else
       "endif"        -> d Endif
