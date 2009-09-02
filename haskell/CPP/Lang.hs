@@ -38,7 +38,7 @@ type Macro = String
 type Tokens = String
 
 -- A file argument to the #include family of directives.
-data Include = System Name | Local Name 
+data Include = System Name | Local Name | IMacro Macro
   deriving Eq
 
 -- A command to the C-preprocessor.
@@ -212,7 +212,8 @@ instance Show Directive where
 
 instance Show Include where
   show (System n) = "<" ++ n ++ ">"
-  show (Local n) = "\"" ++ n ++ "\""
+  show (Local  n) = "\"" ++ n ++ "\""
+  show (IMacro m) = m
 
 instance Show CExpr where
   show (Defined m)   = "defined " ++ m

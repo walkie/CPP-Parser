@@ -131,9 +131,10 @@ rest :: Parser Tokens
 rest = many anyToken
 
 file :: Parser Include
-file = many space >> (system <|> local)
+file = many space >> (system <|> local <|> imacro)
   where system = filename '<' '>' System
         local  = filename '"' '"' Local
+        imacro = liftM IMacro macro
         filename open close f = do
             char open
             n <- many (satisfy (/= close))
