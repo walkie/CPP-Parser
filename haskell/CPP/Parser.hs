@@ -5,6 +5,7 @@ import Data.Char (isSpace)
 import Data.List (dropWhile, isPrefixOf)
 
 import Text.ParserCombinators.Parsec hiding (Line)
+import Text.ParserCombinators.Parsec.Error
 import Text.ParserCombinators.Parsec.Expr
 import Text.ParserCombinators.Parsec.Pos (newPos)
 import Text.ParserCombinators.Parsec.Token (LanguageDef(..),TokenParser,makeTokenParser)
@@ -84,7 +85,10 @@ parseLines p ls = Text $ map (try . parseLine line p) (zip [1..] ls)
   where try = either (error . show) id
 
 parseLine :: Parser a -> FilePath -> (Int, String) -> Either ParseError a
-parseLine p f (l,s) = parse (setPosition (newPos f l 0) >> p) f s
+parseLine p f (l,s) = case parse (setPosition (newPos f l 0) >> p) f s of
+    Right a  -> Right a
+    Left err -> if (Expect "end of comment") `elem` errorMessages err
+                then parseLine p f (l,s++"*/") else Left err
 
 line :: Parser Line
 line = do sp <- many space
@@ -176,3 +180,9 @@ literal = int <|> char
   where int  = liftM (IntConst . fromInteger) integer
         char = liftM CharConst charLiteral
         
+instance Eq Message where
+  SysUnExpect m == SysUnExpect n = m == n
+  UnExpect    m == UnExpect    n = m == n
+  Expect      m == Expect      n = m == n
+  Message     m == Message     n = m == n
+  _ == _ = False
