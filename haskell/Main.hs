@@ -13,15 +13,18 @@ import CPP.Translator
 import Choice
 import Transform
 
-parseAndTranslate :: (DataIs a, Stored (StoreAs a)) => 
+parseAndTranslate :: (Eq a, DataIs a, Stored (StoreAs a)) => 
                      KeepData a -> [FilePath] -> 
                      IO (Expr Bool (StoreAs a),[CExpr])
 parseAndTranslate k ps = do
-    fs <- mapM (unsafeInterleaveIO . parseFile k) ps
+    fs <- parseFiles k ps
     let cs = extract fs
     let (cs',bad) = convert cs
     let e = translate cs'
     return (e,bad)
+
+parseFiles :: Eq a => KeepData a -> [FilePath] -> IO [File a]
+parseFiles k = mapM (unsafeInterleaveIO . parseFile k)
 
 readPathsFromFile :: FilePath -> IO [FilePath]
 readPathsFromFile f = readFile f >>= return . lines
@@ -32,11 +35,15 @@ mainGetPaths = do as <- getArgs
                     ("-f":[f]) -> readPathsFromFile f
                     _ -> return as
 
+main = do fs <- mainGetPaths >>= parseFiles discard
+          putStrLn $ "Total number of macros: " ++ show (length (macrosFs fs))
+
+{-
 main = do ps <- mainGetPaths
           --(e,bad) <- parseAndTranslate keep ps
           (e,bad) <- parseAndTranslate discard ps
           let ds = dom (dims e)
-          let badms = nub (concatMap macros bad)
+          let badms = nub (concatMap macrosE bad)
           let overlap = ds `intersect` badms
           putStrLn $ "** Could not convert " ++ show (length bad) ++ " conditions:"
           print bad
@@ -48,6 +55,7 @@ main = do ps <- mainGetPaths
           putStrLn $ "** Total number of macros: " ++ show (length badms + length ds - length overlap)
           putStrLn "--"
           print e
+-}
 
 instance ShowNesting Bool
 instance ShowNesting (Maybe Int) where
