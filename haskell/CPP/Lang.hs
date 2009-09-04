@@ -85,13 +85,43 @@ data BinOp = Add | Sub | Mul | Div | Mod
            | ShL | ShR | And'| Or' | Xor
   deriving Eq
 
-macros :: CExpr -> [Macro]
-macros (Defined m) = [m]
-macros (Macro   m) = [m]
-macros (UnOp  _ e)   = nub (macros e)
-macros (BinOp _ e f) = nub (concatMap macros [e,f])
-macros (TerIf e f g) = nub (concatMap macros [e,f,g])
-macros _ = []
+-- Wow, this is a SYBP use case...
+
+-- Returns all non-function macro uses.
+macrosE :: CExpr -> [Macro]
+macrosE (Defined m) = [m]
+macrosE (Macro   m) = [m]
+--macrosE (MFun m as) = m : macrosEL as -- TODO recurse into args?
+macrosE (UnOp  _ e)   = macrosE e
+macrosE (BinOp _ e f) = macrosEs [e,f]
+macrosE (TerIf e f g) = macrosEs [e,f,g]
+macrosE _ = []
+
+macrosEs :: [CExpr] -> [Macro]
+macrosEs = nub . concatMap macrosE
+
+-- Returns all non-function macro uses in conditional statements.
+macrosD :: Directive -> [Macro]
+macrosD (DM Ifdef  m) = [m]
+macrosD (DM Ifndef m) = [m]
+macrosD (DE _ e)      = macrosE e
+macrosD _ = []
+
+-- Returns all non-function macro uses in conditional statements.
+macrosL :: Line a -> [Macro]
+macrosL (Control d) = macrosD d
+macrosL _ = []
+
+-- Returns all non-function macro uses in conditional statements.
+macrosT :: Text a -> [Macro]
+macrosT = nub . concatMap macrosL . textLines
+
+-- Returns all non-function macro uses in conditional statements.
+macrosF :: File a -> [Macro]
+macrosF = macrosT . fileText
+
+macrosFs :: [File a] -> [Macro]
+macrosFs = nub . concatMap macrosF
 
 -- Expression evaluation
 
