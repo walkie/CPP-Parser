@@ -2,7 +2,7 @@ module CPP.Parser where
 
 import Control.Monad (liftM, liftM2)
 import Data.Char (isSpace)
-import Data.List (dropWhile, isPrefixOf)
+import Data.List (dropWhile, group, isPrefixOf)
 
 import Text.ParserCombinators.Parsec hiding (Line)
 import Text.ParserCombinators.Parsec.Error
@@ -27,10 +27,10 @@ import CPP.Lang
 -- would pass through to later stages).  Phase 4 is outside the scope of the 
 -- ToSC project.
 
-parseCPP :: KeepData a -> FilePath -> String -> File a
+parseCPP :: Eq a => KeepData a -> FilePath -> String -> File a
 parseCPP k p = File p . parseLines k p . splice . lines
 
-parseFile :: KeepData a -> FilePath -> IO (File a)
+parseFile :: Eq a => KeepData a -> FilePath -> IO (File a)
 parseFile k p = liftM (parseCPP k p) (readFile p)
 
 -------------------
@@ -89,9 +89,11 @@ keep = id
 discard :: KeepData ()
 discard = const ()
 
-parseLines :: KeepData a -> FilePath -> [String] -> Text a
-parseLines k p ls = Text $ map (try . parseLine (line k) p) (zip [1..] ls)
-  where try = either (error . show) id
+parseLines :: Eq a => KeepData a -> FilePath -> [String] -> Text a
+parseLines k p ls = Text (map run ils) --(Text . map head . group . map run) ils
+  where run = try . parseLine (line k) p
+        try = either (error . show) id
+        ils = zip [1..] ls
 
 parseLine :: Parser a -> FilePath -> (Int, String) -> Either ParseError a
 parseLine p f (l,s) = case parse (setPosition (newPos f l 0) >> p) f s of
