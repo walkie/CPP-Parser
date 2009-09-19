@@ -10,19 +10,19 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import editor.model.Dimension;
-import editor.ui.DocumentAdapter;
+import editor.model.Dim;
+import editor.ui.backup.DocumentAdapter;
 
 public class RemoveTagDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	
 	private final String tag;
-	private final Dimension dim;
+	private final Dim dim;
 	private final DocumentAdapter da;
 	private final JButton okButton;
 	private final JButton cancelButton;
 	
-	public RemoveTagDialog(String tag, Dimension dim, DocumentAdapter da)
+	public RemoveTagDialog(String tag, Dim dim, DocumentAdapter da)
 	{
 		this.tag = tag;
 		this.dim = dim;

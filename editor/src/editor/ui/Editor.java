@@ -1,219 +1,47 @@
 package editor.ui;
 
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
-
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.xml.bind.JAXBException;
-
-import editor.controller.VersionedDocument;
-import editor.model.Dimensions;
-import editor.ui.dialogs.AddAlternativeDialog;
-import editor.ui.dialogs.CreateChoiceDialog;
-import editor.ui.dialogs.RemoveAlternativeDialog;
-import editor.ui.dialogs.RemoveChoiceDialog;
+import java.awt.*;
+import javax.swing.*;
 
 public class Editor extends JFrame
 {
-	private static final long serialVersionUID = 1L;
-	private final JEditorPane editorPane = new JEditorPane();
-	private final Gutter gutter = new Gutter();
-	private final ColorManager colorManager = new ColorManager();
-	private final DimensionSelector dimensionSelector;
-	private final DocumentAdapter da;
-	
-	public Editor(DocumentAdapter da)
+	public Editor()
 	{
-		this.da = da;
-		this.dimensionSelector = new DimensionSelector(da, colorManager);
+		GridBagConstraints constraints = new java.awt.GridBagConstraints();
 		
-		setMenus();
+		constraints.gridheight = 1;
+		constraints.gridwidth = 2;
+		constraints.fill = GridBagConstraints.BOTH;
+		
+		java.awt.GridBagLayout layout = new GridBagLayout();
+		layout.setConstraints(this, constraints);
+		
+		setLayout(layout);
+		
+		setSize(new Dimension(800,600));
 	}
 	
-	public void setDimensionList(Dimensions d) 
+	public void addLeft(Component comp)
 	{
-		dimensionSelector.setDimensions(d, d.getSelectedTags());
-	}
-
-	public void setDocument(VersionedDocument doc) 
-	{
-		da.setDocument(doc, editorPane, dimensionSelector, colorManager);
-		DimensionHighlighter h = new DimensionHighlighter();
-		editorPane.setHighlighter(h);
-		editorPane.addMouseListener(da);
-		editorPane.getDocument().addDocumentListener(da);
-		da.setText();
-	}
-
-	public void showit()
-	{
-		BoxLayout layout  = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
-		getContentPane().setLayout(layout);
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0.2;
+		c.weighty = 1.0;
+		c.fill = GridBagConstraints.BOTH;
 		
-		JPanel inner = new JPanel();
-		inner.setLayout(new GridLayout(1,1));
-		
-		editorPane.setFont(new Font("Monospaced", 12, 12));
-		
-		JScrollPane sp1 = new JScrollPane(editorPane);
-
-		inner.add(sp1);
-		
-		add(dimensionSelector);
-		add(gutter);
-		add(inner);
-		
-		setSize(new java.awt.Dimension(700,550));
-		setVisible(true);
+		add(comp, c);
 	}
 	
-	private void setMenus()
+	public void addRight(Component comp)
 	{
-		JMenuBar mb = new JMenuBar();
-				
-		mb.add(fileMenu(new JMenu("File")));
-		mb.add(editMenu(new JMenu("Edit")));
-		mb.add(debugMenu(new JMenu("Debug")));
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 1;
+		c.gridy = 0;
+		c.weightx = 0.8;
+		c.weighty = 1.0;
+		c.fill = GridBagConstraints.BOTH;
 		
-		editorPane.setComponentPopupMenu((JPopupMenu)editMenu(new JPopupMenu()));
-		
-		this.setJMenuBar(mb);
-	}
-	
-	private <T extends JComponent> T fileMenu(T m)
-	{
-		JMenuItem mi;
-		
-		mi = new JMenuItem("New");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				da.newDoc();
-			}
-		});
-		m.add(mi);
-
-		mi = new JMenuItem("Open");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				int returnVal = fc.showOpenDialog(Editor.this);
-
-		        if (returnVal == JFileChooser.APPROVE_OPTION) {
-		            String fileName = fc.getSelectedFile().getAbsolutePath();
-		            
-		            try {
-		            	VersionedDocument doc = new VersionedDocument();
-		            	doc.setDocument(new editor.io.IO().read(fileName));
-						da.setDocument(doc, editorPane, dimensionSelector, colorManager);
-						da.setText();
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-					} catch (JAXBException e1) {
-						e1.printStackTrace();
-					}
-		        }
-			}
-		});
-		m.add(mi);
-
-		mi = new JMenuItem("Save");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				int returnVal = fc.showSaveDialog(Editor.this);
-
-		        if (returnVal == JFileChooser.APPROVE_OPTION) {
-		            String fileName = fc.getSelectedFile().getAbsolutePath();
-		            new editor.io.IO().write(fileName, da.getDocument());
-		        }
-			}
-		});
-		m.add(mi);
-
-		mi = new JMenuItem("Exit");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				System.exit(0);
-			}
-		});
-		m.add(mi);
-		
-		return m;
-	}
-
-	private JComponent editMenu(JComponent m)
-	{
-		JMenuItem mi;
-		
-		mi = new JMenuItem("Create Choice");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new CreateChoiceDialog(da);
-			}
-		});
-		m.add(mi);
-
-		mi = new JMenuItem("Remove Choice");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new RemoveChoiceDialog(da);
-			}
-		});
-		m.add(mi);
-
-		mi = new JMenuItem("Add Alternative");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new AddAlternativeDialog(da);
-			}
-		});
-		m.add(mi);
-
-		mi = new JMenuItem("Remove Alternative");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new RemoveAlternativeDialog(da);
-			}
-		});
-		m.add(mi);
-		
-		return m;
-	}
-
-	private JComponent debugMenu(JComponent m)
-	{
-		JMenuItem mi;
-		
-		mi = new JMenuItem("Print");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				da.debugPrint();
-			}
-		});
-		m.add(mi);
-
-		mi = new JMenuItem("Print tags");
-		mi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				da.debugPrintTags();
-			}
-		});
-		m.add(mi);
-		
-		return m;
+		add(comp, c);
 	}
 }

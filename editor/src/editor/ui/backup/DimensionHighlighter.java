@@ -1,4 +1,4 @@
-package editor.ui;
+package editor.ui.backup;
 
 import java.awt.Color;
 import java.awt.Graphics;

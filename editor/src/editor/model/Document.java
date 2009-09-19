@@ -1,91 +1,137 @@
 package editor.model;
 
-import java.util.Set;
+import java.util.ArrayList;
 
-public class Document
+import editor.ui.Adapter;
+
+import editor.util.Debug;
+
+public class Document implements DocTree
 {
-	private Dimensions dimensions;
-    private Tree tree;
+	final ArrayList<Obj> objs;
+	final Adapter adapter;
 	
-	public Document()
+	public Document(Adapter adapter)
 	{
-		this.dimensions = new Dimensions();
-		tree = new VersionedObject(this, "").getTree();
+		this.objs = new ArrayList<Obj>();
+		this.objs.add(new Empty(this));
+		this.adapter = adapter;
 	}
-	
-	public void addDimension(Dimension dim)
+
+	public void removeText(int pos, int length)
 	{
-		dimensions.addDimension(dim);
-	}
-	
-	public void removeDimension(Dimension dim)
-	{
-		for (String tag : dim.getTags())
+		while (length-- > 0)
 		{
-			tree.getObject().removeTag(tag);
+			int i, p = 0;
+			do
+			{
+				i = objs.get(p++).removeText(pos);
+			} while (i >= 0 && p < objs.size());
 		}
-		dimensions.removeDimension(dim);
-	}
-	
-    public Dimensions getDimensions() 
-    {
-        return dimensions;
-    }
-	
-	public AbstractVersionedObject getObject()
-	{
-		return tree.getObject();
-	}
-	
-	public String getText()
-	{
-		return tree.getObject().getText();
+		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
 	}
 
-	public void setObject(AbstractVersionedObject obj)
+	public void insertText(int pos, String insText)
 	{
-		tree.setObject(obj);
-	}
-	
-	public void removeTag(String tag)
-	{
-		tree.getObject().removeTag(tag);
-		dimensions.removeTag(tag);
-	}
-
-	public void select(String tag)
-	{
-		dimensions.select(tag);
-	}
-
-	public Set<String> getSelectedTags()
-	{
-		return dimensions.getSelectedTags();
-	}
-
-	public Dimension findDimension(String tag)
-	{
-		for (Dimension dim : dimensions)
+		for (char c : insText.toCharArray())
 		{
-			if (dim.containsTag(tag))
-				return dim;
+			int i, p = 0;
+			
+			do
+			{
+				i = objs.get(p++).insertText(pos, c);
+			} while (i >= 0 && p < objs.size());
+		
+			pos++;
 		}
 		
-		Dimension dim = new Dimension();
-		dim.addTag(tag);
-		dimensions.add(dim);
+		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
+	}
+
+	public Dim createChoice(int start, int end)
+	{
+		Debug.print("createChoice: " + start + " " + end);
+
+		Obj obj = getParts(start, end);
+		Dim dim = obj.createChoice();
+		
+		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
+		
 		return dim;
 	}
 
-	public Dimension findDimension(String tag, String tag2)
+	private Obj getParts(int start, int end)
 	{
-		// TODO Merge dimensions
-		return findDimension(tag);
+		return objs.get(0);
 	}
 
-	public void cloneAlternative(String newTag, String oldTag)
+	public void removeChoice(int start)
 	{
-		// TODO Auto-generated method stub
-		tree.getObject().cloneAlternative(newTag, oldTag);
+		Debug.print("removeChoice: " + start);
+		
+	}
+
+	public void debugPrint()
+	{
+		System.out.println(debugGetText());
+	}
+
+	public String debugGetText()
+	{
+		String debugText = "";
+		
+		for (Obj obj : objs)
+		{
+			debugText += obj.debugGetText();
+		}
+
+		return debugText;
+	}
+
+	@Override public void replace(Obj oldObj, Obj newObj)
+	{
+		int i = objs.indexOf(oldObj);
+		objs.remove(i);
+		objs.add(i, newObj);
+		newObj.parent = this;
+	}
+
+	@Override public void remove(Obj obj)
+	{
+		int i = objs.indexOf(obj);
+		objs.remove(i);
+		objs.add(i, new Empty(this));
+	}
+
+	public void addAlternative(int pos)
+	{
+		Choice c = getChoice(pos);
+		c.addAlternative("???", new Empty(c));
+	}
+
+	public void removeAlternative(int pos)
+	{
+		Choice c = getChoice(pos);
+		c.removeSelectedAlternative();
+	}
+
+	private Choice getChoice(int pos)
+	{
+		int p = 0;
+		ArrayList<Obj> a = new ArrayList<Obj>();
+		do
+		{
+			objs.get(p++).findObj(pos, a);
+		} while (a.size() == 0 && p < objs.size());
+		
+		if (a.size() == 0)
+			return null;
+		else
+			return a.get(0).findChoice();
+	}
+
+	@Override public Choice findChoice()
+	{
+		return null;
 	}
 }

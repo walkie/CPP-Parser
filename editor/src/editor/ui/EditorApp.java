@@ -1,10 +1,16 @@
 package editor.ui;
 
+import java.awt.Dimension;
+import java.util.ArrayList;
+
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
-import editor.controller.VersionedDocument;
+import editor.util.Debug;
 
-public class EditorApp {
+public class EditorApp 
+{
 	private static final long serialVersionUID = 1L;
 
    /**
@@ -12,11 +18,27 @@ public class EditorApp {
 	 */
 	public static void main(String[] args) 
 	{
-		Editor e = new Editor(new DocumentAdapter());
-				
-		VersionedDocument v = new VersionedDocument();
-		e.setDocument(v);
+		Debug.DEBUG = true;
+		
+		Editor e = new Editor();
+		
+		DimensionSelector ds = new DimensionSelector();
+		JEditorPane t = new JEditorPane();
+		
+		Adapter adapter = new Adapter(ds, t);
+		
+		EditMenu editMenu = new EditMenu(adapter);
+		
+		t.setComponentPopupMenu(editMenu);
+		
+		t.getDocument().addDocumentListener(adapter);
+		
+		e.addRight(new JScrollPane(t));
+		e.addLeft(ds);
+		
+		ds.addDimension("S", new ArrayList<String>());
+		
 		e.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		e.showit();
+		e.setVisible(true);
 	}
 }

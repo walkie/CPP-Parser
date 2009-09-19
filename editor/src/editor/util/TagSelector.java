@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Stack;
 
-import editor.model.AbstractVersionedObject;
 import editor.model.Choice;
 import editor.model.Document;
-import editor.model.VersionedObject;
+import editor.model.Part;
 
 public class TagSelector
 {
@@ -21,22 +20,24 @@ public class TagSelector
 	public TagSelector(Document doc)
 	{
 		this.doc = doc;
-		findParts(doc.getObject());
+//		findParts(doc.getObject());
 	}
 
-	public void findParts(AbstractVersionedObject obj)
-	{
-		if (obj instanceof VersionedObject)
-			findParts((VersionedObject)obj);
-		else if (obj instanceof Choice)
-			findParts((Choice)obj);
-		else
-			throw new IllegalArgumentException("expecting Choice or VersionedObject");
-	}
+//	public void findParts(Obj obj)
+//	{
+//		if (obj instanceof VersionedObject)
+//			findParts((VersionedObject)obj);
+//		else if (obj instanceof Choice)
+//			findParts((Choice)obj);
+//		else if (obj instanceof Variable)
+//			findParts(((Variable)obj).getBoundObject());
+//		else
+//			throw new IllegalArgumentException("expecting Choice or VersionedObject");
+//	}
 
-	public void findParts(VersionedObject v)
+	public void findParts(Part v)
 	{
-		int end = pos + v.getValue().length();
+		int end = pos; // + v.getValue().length();
 		
 		String tag = null;
 		if (tags.size() != 0)
@@ -52,43 +53,43 @@ public class TagSelector
 			hiddenParts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
 		}
 		
-		for (AbstractVersionedObject o : v.getSubObjects())
-		{
-			findParts(o);
-		}
+//		for (Obj o : v.getSubObjects())
+//		{
+//			findParts(o);
+//		}
 	}
 
 	public void findParts(Choice choice) 
 	{
-		hiddenParts = new ArrayList<TextPart>();
-		if (intersects(doc.getDimensions().getSelectedTags(), choice.ctags()))
-		{
-			for (String tag : choice.tags())
-			{
-				tags.push(tag);
-				if (doc.getDimensions().getSelectedTags().contains(tag))
-				{
-					selected = true;
-					findParts(choice.getAlternative(tag));
-					selected = false;
-				}
-				else
-				{
-					findParts(choice.getAlternative(tag));
-				}
-				tags.pop();
-			}
-		}
-		else
-		{
-			for (String tag : choice.tags())
-			{
-				tags.push(tag);
-				findParts(choice.getAlternative(tag));
-				tags.pop();
-			}			
-		}
-		hiddenParts = new ArrayList<TextPart>();
+//		hiddenParts = new ArrayList<TextPart>();
+//		if (intersects(doc.getDimensions().getSelectedTags(), choice.ctags()))
+//		{
+//			for (String tag : choice.tags())
+//			{
+//				tags.push(tag);
+//				if (doc.getDimensions().getSelectedTags().contains(tag))
+//				{
+//					selected = true;
+//					findParts(choice.getAlternative(tag));
+//					selected = false;
+//				}
+//				else
+//				{
+//					findParts(choice.getAlternative(tag));
+//				}
+//				tags.pop();
+//			}
+//		}
+//		else
+//		{
+//			for (String tag : choice.tags())
+//			{
+//				tags.push(tag);
+//				findParts(choice.getAlternative(tag));
+//				tags.pop();
+//			}			
+//		}
+//		hiddenParts = new ArrayList<TextPart>();
 	}
 
 	private boolean intersects(Collection<String> s1, Collection<String> s2)

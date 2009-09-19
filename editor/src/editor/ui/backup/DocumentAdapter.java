@@ -1,4 +1,4 @@
-package editor.ui;
+package editor.ui.backup;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +13,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
-import editor.model.Dimension;
+import editor.model.Dim;
 import editor.model.Document;
 import editor.controller.VersionedDocument;
 import editor.util.TextPart;
@@ -59,7 +59,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 				return;
 			}
 			
-			doc.addText(pos, text);
+//			doc.addText(pos, text);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 	{
 		if (!inSetText)
 		{
-			doc.removeText(e.getOffset(), e.getLength());
+//			doc.removeText(e.getOffset(), e.getLength());
 		}
 	}
 
@@ -76,43 +76,43 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 		if (e.getButton() == MouseEvent.BUTTON1 && e.isControlDown())
 		{		
 			int pos = textBox.getCaretPosition();
-			String[] texts = doc.getTextWithHidden(pos);
-			if (texts != null)
-			{
-				// TODO: Move to own class
-				final javax.swing.JFrame d = new javax.swing.JFrame();
-				javax.swing.JPanel p = new javax.swing.JPanel();
-				p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-				
-				for (String text : texts)
-				{
-					p.add(new javax.swing.JLabel(text));
-				}
-				
-				d.add(p);
-				d.setLocationRelativeTo(textBox);
-				try
-				{
-					java.awt.Point pt = textBox.modelToView(pos).getLocation();
-					java.awt.Point pt2 = textBox.getLocationOnScreen();
-					
-					d.setLocation(pt.x+pt2.x, pt.y+pt2.y);
-				}
-				catch (BadLocationException e1)
-				{
-					e1.printStackTrace();
-				}
-				d.setUndecorated(true);
-				d.setSize(new java.awt.Dimension(200,200));
-				d.setVisible(true);
-				
-				new javax.swing.Timer(10000, new ActionListener() {
-					public void actionPerformed(ActionEvent e)
-					{
-						d.setVisible(false);
-					}
-				}).start();
-			}
+//			String[] texts = doc.getTextWithHidden(pos);
+//			if (texts != null)
+//			{
+//				// TODO: Move to own class
+//				final javax.swing.JFrame d = new javax.swing.JFrame();
+//				javax.swing.JPanel p = new javax.swing.JPanel();
+//				p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+//				
+//				for (String text : texts)
+//				{
+//					p.add(new javax.swing.JLabel(text));
+//				}
+//				
+//				d.add(p);
+//				d.setLocationRelativeTo(textBox);
+//				try
+//				{
+//					java.awt.Point pt = textBox.modelToView(pos).getLocation();
+//					java.awt.Point pt2 = textBox.getLocationOnScreen();
+//					
+//					d.setLocation(pt.x+pt2.x, pt.y+pt2.y);
+//				}
+//				catch (BadLocationException e1)
+//				{
+//					e1.printStackTrace();
+//				}
+//				d.setUndecorated(true);
+//				d.setSize(new java.awt.Dimension(200,200));
+//				d.setVisible(true);
+//				
+//				new javax.swing.Timer(10000, new ActionListener() {
+//					public void actionPerformed(ActionEvent e)
+//					{
+//						d.setVisible(false);
+//					}
+//				}).start();
+//			}
 		}
 	}
 
@@ -120,13 +120,13 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 	{
 		inSetText = true;
 		
-		colorManager.setDimensions(doc.getDimensions());
-		dimensionSelecter.setDimensions(doc.getDimensions(), doc.getSelectedTags());
+//		colorManager.setDimensions(doc.getDimensions());
+//		dimensionSelecter.setDimensions(doc.getDimensions(), doc.getSelectedTags());
 
-		Collection<TextPart> parts = doc.getTextParts();
+//		Collection<TextPart> parts = doc.getTextParts();
 
-		textBox.setText(getText(parts));
-		setHighlights(parts);
+//		textBox.setText(getText(parts));
+//		setHighlights(parts);
 
 		inSetText = false;
 	}
@@ -140,7 +140,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 			try {
 				DimensionHighlighter h = null;
 				h = (DimensionHighlighter)textBox.getHighlighter();
-				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getTag()));
+//				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getTag()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -151,7 +151,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 		String str = "";
 		for (TextPart part : parts)
 		{
-			str += part.getText();
+//			str += part.getText();
 		}
 		return str;
 	}
@@ -178,7 +178,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 
 	public void select(String tag) 
 	{
-		doc.select(tag);
+//		doc.select(tag);
 		setText();
 	}
 
@@ -191,7 +191,7 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 	public void addText(String text)
 	{
 		int pos = textBox.getCaretPosition();
-		doc.addText(pos, text);
+//		doc.addText(pos, text);
 		setText();
 	}
 
@@ -199,14 +199,14 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 	{
 		int start = textBox.getSelectionStart();
 		int end = textBox.getSelectionEnd();
-		doc.createChoice(start, end, tag);
+//		doc.createChoice(start, end, tag);
 		setText();		
 	}
 
 	public void removeChoice() 
 	{
 		int pos = textBox.getCaretPosition();
-		doc.removeChoice(pos);
+//		doc.removeChoice(pos);
 		setText();		
 	}
 
@@ -214,54 +214,54 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 	{
 		int pos = textBox.getCaretPosition();
 		
-		if (doc.addAlternative(pos, tag, text))
-			setText();	
-		else
-			JOptionPane.showMessageDialog(null, "Could not add alternative at cursor position.");
+//		if (doc.addAlternative(pos, tag, text))
+//			setText();	
+//		else
+//			JOptionPane.showMessageDialog(null, "Could not add alternative at cursor position.");
 	}
 
 	public void removeAlternative() 
 	{
 		int pos = textBox.getCaretPosition();
-		doc.removeAlternative(pos);
+//		doc.removeAlternative(pos);
 		setText();		
 	}
 
-	public void addTagToDim(String newTag, String oldTag, Dimension dim)
+	public void addTagToDim(String newTag, String oldTag, Dim dim)
 	{
-		doc.addTagToDim(newTag, oldTag, dim);
+//		doc.addTagToDim(newTag, oldTag, dim);
 		setText();
 	}
 
-	public void removeTagFromDim(String tag, Dimension dim)
+	public void removeTagFromDim(String tag, Dim dim)
 	{
-		doc.removeTagFromDim(tag, dim);
+//		doc.removeTagFromDim(tag, dim);
 		setText();
 	}
 
-	public void removeDimension(Dimension dim)
+	public void removeDimension(Dim dim)
 	{
-		doc.removeDimension(dim);
+//		doc.removeDimension(dim);
 		setText();
 	}
 
 	public void debugPrint()
 	{
-		doc.debugPrint();
+//		doc.debugPrint();
 	}
 
 
 	public void debugPrintTags()
 	{
-		for (String tag : doc.getDocument().getObject().tags())
-		{
-			System.out.print(tag);
-		}
-		System.out.println();
+//		for (String tag : doc.getDocument().getObject().tags())
+//		{
+//			System.out.print(tag);
+//		}
+//		System.out.println();
 	}
 
-	public Document getDocument()
-	{
-		return doc.getDocument();
-	}
+//	public Document getDocument()
+//	{
+//		return doc.getDocument();
+//	}
 }

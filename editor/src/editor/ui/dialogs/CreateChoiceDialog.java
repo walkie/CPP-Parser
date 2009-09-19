@@ -10,7 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import editor.ui.DocumentAdapter;
+import editor.ui.backup.DocumentAdapter;
 
 public class CreateChoiceDialog extends JDialog 
 {

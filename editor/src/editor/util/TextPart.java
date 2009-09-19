@@ -3,7 +3,7 @@ package editor.util;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import editor.model.VersionedObject;
+import editor.model.Part;
 
 public class TextPart 
 {
@@ -11,10 +11,10 @@ public class TextPart
 	private final int end;
 	private final String tag;
 	private final boolean visible;
-	private final VersionedObject v;
+	private final Part v;
 	private final Collection<TextPart> hiddenParts;
 	
-	public TextPart(int start, int end, String tag, boolean visible, VersionedObject v, Collection<TextPart> hiddenParts)
+	public TextPart(int start, int end, String tag, boolean visible, Part v, Collection<TextPart> hiddenParts)
 	{
 		this.start = start;
 		this.end = end;
@@ -26,12 +26,12 @@ public class TextPart
 	
 	public int getStartPos() { return start; }
 	public int getEndPos() { return end; }
-	public String getText() { return v.getValue(); }
+	//public String getText() { return v.getValue(); }
 	public String getTag() { return tag; }
 	public boolean isAlt() { return tag != null; }
 	public boolean isVisible() { return visible; }
-	public VersionedObject getVersionedObject() { return v; }
-	public int getLength() { return v.getValue().length(); }
+	public Part getVersionedObject() { return v; }
+	//public int getLength() { return v.getValue().length(); }
 
 	public void addHiddenPart(TextPart p)
 	{
@@ -58,7 +58,7 @@ public class TextPart
 		String textLabel = "";
 		if (tag != null)
 			textLabel += tag + ": ";
-		textLabel += getText();
+//		textLabel += getText();
 		return textLabel;
 	}
 }

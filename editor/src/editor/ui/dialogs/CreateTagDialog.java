@@ -12,26 +12,27 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import editor.model.Dimension;
-import editor.ui.DocumentAdapter;
+import editor.model.Dim;
+import editor.ui.backup.DocumentAdapter;
 
 public class CreateTagDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	
-	private final Dimension dim;
+	private final Dim dim;
 	private final DocumentAdapter da;
 	private final JTextField textBox;
 	private final JButton okButton;
 	private final JButton cancelButton;
 	private final JComboBox list;
 	
-	public CreateTagDialog(Dimension dim, DocumentAdapter da)
+	public CreateTagDialog(Dim dim, DocumentAdapter da)
 	{
 		this.dim = dim;
 		this.da = da;
 		
 		textBox = new JTextField();
-		list = new JComboBox(dim.getTags().toArray());
+//		list = new JComboBox(dim.getTags().toArray());
+		list = new JComboBox();
 		
 		okButton = new JButton("Ok");
 		cancelButton = new JButton("Cancel");

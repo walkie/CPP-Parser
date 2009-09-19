@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import editor.ui.DocumentAdapter;
+import editor.ui.backup.DocumentAdapter;
 
 public class RemoveAlternativeDialog extends JDialog
 {

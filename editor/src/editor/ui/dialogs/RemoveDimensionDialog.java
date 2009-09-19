@@ -10,18 +10,18 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import editor.model.Dimension;
-import editor.ui.DocumentAdapter;
+import editor.model.Dim;
+import editor.ui.backup.DocumentAdapter;
 
 public class RemoveDimensionDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	
-	private final Dimension dim;
+	private final Dim dim;
 	private final DocumentAdapter da;
 	private final JButton okButton;
 	private final JButton cancelButton;
 	
-	public RemoveDimensionDialog(Dimension dim, DocumentAdapter da)
+	public RemoveDimensionDialog(Dim dim, DocumentAdapter da)
 	{
 		this.dim = dim;
 		this.da = da;

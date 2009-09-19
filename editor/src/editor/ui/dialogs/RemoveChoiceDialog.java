@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import editor.ui.DocumentAdapter;
+import editor.ui.backup.DocumentAdapter;
 
 public class RemoveChoiceDialog extends JDialog 
 {
