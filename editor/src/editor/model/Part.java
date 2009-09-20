@@ -1,8 +1,10 @@
 package editor.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import editor.util.Debug;
+import editor.util.TextAttr;
 
 public class Part extends Obj
 {
@@ -90,5 +92,13 @@ public class Part extends Obj
 		return --pos;
 	}
 	
-	
+	@Override public int size()
+	{
+		return 1;
+	}
+
+	@Override public int getAttrs(int pos, Collection<TextAttr> attrs)
+	{
+		return ++pos;
+	}
 }

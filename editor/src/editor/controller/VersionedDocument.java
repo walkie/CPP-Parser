@@ -6,7 +6,7 @@ import java.util.Set;
 
 import editor.model.*;
 import editor.util.TagSelector;
-import editor.util.TextPart;
+import editor.util.TextAttr;
 
 public class VersionedDocument 
 {

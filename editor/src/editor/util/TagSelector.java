@@ -11,10 +11,10 @@ import editor.model.Part;
 public class TagSelector
 {
 	int pos = 0;
-	ArrayList<TextPart> parts = new ArrayList<TextPart>();
+	ArrayList<TextAttr> parts = new ArrayList<TextAttr>();
 	Stack<String> tags = new Stack<String>();
 	boolean selected = false;
-	private ArrayList<TextPart> hiddenParts = new ArrayList<TextPart>();
+	private ArrayList<TextAttr> hiddenParts = new ArrayList<TextAttr>();
 	private final Document doc;
 	
 	public TagSelector(Document doc)
@@ -45,12 +45,12 @@ public class TagSelector
 		
 		if (selected || tag == null)
 		{
-			parts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
+			parts.add(new TextAttr(pos, end, tag));
 			pos = end;
 		}
 		else
 		{
-			hiddenParts.add(new TextPart(pos, end, tag, selected, v, hiddenParts));
+			hiddenParts.add(new TextAttr(pos, end, tag));
 		}
 		
 //		for (Obj o : v.getSubObjects())
@@ -103,7 +103,7 @@ public class TagSelector
 		return false;
 	}
 	
-	public Collection<TextPart> getTextParts()
+	public Collection<TextAttr> getTextParts()
 	{
 		return parts;
 	}

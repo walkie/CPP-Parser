@@ -16,7 +16,6 @@ import javax.swing.text.BadLocationException;
 import editor.model.Dim;
 import editor.model.Document;
 import editor.controller.VersionedDocument;
-import editor.util.TextPart;
 
 public class DocumentAdapter implements DocumentListener, MouseListener
 {
@@ -131,30 +130,30 @@ public class DocumentAdapter implements DocumentListener, MouseListener
 		inSetText = false;
 	}
 
-	private void setHighlights(Collection<TextPart> parts) {
-		for (TextPart part : parts)
-		{
-			if (!part.isAlt())
-				continue;
+//	private void setHighlights(Collection<TextPart> parts) {
+//		for (TextPart part : parts)
+//		{
+//			if (!part.isAlt())
+//				continue;
+//
+//			try {
+//				DimensionHighlighter h = null;
+//				h = (DimensionHighlighter)textBox.getHighlighter();
+////				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getTag()));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 
-			try {
-				DimensionHighlighter h = null;
-				h = (DimensionHighlighter)textBox.getHighlighter();
-//				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getTag()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private String getText(Collection<TextPart> parts) {
-		String str = "";
-		for (TextPart part : parts)
-		{
-//			str += part.getText();
-		}
-		return str;
-	}
+//	private String getText(Collection<TextPart> parts) {
+//		String str = "";
+////		for (TextPart part : parts)
+////		{
+//////			str += part.getText();
+////		}
+//		return str;
+//	}
 	
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub

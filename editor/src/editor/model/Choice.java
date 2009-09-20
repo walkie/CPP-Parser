@@ -1,6 +1,10 @@
 package editor.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+
+import editor.util.Debug;
+import editor.util.TextAttr;
 
 public class Choice extends Obj
 {
@@ -101,5 +105,22 @@ public class Choice extends Obj
 	@Override public int removeBetween(int pos, int start, int end)
 	{
 		return alts.get(dim.getSelectedAltIdx()).removeBetween(pos, start, end);
+	}
+
+	@Override public int size()
+	{
+		return alts.get(dim.getSelectedAltIdx()).size();
+	}
+	
+	@Override public int getAttrs(int pos, Collection<TextAttr> attrs)
+	{
+		int end = pos+size();
+		TextAttr attr = new TextAttr(pos, end, dim.getName());
+		
+		Debug.print("Attr: " + pos + " " + end + " " + dim.getName());
+		
+		attrs.add(attr);
+		
+		return end;
 	}
 }

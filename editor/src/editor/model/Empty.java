@@ -12,8 +12,7 @@ public class Empty extends Obj
 		return "Empty";
 	}
 
-	@Override
-	public int addAt(int pos, Obj obj)
+	@Override public int addAt(int pos, Obj obj)
 	{
 		if (pos == 0)
 		{
@@ -23,5 +22,10 @@ public class Empty extends Obj
 		}
 		
 		return pos;
+	}
+	
+	@Override public int size()
+	{
+		return 0;
 	}
 }

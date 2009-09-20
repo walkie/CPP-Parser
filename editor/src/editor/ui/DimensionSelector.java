@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import editor.util.Debug;
@@ -20,6 +21,11 @@ public class DimensionSelector extends JPanel
 		
 		BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
 		setLayout(layout);
+		
+		JPanel title = new JPanel();
+		title.add(new JLabel("Dimensions"));
+		title.setPreferredSize(new Dimension(200,20));
+		add(title);
 		
 		setBackground(new Color(200,200,240));
 	}

@@ -3,6 +3,7 @@ package editor.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
@@ -15,7 +16,9 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import editor.model.Dim;
 import editor.model.Document;
 import editor.model.exceptions.NoChoiceException;
+import editor.ui.backup.DimensionHighlighter;
 import editor.util.Debug;
+import editor.util.TextAttr;
 
 public class Adapter implements DocumentListener
 {
@@ -23,6 +26,7 @@ public class Adapter implements DocumentListener
 	final DimensionSelector ds;
 	final View view;
 	final JEditorPane editor;
+	final ColorManager colorManager;
 	
 	public Adapter(DimensionSelector ds, JEditorPane editor)
 	{
@@ -30,6 +34,7 @@ public class Adapter implements DocumentListener
 		this.editor = editor;
 		this.doc = new Document(this);
 		this.view = new View(doc, editor);
+		this.colorManager = new ColorManager();
 	}
 	
 	public void changedUpdate(DocumentEvent e)
@@ -90,6 +95,8 @@ public class Adapter implements DocumentListener
 				Dim dim = doc.createChoice(ds.getSelectedDim(), start, end);
 				
 				ds.addDimension(dim.getName(), dim.getTags());
+				
+				setText();
 			}
 		};
 	}
@@ -155,5 +162,46 @@ public class Adapter implements DocumentListener
 				doc.debugPrint();
 			}
 		};
+	}
+	
+	boolean inSetText = false;
+	public void setText()
+	{
+		inSetText = true;
+		
+		colorManager.setDimensions(doc.getDimensions());
+		//ds.setDimensions(doc.getDimensions(), doc.getSelectedTags());
+
+		Collection<TextAttr> parts = doc.getTextParts();
+
+//		editor.setText(getText(parts));
+		setHighlights(parts);
+
+		inSetText = false;
+	}
+
+//	private String getText(Collection<TextAttr> parts) {
+//		String str = "";
+//		for (TextAttr part : parts)
+//		{
+//			str += part.getText();
+//		}
+//		return str;
+//	}
+	
+	private void setHighlights(Collection<TextAttr> parts) {
+		for (TextAttr part : parts)
+		{
+//			if (!part.isAlt())
+//				continue;
+
+			try {
+				DimensionHighlighter h = null;
+				h = (DimensionHighlighter)editor.getHighlighter();
+				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getDimName()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

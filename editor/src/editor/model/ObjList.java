@@ -1,6 +1,9 @@
 package editor.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+
+import editor.util.TextAttr;
 
 public class ObjList extends Obj
 {
@@ -119,6 +122,28 @@ public class ObjList extends Obj
 		for (int i = children.size() - 1; i >= 0; i--)
 		{
 			pos = children.get(i).removeBetween(pos, start, end);
+		}
+		
+		return pos;
+	}
+	
+	@Override public int size()
+	{
+		int size = 0;
+		
+		for (Obj c : children)
+		{
+			size += c.size();
+		}
+		
+		return size;
+	}
+	
+	@Override public int getAttrs(int pos, Collection<TextAttr> attrs)
+	{
+		for (Obj c : children)
+		{
+			pos = c.getAttrs(pos, attrs);
 		}
 		
 		return pos;

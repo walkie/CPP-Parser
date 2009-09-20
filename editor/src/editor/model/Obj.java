@@ -1,6 +1,9 @@
 package editor.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+
+import editor.util.TextAttr;
 
 public abstract class Obj implements DocTree
 {
@@ -8,6 +11,7 @@ public abstract class Obj implements DocTree
 	
 	public abstract int addAt(int pos, Obj obj);
 	public abstract String debugGetText();
+	public abstract int size();
 	
 	public void replace(Obj oldObj, Obj newObj)
 	{
@@ -22,9 +26,8 @@ public abstract class Obj implements DocTree
 		return pos;
 	}
 
-	public Dim createChoice()
+	public Dim createChoice(Dim dim)
 	{
-		Dim dim = new Dim();
 		Choice c = new Choice(dim);
 		parent.replace(this, c);
 		c.addAlternative("???", this);
@@ -41,6 +44,11 @@ public abstract class Obj implements DocTree
 	}
 	
 	public int findObj(int pos, ArrayList<Obj> outObj)
+	{
+		return pos;
+	}
+	
+	public int getAttrs(int pos, Collection<TextAttr> attrs)
 	{
 		return pos;
 	}

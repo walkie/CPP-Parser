@@ -84,4 +84,9 @@ public class Dim extends Obj
 		
 		return selectedAltIdx;
 	}
+	
+	@Override public int size()
+	{
+		return obj.size();
+	}
 }

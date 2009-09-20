@@ -11,9 +11,13 @@ public class Ref extends Obj
 		return "Ref<>";
 	}
 
-	@Override
-	public int addAt(int pos, Obj obj)
+	@Override public int addAt(int pos, Obj obj)
 	{
 		return pos;
+	}
+	
+	@Override public int size()
+	{
+		return obj.size();
 	}
 }

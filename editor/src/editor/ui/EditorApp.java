@@ -7,6 +7,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
+import editor.ui.backup.DimensionHighlighter;
 import editor.util.Debug;
 
 public class EditorApp 
@@ -37,6 +38,10 @@ public class EditorApp
 		e.addLeft(ds);
 				
 		e.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
+		DimensionHighlighter h = new DimensionHighlighter();
+		t.setHighlighter(h);
+
 		e.setVisible(true);
 	}
 }

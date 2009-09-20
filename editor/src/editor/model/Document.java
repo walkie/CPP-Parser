@@ -1,11 +1,13 @@
 package editor.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import editor.model.exceptions.NoChoiceException;
 import editor.ui.Adapter;
 
 import editor.util.Debug;
+import editor.util.TextAttr;
 
 public class Document implements DocTree
 {
@@ -53,7 +55,7 @@ public class Document implements DocTree
 		Dim dim = dims.getDim(dimName);
 		
 		objs.addAt(start, objList);
-		objList.createChoice();
+		objList.createChoice(dim);
 			
 		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
 		
@@ -129,5 +131,19 @@ public class Document implements DocTree
 	public String newDimName()
 	{
 		return dims.newDimName();
+	}
+
+	public Dimensions getDimensions()
+	{
+		return dims;
+	}
+
+	public Collection<TextAttr> getTextParts()
+	{
+		ArrayList<TextAttr> attrs = new ArrayList<TextAttr>();
+
+		objs.getAttrs(0, attrs);
+		
+		return attrs;
 	}
 }

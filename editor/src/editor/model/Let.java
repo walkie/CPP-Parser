@@ -6,7 +6,7 @@ public class Let extends Obj
 {
 	Ref ref;
 	Obj bound;
-	Obj Scope;
+	Obj scope;
 
 	@Override
 	public String debugGetText()
@@ -19,5 +19,11 @@ public class Let extends Obj
 	public int addAt(int pos, Obj obj)
 	{
 		return pos;
+	}
+	
+	
+	@Override public int size()
+	{
+		return scope.size();
 	}
 }
