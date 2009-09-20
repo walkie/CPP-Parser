@@ -13,11 +13,12 @@ public class Empty extends Obj
 	}
 
 	@Override
-	public int insertText(int pos, char c)
+	public int addAt(int pos, Obj obj)
 	{
 		if (pos == 0)
 		{
-			parent.replace(this, new Part(parent, c));
+			obj.parent = parent;
+			parent.replace(this, obj);
 			return -1;
 		}
 		

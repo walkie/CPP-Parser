@@ -2,16 +2,16 @@ package editor.model;
 
 import java.util.ArrayList;
 
+import editor.util.Debug;
+
 public class Part extends Obj
 {
 	char data;
-	ArrayList<Obj> children;
 
 	public Part(DocTree parent, char data)
 	{
 		this.parent = parent;
 		this.data = data;
-		this.children = new ArrayList<Obj>();		
 	}
 
 	public char getData()
@@ -19,80 +19,31 @@ public class Part extends Obj
 		return data;
 	}
 
-	public void setData(String text)
+	public void setData(char data)
 	{
 		this.data = data;
 	}
 	
 	@Override public String debugGetText()
 	{
-		String childrenText = "";
-		
-		for (int i = 0; i < children.size(); i++)
-		{
-			childrenText += children.get(i).debugGetText();
-			if (i < children.size() - 1)
-				childrenText += ",";
-		}
-		return "Part<" + data + ">[" + childrenText + "]";
+		return "Part<" + data + ">";
 	}
 
-	@Override public int insertText(int pos, char c)
+	@Override public int addAt(int pos, Obj obj)
 	{
-		if (pos == 0)
-		{
-			Part p = new Part(parent, c);
-			p.children.add(this);
-			parent.replace(this, p);
-			return -1;
-		}
-		else if (pos == 1)
-		{
-			children.add(0, new Part(this, c));
-			return -1;
-		}
-		
-		pos--;
-		
-		for (int i = 0; i < children.size(); i++)
-		{
-			pos = children.get(i).insertText(pos, c);
-			if (pos == 0)
-			{
-				children.add(i+1, new Part(this, c));
-				return -1;
-			}
-		}
-		
-		return pos;
+		return --pos;
 	}
 	
 	@Override public int removeText(int pos)
 	{
 		if (pos == 0)
 		{
-			if (children.size() > 0)
-			{
-				Obj obj = children.get(0);
-				children.remove(0);
-				parent.replace(this, obj);
-				((Part)obj).children.addAll(children);
-			}
-			else
-			{
-				parent.remove(this);
-			}
+			parent.remove(this);
 			return -1;
 		}
 		else
 		{
 			pos--;
-			for (Obj child : children)
-			{
-				pos = child.removeText(pos);
-				if (pos < 0) 
-					return -1;
-			}
 		}
 		
 		return pos;
@@ -100,15 +51,7 @@ public class Part extends Obj
 
 	@Override public void replace(Obj oldObj, Obj newObj)
 	{
-		int i = children.indexOf(oldObj);
-		children.remove(i);
-		children.add(i, newObj);
-		newObj.parent = this;
-	}
-
-	@Override public void remove(Obj obj)
-	{
-		children.remove(obj);
+		parent.replace(oldObj, newObj);
 	}
 	
 	@Override public int findObj(int pos, ArrayList<Obj> outObj)
@@ -118,14 +61,34 @@ public class Part extends Obj
 			outObj.add(this);
 			return -1;
 		}
-		for (Obj c : children)
-		{
-			pos = findObj(--pos, outObj);
-			if (pos == -1)
-				break;
-		}
 		
-		return pos;
+		return --pos;
 	}
 
+	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	{
+		if (pos >= start && pos < end)
+		{
+			Debug.print("getBetween: " + data);
+			parent.remove(this);
+			((ObjList)parent).setRemove();
+			objList.addEnd(this);
+		}
+		
+		return ++pos;
+	}
+	
+	@Override public int removeBetween(int pos, int start, int end)
+	{
+		if (pos > start && pos <= end)
+		{
+			Debug.print("removeBetween: " + data);
+			
+			parent.remove(this);
+		}
+		
+		return --pos;
+	}
+	
+	
 }

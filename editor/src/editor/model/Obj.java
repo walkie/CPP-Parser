@@ -6,7 +6,7 @@ public abstract class Obj implements DocTree
 {
 	protected DocTree parent = null;
 	
-	public abstract int insertText(int pos, char c);
+	public abstract int addAt(int pos, Obj obj);
 	public abstract String debugGetText();
 	
 	public void replace(Obj oldObj, Obj newObj)
@@ -41,6 +41,16 @@ public abstract class Obj implements DocTree
 	}
 	
 	public int findObj(int pos, ArrayList<Obj> outObj)
+	{
+		return pos;
+	}
+	
+	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	{
+		return pos;
+	}
+	
+	@Override public int removeBetween(int pos, int start, int end)
 	{
 		return pos;
 	}

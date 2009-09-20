@@ -30,10 +30,10 @@ public class Choice extends Obj
 		return "Choice<" + altsText + ">";
 	}
 
-	@Override public int insertText(int pos, char c)
+	@Override public int addAt(int pos, Obj obj)
 	{
 		Obj alt = alts.get(dim.getSelectedAltIdx());
-		return alt.insertText(pos, c);
+		return alt.addAt(pos, obj);
 	}
 
 	@Override public int removeText(int pos)
@@ -91,5 +91,15 @@ public class Choice extends Obj
 	public void addAlternative(Obj obj)
 	{
 		alts.add(obj);		
+	}
+
+	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	{
+		return alts.get(dim.getSelectedAltIdx()).getBetween(pos, start, end, objList);
+	}
+
+	@Override public int removeBetween(int pos, int start, int end)
+	{
+		return alts.get(dim.getSelectedAltIdx()).removeBetween(pos, start, end);
 	}
 }

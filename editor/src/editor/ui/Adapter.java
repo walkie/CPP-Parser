@@ -14,6 +14,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import editor.model.Dim;
 import editor.model.Document;
+import editor.model.exceptions.NoChoiceException;
 import editor.util.Debug;
 
 public class Adapter implements DocumentListener
@@ -34,22 +35,6 @@ public class Adapter implements DocumentListener
 	public void changedUpdate(DocumentEvent e)
 	{
 		throw new NotImplementedException();
-//		try
-//		{
-//			int offset = e.getOffset();
-//			int length = e.getLength();
-//			String text = e.getDocument().getText(offset, length);
-//			Debug.print("changed: " + offset + " " + length + " " + text);
-//
-//			doc.removeText(offset, length);
-//			doc.insertText(offset, text);
-//
-//			Debug.print("changed: " + doc.getText());
-//		}
-//		catch (BadLocationException e1)
-//		{
-//			e1.printStackTrace();
-//		}
 	}
 
 	public void insertUpdate(DocumentEvent e)
@@ -134,7 +119,14 @@ public class Adapter implements DocumentListener
 				int pos = editor.getCaretPosition();
 				Debug.print("add alt: " + pos);
 				
-				doc.addAlternative(pos);
+				try
+				{
+					doc.addAlternative(pos);
+				}
+				catch (NoChoiceException e1)
+				{
+					JOptionPane.showMessageDialog(editor, "No choice here", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		};
 	}

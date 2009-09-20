@@ -2,19 +2,20 @@ package editor.model;
 
 import java.util.ArrayList;
 
+import editor.model.exceptions.NoChoiceException;
 import editor.ui.Adapter;
 
 import editor.util.Debug;
 
 public class Document implements DocTree
 {
-	final ArrayList<Obj> objs;
+	ObjList objs;
 	final Adapter adapter;
+	int length = 0;
 	
 	public Document(Adapter adapter)
 	{
-		this.objs = new ArrayList<Obj>();
-		this.objs.add(new Empty(this));
+		this.objs = new ObjList(this);
 		this.adapter = adapter;
 	}
 
@@ -22,11 +23,8 @@ public class Document implements DocTree
 	{
 		while (length-- > 0)
 		{
-			int i, p = 0;
-			do
-			{
-				i = objs.get(p++).removeText(pos);
-			} while (i >= 0 && p < objs.size());
+			length--;
+			objs.removeText(pos);
 		}
 		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
 	}
@@ -35,14 +33,8 @@ public class Document implements DocTree
 	{
 		for (char c : insText.toCharArray())
 		{
-			int i, p = 0;
-			
-			do
-			{
-				i = objs.get(p++).insertText(pos, c);
-			} while (i >= 0 && p < objs.size());
-		
-			pos++;
+			length++;
+			objs.addAt(pos++, new Part(null, c));
 		}
 		
 		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
@@ -52,19 +44,19 @@ public class Document implements DocTree
 	{
 		Debug.print("createChoice: " + start + " " + end);
 
-		Obj obj = getParts(start, end);
-		Dim dim = obj.createChoice();
+		ObjList objList = new ObjList(null);
 		
+		getBetween(0, start, end, objList);
+		//removeBetween(length, start, end);
+		
+		objs.addAt(start, objList);
+		Dim dim = objList.createChoice();
+			
 		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
 		
 		return dim;
 	}
-
-	private Obj getParts(int start, int end)
-	{
-		return objs.get(0);
-	}
-
+	
 	public void removeChoice(int start)
 	{
 		Debug.print("removeChoice: " + start);
@@ -78,34 +70,24 @@ public class Document implements DocTree
 
 	public String debugGetText()
 	{
-		String debugText = "";
-		
-		for (Obj obj : objs)
-		{
-			debugText += obj.debugGetText();
-		}
-
-		return debugText;
+		return objs.debugGetText();
 	}
 
 	@Override public void replace(Obj oldObj, Obj newObj)
 	{
-		int i = objs.indexOf(oldObj);
-		objs.remove(i);
-		objs.add(i, newObj);
-		newObj.parent = this;
+		objs.replace(oldObj, newObj);
 	}
 
 	@Override public void remove(Obj obj)
 	{
-		int i = objs.indexOf(obj);
-		objs.remove(i);
-		objs.add(i, new Empty(this));
+		objs.remove(obj);
 	}
 
-	public void addAlternative(int pos)
+	public void addAlternative(int pos) throws NoChoiceException
 	{
 		Choice c = getChoice(pos);
+		if (c == null)
+			throw new NoChoiceException();
 		c.addAlternative("???", new Empty(c));
 	}
 
@@ -117,12 +99,8 @@ public class Document implements DocTree
 
 	private Choice getChoice(int pos)
 	{
-		int p = 0;
 		ArrayList<Obj> a = new ArrayList<Obj>();
-		do
-		{
-			objs.get(p++).findObj(pos, a);
-		} while (a.size() == 0 && p < objs.size());
+		objs.findObj(pos, a);
 		
 		if (a.size() == 0)
 			return null;
@@ -133,5 +111,15 @@ public class Document implements DocTree
 	@Override public Choice findChoice()
 	{
 		return null;
+	}
+
+	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	{
+		return objs.getBetween(pos, start, end, objList);
+	}
+
+	@Override public int removeBetween(int pos, int start, int end)
+	{
+		return objs.removeBetween(pos, start, end);
 	}
 }

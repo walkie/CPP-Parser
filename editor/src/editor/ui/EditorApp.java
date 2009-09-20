@@ -35,9 +35,7 @@ public class EditorApp
 		
 		e.addRight(new JScrollPane(t));
 		e.addLeft(ds);
-		
-		ds.addDimension("S", new ArrayList<String>());
-		
+				
 		e.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		e.setVisible(true);
 	}

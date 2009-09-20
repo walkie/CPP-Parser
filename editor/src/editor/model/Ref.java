@@ -12,7 +12,7 @@ public class Ref extends Obj
 	}
 
 	@Override
-	public int insertText(int pos, char c)
+	public int addAt(int pos, Obj obj)
 	{
 		return pos;
 	}
