@@ -12,19 +12,29 @@ public class Dim extends Obj
 	
 	public Dim()
 	{
-		this.name = "???";
+		this("???");
+	}
+	
+	public Dim(String name)
+	{
+		this.name = name;
 		this.choices = new ArrayList<Choice>();
 		this.tags = new ArrayList<String>();
 	}
-	
+
 	public void addChoice(Choice c)
 	{
 		choices.add(c);
 	}
-	
+
 	public String getName()
 	{
 		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 	
 	public ArrayList<String> getTags()

@@ -87,7 +87,7 @@ public class Adapter implements DocumentListener
 					return;
 				}
 				
-				Dim dim = doc.createChoice(start, end);
+				Dim dim = doc.createChoice(ds.getSelectedDim(), start, end);
 				
 				ds.addDimension(dim.getName(), dim.getTags());
 			}

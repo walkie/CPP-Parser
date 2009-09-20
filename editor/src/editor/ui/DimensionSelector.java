@@ -31,4 +31,9 @@ public class DimensionSelector extends JPanel
 		add(d);
 		updateUI();
 	}
+
+	public String getSelectedDim()
+	{
+		return null;
+	}
 }

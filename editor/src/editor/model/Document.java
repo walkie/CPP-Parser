@@ -9,6 +9,7 @@ import editor.util.Debug;
 
 public class Document implements DocTree
 {
+	Dimensions dims;
 	ObjList objs;
 	final Adapter adapter;
 	int length = 0;
@@ -16,6 +17,7 @@ public class Document implements DocTree
 	public Document(Adapter adapter)
 	{
 		this.objs = new ObjList(this);
+		this.dims = new Dimensions();
 		this.adapter = adapter;
 	}
 
@@ -40,17 +42,18 @@ public class Document implements DocTree
 		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
 	}
 
-	public Dim createChoice(int start, int end)
+	public Dim createChoice(String dimName, int start, int end)
 	{
 		Debug.print("createChoice: " + start + " " + end);
 
 		ObjList objList = new ObjList(null);
 		
 		getBetween(0, start, end, objList);
-		//removeBetween(length, start, end);
+
+		Dim dim = dims.getDim(dimName);
 		
 		objs.addAt(start, objList);
-		Dim dim = objList.createChoice();
+		objList.createChoice();
 			
 		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
 		
@@ -121,5 +124,10 @@ public class Document implements DocTree
 	@Override public int removeBetween(int pos, int start, int end)
 	{
 		return objs.removeBetween(pos, start, end);
+	}
+	
+	public String newDimName()
+	{
+		return dims.newDimName();
 	}
 }
