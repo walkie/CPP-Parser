@@ -148,4 +148,16 @@ public class ObjList extends Obj
 		
 		return pos;
 	}
+	
+	@Override public String getText()
+	{
+		String text = "";
+		
+		for (Obj c : children)
+		{
+			text += c.getText();
+		}
+	
+		return text;
+	}
 }

@@ -62,10 +62,17 @@ public class Document implements DocTree
 		return dim;
 	}
 	
-	public void removeChoice(int start)
+	public void removeChoice(int pos)
 	{
-		Debug.print("removeChoice: " + start);
+		Debug.print("removeChoice: " + pos);
+		ArrayList<Obj> a = new ArrayList<Obj>();
+		objs.findObj(pos, a);
 		
+		if (a.size() > 0)
+		{
+			Choice c = a.get(0).findChoice();
+			c.removeChoice();
+		}
 	}
 
 	public void debugPrint()
@@ -88,12 +95,13 @@ public class Document implements DocTree
 		objs.remove(obj);
 	}
 
-	public void addAlternative(int pos) throws NoChoiceException
+	public Dim addAlternative(int pos) throws NoChoiceException
 	{
 		Choice c = getChoice(pos);
 		if (c == null)
 			throw new NoChoiceException();
-		c.addAlternative("???", new Empty(c));
+		
+		return c.addAlternative(new Part(c, ' '));
 	}
 
 	public void removeAlternative(int pos)
@@ -145,5 +153,10 @@ public class Document implements DocTree
 		objs.getAttrs(0, attrs);
 		
 		return attrs;
+	}
+
+	public String getText()
+	{
+		return objs.getText();
 	}
 }

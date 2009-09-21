@@ -46,12 +46,19 @@ public class Choice extends Obj
 		return alt.removeText(pos);
 	}
 
-	public void addAlternative(String tag, Obj obj)
+	public Dim addAlternative(Obj obj)
 	{
-		int i = dim.addAlternative(tag);
+		int i = dim.addAlternative();
 		obj.parent = this;
 		alts.remove(i);
 		alts.add(i, obj);		
+		
+		return dim;
+	}
+
+	public void addAlternativeAtEnd(Obj obj)
+	{
+		alts.add(obj);		
 	}
 	
 	@Override public void replace(Obj oldObj, Obj newObj)
@@ -92,11 +99,6 @@ public class Choice extends Obj
 		return alts.get(dim.getSelectedAltIdx()).findObj(pos, outObj);
 	}
 
-	public void addAlternative(Obj obj)
-	{
-		alts.add(obj);		
-	}
-
 	@Override public int getBetween(int pos, int start, int end, ObjList objList)
 	{
 		return alts.get(dim.getSelectedAltIdx()).getBetween(pos, start, end, objList);
@@ -122,5 +124,21 @@ public class Choice extends Obj
 		attrs.add(attr);
 		
 		return end;
+	}
+
+	public void removeChoice()
+	{
+		Obj obj = alts.get(dim.getSelectedAltIdx());
+		parent.replace(this, obj);
+	}
+
+	public void select(String tag)
+	{
+		dim.select(tag);
+	}
+	
+	@Override public String getText()
+	{
+		return alts.get(dim.getSelectedAltIdx()).getText();
 	}
 }

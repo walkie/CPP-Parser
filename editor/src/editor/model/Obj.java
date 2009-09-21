@@ -30,7 +30,7 @@ public abstract class Obj implements DocTree
 	{
 		Choice c = new Choice(dim);
 		parent.replace(this, c);
-		c.addAlternative("???", this);
+		c.addAlternative(this);
 		
 		return dim;
 	}
@@ -61,5 +61,10 @@ public abstract class Obj implements DocTree
 	@Override public int removeBetween(int pos, int start, int end)
 	{
 		return pos;
+	}
+	
+	public String getText()
+	{
+		return "";
 	}
 }

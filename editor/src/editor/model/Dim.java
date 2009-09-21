@@ -72,14 +72,15 @@ public class Dim extends Obj
 		}
 	}
 
-	public int addAlternative(String tag)
+	public int addAlternative()
 	{
+		String tag = "tag" + tags.size();
 		tags.add(tag);
 		selectedAltIdx = tags.size() - 1;
 		
 		for (Choice c : choices)
 		{
-			c.addAlternative(new Empty(c));
+			c.addAlternativeAtEnd(new Part(c, ' '));
 		}
 		
 		return selectedAltIdx;
@@ -88,5 +89,10 @@ public class Dim extends Obj
 	@Override public int size()
 	{
 		return obj.size();
+	}
+
+	public void select(String tag)
+	{
+		selectedAltIdx = tags.indexOf(tag);
 	}
 }

@@ -2,6 +2,8 @@ package editor.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -20,7 +22,7 @@ import editor.ui.backup.DimensionHighlighter;
 import editor.util.Debug;
 import editor.util.TextAttr;
 
-public class Adapter implements DocumentListener
+public class Adapter implements DocumentListener, KeyListener
 {
 	final Document doc;
 	final DimensionSelector ds;
@@ -44,6 +46,9 @@ public class Adapter implements DocumentListener
 
 	public void insertUpdate(DocumentEvent e)
 	{
+		if (inSetText)
+			return;
+
 		try
 		{
 			int offset = e.getOffset();
@@ -65,6 +70,9 @@ public class Adapter implements DocumentListener
 
 	public void removeUpdate(DocumentEvent e)
 	{
+		if (inSetText)
+			return;
+
 		int offset = e.getOffset();
 		int length = e.getLength();
 		Debug.print("removed: " + offset + " " + length);
@@ -76,46 +84,57 @@ public class Adapter implements DocumentListener
 		view.applyView();
 	}
 	
-	public ActionListener createChoice()
+	public ActionListener createChoiceListener()
 	{
 		return new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				int start = editor.getSelectionStart();
-				int end = editor.getSelectionEnd();
-				Debug.print("create choice: " + start + " " + end);
-				
-				if (start == end)
-				{
-					JOptionPane.showMessageDialog(editor, "Please select text");
-					return;
-				}
-				
-				Dim dim = doc.createChoice(ds.getSelectedDim(), start, end);
-				
-				ds.addDimension(dim.getName(), dim.getTags());
-				
-				setText();
+				createChoice();
 			}
 		};
 	}
 	
-	public ActionListener removeChoice()
+	private void createChoice()
+	{
+		int start = editor.getSelectionStart();
+		int end = editor.getSelectionEnd();
+		Debug.print("create choice: " + start + " " + end);
+		
+		if (start == end)
+		{
+			JOptionPane.showMessageDialog(editor, "Please select text");
+			return;
+		}
+		
+		Dim dim = doc.createChoice(ds.getSelectedDim(), start, end);
+		
+		ds.addDimension(dim.getName(), dim.getTags());
+		
+		setText();
+	}
+	
+	public ActionListener removeChoiceListener()
 	{
 		return new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				int start = editor.getSelectionStart();
-				int end = editor.getSelectionEnd();
-				Debug.print("remove choice: " + start + " " + end);
-
-				doc.removeChoice(start);
+				removeChoice();
 			}
 		};
 	}
 
+	private void removeChoice()
+	{
+		int start = editor.getCaretPosition();
+		Debug.print("remove choice: " + start);
+
+		doc.removeChoice(start);
+		
+		setText();
+	}
+	
 	public ActionListener addAlternative()
 	{
 		return new ActionListener()
@@ -128,7 +147,11 @@ public class Adapter implements DocumentListener
 				
 				try
 				{
-					doc.addAlternative(pos);
+					Dim dim = doc.addAlternative(pos);
+					
+					ds.updateDim(dim);
+					
+					setText();
 				}
 				catch (NoChoiceException e1)
 				{
@@ -172,35 +195,57 @@ public class Adapter implements DocumentListener
 		colorManager.setDimensions(doc.getDimensions());
 		//ds.setDimensions(doc.getDimensions(), doc.getSelectedTags());
 
+		editor.setText(doc.getText());
+		
 		Collection<TextAttr> parts = doc.getTextParts();
 
-//		editor.setText(getText(parts));
 		setHighlights(parts);
 
 		inSetText = false;
 	}
 
-//	private String getText(Collection<TextAttr> parts) {
-//		String str = "";
-//		for (TextAttr part : parts)
-//		{
-//			str += part.getText();
-//		}
-//		return str;
-//	}
-	
-	private void setHighlights(Collection<TextAttr> parts) {
-		for (TextAttr part : parts)
-		{
-//			if (!part.isAlt())
-//				continue;
+	private void setHighlights(Collection<TextAttr> parts) 
+	{
+		DimensionHighlighter h = null;
+		
+		h = (DimensionHighlighter)editor.getHighlighter();
+		h.removeAllHighlights();
 
-			try {
-				DimensionHighlighter h = null;
-				h = (DimensionHighlighter)editor.getHighlighter();
-				h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getDimName()));
-			} catch (Exception e) {
-				e.printStackTrace();
+		if (h != null)
+		{
+			for (TextAttr part : parts)
+			{
+				try
+				{
+					h.addHighlight(part.getStartPos(), part.getEndPos(), colorManager.getColor(part.getDimName()));
+				}
+				catch (BadLocationException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public void keyPressed(KeyEvent e)
+	{
+	}
+
+	public void keyReleased(KeyEvent e)
+	{
+	}
+
+	public void keyTyped(KeyEvent e)
+	{
+		if (e.isAltDown() && e.getKeyChar() == 'c' || e.getKeyChar() == 'C')
+		{
+			if (e.isShiftDown())
+			{
+				removeChoice();
+			}
+			else				
+			{
+				createChoice();
 			}
 		}
 	}

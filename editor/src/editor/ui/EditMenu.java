@@ -15,11 +15,11 @@ public class EditMenu extends JPopupMenu
 		JMenuItem mi;
 		
 		mi = new JMenuItem("Create Choice");
-		mi.addActionListener(adapter.createChoice());
+		mi.addActionListener(adapter.createChoiceListener());
 		add(mi);
 
 		mi = new JMenuItem("Remove Choice");
-		mi.addActionListener(adapter.removeChoice());
+		mi.addActionListener(adapter.removeChoiceListener());
 		add(mi);
 
 		mi = new JMenuItem("Add Alternative");

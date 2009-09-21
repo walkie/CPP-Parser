@@ -101,4 +101,9 @@ public class Part extends Obj
 	{
 		return ++pos;
 	}
+	
+	@Override public String getText()
+	{
+		return "" + data;
+	}
 }

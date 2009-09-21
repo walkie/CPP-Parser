@@ -9,6 +9,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import editor.model.Dim;
 import editor.util.Debug;
 
 public class DimensionSelector extends JPanel
@@ -41,5 +42,13 @@ public class DimensionSelector extends JPanel
 	public String getSelectedDim()
 	{
 		return null;
+	}
+
+	public void updateDim(Dim dim)
+	{
+		DimensionControl dc = dims.get(dim.getName());
+		
+		dc.setTags(dim.getTags());
+		updateUI();
 	}
 }

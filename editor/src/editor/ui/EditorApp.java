@@ -42,6 +42,8 @@ public class EditorApp
 		DimensionHighlighter h = new DimensionHighlighter();
 		t.setHighlighter(h);
 
+		t.addKeyListener(adapter);
+		
 		e.setVisible(true);
 	}
 }
