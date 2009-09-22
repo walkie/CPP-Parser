@@ -71,12 +71,12 @@ public abstract class Obj implements DocTree
 		return pos;
 	}
 	
-	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	public int getBetween(int pos, int start, int end, ObjList objList)
 	{
 		return pos;
 	}
 	
-	@Override public int removeBetween(int pos, int start, int end)
+	public int removeBetween(int pos, int start, int end)
 	{
 		return pos;
 	}

@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.ButtonGroup;
@@ -14,14 +13,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
-import com.sun.org.apache.bcel.internal.generic.Select;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import editor.model.Dim;
 import editor.model.Document;
 import editor.model.exceptions.NoChoiceException;
-import editor.ui.backup.DimensionHighlighter;
+import editor.ui.DimensionHighlighter;
 import editor.util.Debug;
 import editor.util.TextAttr;
 
@@ -46,7 +41,7 @@ public class Adapter implements DocumentListener, KeyListener
 	
 	public void changedUpdate(DocumentEvent e)
 	{
-		throw new NotImplementedException();
+		// not implemented
 	}
 
 	public void insertUpdate(DocumentEvent e)
