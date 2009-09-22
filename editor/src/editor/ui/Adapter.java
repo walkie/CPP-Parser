@@ -13,6 +13,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
+import com.sun.org.apache.bcel.internal.generic.Select;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import editor.model.Dim;
@@ -37,6 +39,8 @@ public class Adapter implements DocumentListener, KeyListener
 		this.doc = new Document(this);
 		this.view = new View(doc, editor);
 		this.colorManager = new ColorManager();
+		
+		this.ds.setAdapter(this);
 	}
 	
 	public void changedUpdate(DocumentEvent e)
@@ -248,5 +252,16 @@ public class Adapter implements DocumentListener, KeyListener
 				createChoice();
 			}
 		}
+	}
+	
+	public ActionListener getSelectTagListener(final String name, final String tag)
+	{
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)
+			{
+				doc.select(name, tag);
+				setText();
+			}
+		};
 	}
 }

@@ -15,6 +15,7 @@ import editor.util.Debug;
 public class DimensionSelector extends JPanel
 {
 	final Hashtable<String,DimensionControl> dims = new Hashtable<String,DimensionControl>();
+	Adapter adapter;
 	
 	public DimensionSelector()
 	{
@@ -33,7 +34,7 @@ public class DimensionSelector extends JPanel
 	
 	public void addDimension(String name, ArrayList<String> tags)
 	{
-		DimensionControl d = new DimensionControl(name, tags);
+		DimensionControl d = new DimensionControl(adapter, name, tags);
 		dims.put(name, d);
 		add(d);
 		updateUI();
@@ -50,5 +51,10 @@ public class DimensionSelector extends JPanel
 		
 		dc.setTags(dim.getTags());
 		updateUI();
+	}
+
+	public void setAdapter(Adapter adapter)
+	{
+		this.adapter = adapter;
 	}
 }

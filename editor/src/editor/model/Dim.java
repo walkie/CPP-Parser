@@ -80,7 +80,10 @@ public class Dim extends Obj
 		
 		for (Choice c : choices)
 		{
-			c.addAlternativeAtEnd(new Part(c, ' '));
+			ObjList ol = new ObjList(c);
+			ol.addEnd(new Part(c, ' '));
+
+			c.addAlternativeAtEnd(ol);
 		}
 		
 		return selectedAltIdx;

@@ -101,7 +101,10 @@ public class Document implements DocTree
 		if (c == null)
 			throw new NoChoiceException();
 		
-		return c.addAlternative(new Part(c, ' '));
+		ObjList ol = new ObjList(c);
+		ol.addEnd(new Part(c, ' '));
+		
+		return c.addAlternative(ol);
 	}
 
 	public void removeAlternative(int pos)
@@ -158,5 +161,10 @@ public class Document implements DocTree
 	public String getText()
 	{
 		return objs.getText();
+	}
+
+	public void select(String name, String tag)
+	{
+		dims.getDim(name).select(tag);
 	}
 }

@@ -12,12 +12,14 @@ import editor.util.Debug;
 
 public class DimensionControl extends JPanel
 {
+	Adapter adapter;
 	String name;
 	ArrayList<String> tags;
 	ButtonGroup g = new ButtonGroup();
 	
-	public DimensionControl(String name, ArrayList<String> tags)
+	public DimensionControl(Adapter adapter, String name, ArrayList<String> tags)
 	{
+		this.adapter = adapter;
 		this.name = name;
 		this.tags = new ArrayList<String>();
 		this.tags.addAll(tags);
@@ -38,8 +40,10 @@ public class DimensionControl extends JPanel
 	private void addTag(String tag)
 	{
 		JRadioButton r = new JRadioButton(tag);
+		r.addActionListener(adapter.getSelectTagListener(name, tag));
 		g.add(r);
 		add(r);
+		r.setSelected(true);
 	}
 	
 	public void setTags(ArrayList<String> tags)

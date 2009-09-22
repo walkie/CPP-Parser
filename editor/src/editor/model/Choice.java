@@ -131,11 +131,6 @@ public class Choice extends Obj
 		Obj obj = alts.get(dim.getSelectedAltIdx());
 		parent.replace(this, obj);
 	}
-
-	public void select(String tag)
-	{
-		dim.select(tag);
-	}
 	
 	@Override public String getText()
 	{
