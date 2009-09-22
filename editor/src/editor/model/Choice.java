@@ -61,14 +61,14 @@ public class Choice extends Obj
 		alts.add(obj);		
 	}
 	
-	@Override public void replace(Obj oldObj, Obj newObj)
+	public void replace(Obj oldObj, Obj newObj)
 	{
 		newObj.parent = this;
 		alts.remove(dim.getSelectedAltIdx());
 		alts.add(0, newObj);		
 	}
 
-	@Override public void remove(Obj obj)
+	public void remove(Obj obj)
 	{
 		alts.remove(dim.getSelectedAltIdx());
 		alts.add(0, new Empty(this));		
@@ -89,7 +89,7 @@ public class Choice extends Obj
 		}	
 	}
 	
-	@Override public Choice findChoice()
+	public Choice findChoice()
 	{
 		return this;
 	}
@@ -99,12 +99,12 @@ public class Choice extends Obj
 		return alts.get(dim.getSelectedAltIdx()).findObj(pos, outObj);
 	}
 
-	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	public int getBetween(int pos, int start, int end, ObjList objList)
 	{
 		return alts.get(dim.getSelectedAltIdx()).getBetween(pos, start, end, objList);
 	}
 
-	@Override public int removeBetween(int pos, int start, int end)
+	public int removeBetween(int pos, int start, int end)
 	{
 		return alts.get(dim.getSelectedAltIdx()).removeBetween(pos, start, end);
 	}

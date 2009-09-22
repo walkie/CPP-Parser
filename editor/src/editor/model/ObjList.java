@@ -70,12 +70,12 @@ public class ObjList extends Obj
 	}
 	
 
-	@Override public void remove(Obj obj)
+	public void remove(Obj obj)
 	{
 		children.remove(obj);
 	}
 	
-	@Override public void replace(Obj oldObj, Obj newObj)
+	public void replace(Obj oldObj, Obj newObj)
 	{
 		int i = children.indexOf(oldObj);
 		children.remove(i);
@@ -95,7 +95,7 @@ public class ObjList extends Obj
 		return pos;
 	}
 
-	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	public int getBetween(int pos, int start, int end, ObjList objList)
 	{
 		int i = 0;
 		while (i < children.size())
@@ -117,7 +117,7 @@ public class ObjList extends Obj
 	}
 	boolean inc = true;
 	
-	@Override public int removeBetween(int pos, int start, int end)
+	public int removeBetween(int pos, int start, int end)
 	{
 		for (int i = children.size() - 1; i >= 0; i--)
 		{

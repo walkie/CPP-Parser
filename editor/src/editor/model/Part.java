@@ -51,7 +51,7 @@ public class Part extends Obj
 		return pos;
 	}
 
-	@Override public void replace(Obj oldObj, Obj newObj)
+	public void replace(Obj oldObj, Obj newObj)
 	{
 		parent.replace(oldObj, newObj);
 	}
@@ -67,7 +67,7 @@ public class Part extends Obj
 		return --pos;
 	}
 
-	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	public int getBetween(int pos, int start, int end, ObjList objList)
 	{
 		if (pos >= start && pos < end)
 		{
@@ -80,7 +80,7 @@ public class Part extends Obj
 		return ++pos;
 	}
 	
-	@Override public int removeBetween(int pos, int start, int end)
+	public int removeBetween(int pos, int start, int end)
 	{
 		if (pos > start && pos <= end)
 		{

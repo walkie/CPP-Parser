@@ -85,12 +85,12 @@ public class Document implements DocTree
 		return objs.debugGetText();
 	}
 
-	@Override public void replace(Obj oldObj, Obj newObj)
+	public void replace(Obj oldObj, Obj newObj)
 	{
 		objs.replace(oldObj, newObj);
 	}
 
-	@Override public void remove(Obj obj)
+	public void remove(Obj obj)
 	{
 		objs.remove(obj);
 	}
@@ -124,17 +124,17 @@ public class Document implements DocTree
 			return a.get(0).findChoice();
 	}
 
-	@Override public Choice findChoice()
+	public Choice findChoice()
 	{
 		return null;
 	}
 
-	@Override public int getBetween(int pos, int start, int end, ObjList objList)
+	public int getBetween(int pos, int start, int end, ObjList objList)
 	{
 		return objs.getBetween(pos, start, end, objList);
 	}
 
-	@Override public int removeBetween(int pos, int start, int end)
+	public int removeBetween(int pos, int start, int end)
 	{
 		return objs.removeBetween(pos, start, end);
 	}
