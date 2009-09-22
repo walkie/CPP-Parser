@@ -7,7 +7,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
-import editor.ui.backup.DimensionHighlighter;
+import editor.ui.DimensionHighlighter;
 import editor.util.Debug;
 
 public class EditorApp 
