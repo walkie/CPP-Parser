@@ -55,7 +55,7 @@ public class Document implements DocTree
 		Dim dim = dims.getDim(dimName);
 		
 		objs.addAt(start, objList);
-		objList.createChoice(dim);
+		objList.createChoice(dim, dimName == null);
 			
 		Debug.print("doc: **********************\n" + debugGetText() + "\n**********************");
 		

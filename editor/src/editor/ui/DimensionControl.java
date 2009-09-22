@@ -16,6 +16,7 @@ public class DimensionControl extends JPanel
 	String name;
 	ArrayList<String> tags;
 	ButtonGroup g = new ButtonGroup();
+	JRadioButton dimRadioButton;
 	
 	public DimensionControl(Adapter adapter, String name, ArrayList<String> tags)
 	{
@@ -29,8 +30,13 @@ public class DimensionControl extends JPanel
 
 	private void setUI()
 	{
+		dimRadioButton = new JRadioButton();
+		adapter.getDimensionButtonGroup().add(dimRadioButton);
+		add(dimRadioButton);
+		dimRadioButton.setSelected(true);
+		dimRadioButton.addActionListener(adapter.dimensionSelectionListener(name));
 		add(new JLabel(name));
-			
+		
 		for (String tag : tags)
 		{
 			addTag(tag);

@@ -75,6 +75,12 @@ public class Dim extends Obj
 	public int addAlternative()
 	{
 		String tag = "tag" + tags.size();
+			
+		return addAlternative(tag);
+	}
+	
+	public int addAlternative(String tag)
+	{
 		tags.add(tag);
 		selectedAltIdx = tags.size() - 1;
 		

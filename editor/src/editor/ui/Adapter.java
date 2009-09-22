@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
@@ -40,7 +41,7 @@ public class Adapter implements DocumentListener, KeyListener
 		this.view = new View(doc, editor);
 		this.colorManager = new ColorManager();
 		
-		this.ds.setAdapter(this);
+		this.ds.initUI(this);
 	}
 	
 	public void changedUpdate(DocumentEvent e)
@@ -261,6 +262,22 @@ public class Adapter implements DocumentListener, KeyListener
 			{
 				doc.select(name, tag);
 				setText();
+			}
+		};
+	}
+
+	final ButtonGroup dimensionButtonGroup = new ButtonGroup();
+	public ButtonGroup getDimensionButtonGroup()
+	{
+		return dimensionButtonGroup;
+	}
+
+	public ActionListener dimensionSelectionListener(final String name)
+	{
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				ds.setSelectedDim(name);
 			}
 		};
 	}

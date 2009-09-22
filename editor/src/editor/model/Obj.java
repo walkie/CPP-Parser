@@ -26,12 +26,30 @@ public abstract class Obj implements DocTree
 		return pos;
 	}
 
-	public Dim createChoice(Dim dim)
+	public Dim createChoice(Dim dim, boolean isNew)
 	{
 		Choice c = new Choice(dim);
 		parent.replace(this, c);
-		c.addAlternative(this);
-		
+		if (isNew)
+			c.addAlternative(this);
+		else
+		{
+			for (int i = 0; i < dim.getTags().size(); i++)
+			{
+				ObjList ol = new ObjList(c);
+				ol.addEnd(new Part(ol, ' '));
+				if (i == dim.getSelectedAltIdx())
+				{
+					parent = c;
+					c.addAlternativeAtEnd(this);
+				}
+				else
+				{
+					c.addAlternativeAtEnd(ol);
+				}
+			}
+		}
+			
 		return dim;
 	}
 	
