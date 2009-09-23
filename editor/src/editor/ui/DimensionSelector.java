@@ -44,7 +44,7 @@ public class DimensionSelector extends JPanel
 	{
 		if (!dims.containsKey(name))
 		{
-			DimensionControl d = new DimensionControl(adapter, name, tags);
+			DimensionControl d = new DimensionControl(adapter, this, name, tags);
 			dims.put(name, d);
 			add(d);
 			selectedDim = name;

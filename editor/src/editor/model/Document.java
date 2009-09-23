@@ -167,4 +167,14 @@ public class Document implements DocTree
 	{
 		dims.getDim(name).select(tag);
 	}
+
+	public void changeTag(String name, String oldTag, String newTag)
+	{
+		dims.getDim(name).changeTag(oldTag, newTag);
+	}
+
+	public void changeDimName(String oldName, String newName)
+	{
+		dims.getDim(oldName).setName(newName);
+	}
 }

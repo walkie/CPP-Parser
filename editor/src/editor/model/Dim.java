@@ -104,4 +104,13 @@ public class Dim extends Obj
 	{
 		selectedAltIdx = tags.indexOf(tag);
 	}
+
+	public void changeTag(String oldTag, String newTag)
+	{
+		int i = tags.indexOf(oldTag);
+		if (i >= 0)
+		{
+			tags.set(i, newTag);
+		}
+	}
 }

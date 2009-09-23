@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -193,7 +194,6 @@ public class Adapter implements DocumentListener, KeyListener
 		inSetText = true;
 		
 		colorManager.setDimensions(doc.getDimensions());
-		//ds.setDimensions(doc.getDimensions(), doc.getSelectedTags());
 
 		editor.setText(doc.getText());
 		
@@ -250,12 +250,12 @@ public class Adapter implements DocumentListener, KeyListener
 		}
 	}
 	
-	public ActionListener getSelectTagListener(final String name, final String tag)
+	public ActionListener getSelectTagListener(final String name, final JLabel l)
 	{
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent arg0)
 			{
-				doc.select(name, tag);
+				doc.select(name, l.getText());
 				setText();
 			}
 		};
@@ -275,5 +275,15 @@ public class Adapter implements DocumentListener, KeyListener
 				ds.setSelectedDim(name);
 			}
 		};
+	}
+
+	public void changeTag(String name, String oldTag, String newTag)
+	{
+		doc.changeTag(name, oldTag, newTag);
+	}
+
+	public void changeDimName(String oldName, String newName)
+	{
+		doc.changeDimName(oldName, newName);
 	}
 }
