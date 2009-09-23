@@ -2,45 +2,29 @@ package editor.ui;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.Set;
 
 import editor.model.Dim;
 import editor.model.Dimensions;
 
-//import editor.model.Dimension;
-//import editor.model.Dimensions;
-
 public class ColorManager 
 {
-	private static Color defaultColor = new Color(255,255,255);
 	HashMap<String, Color> colors = new HashMap<String,Color>();
 
 	public Color getColor(String name)
 	{
-		if (colors.keySet().contains(name))
+		if (!colors.keySet().contains(name))
 		{
-			return colors.get(name);
+			colors.put(name, nextColor());
 		}
 		
-		return defaultColor;
+		return colors.get(name);
 	}
 
 	public void setDimensions(Dimensions dimensions)
 	{
-		//colors.clear();
-		
 		for (Dim dim : dimensions)
 		{
-			Color c;
-			
-			c = getColor(dim.getName());
-			
-			if (c.equals(defaultColor))
-			{
-				c = nextColor();
-			}
-			
-			colors.put(dim.getName(), c);
+			getColor(dim.getName());
 		}
 	}
 	
@@ -61,5 +45,12 @@ public class ColorManager
 		float h =  i / denom;
 		Color c = Color.getHSBColor(h, 0.8f, 1.0f);
 		return new Color(c.getRed(), c.getBlue(), c.getGreen(), 128);
+	}
+
+	public void changeDimName(String oldName, String newName)
+	{
+		Color color = colors.get(oldName);
+		colors.remove(oldName);
+		colors.put(newName, color);
 	}
 }

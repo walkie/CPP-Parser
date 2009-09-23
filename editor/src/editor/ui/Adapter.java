@@ -1,5 +1,6 @@
 package editor.ui;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -285,5 +286,11 @@ public class Adapter implements DocumentListener, KeyListener
 	public void changeDimName(String oldName, String newName)
 	{
 		doc.changeDimName(oldName, newName);
+		colorManager.changeDimName(oldName, newName);
+	}
+
+	public Color getColor(String name)
+	{
+		return colorManager.getColor(name);
 	}
 }

@@ -1,5 +1,6 @@
 package editor.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -49,6 +50,7 @@ public class DimensionControl extends JPanel
 	{
 		final JLabel l = new JLabel(name);
 		final JTextField t = new JTextField();
+				
 		dimRadioButton = new JRadioButton();
 		adapter.getDimensionButtonGroup().add(dimRadioButton);
 		dimRadioButton.setSelected(true);
@@ -75,7 +77,7 @@ public class DimensionControl extends JPanel
 			{
 				if (e.getKeyChar() == '\n')
 				{
-					if (t.getText() != "")
+					if (!t.getText().trim().equals(""))
 					{
 						adapter.changeDimName(l.getText(), t.getText());
 						if (l.getText().equals(ds.getSelectedDim()))
@@ -91,6 +93,10 @@ public class DimensionControl extends JPanel
 		add(t);
 		add(l);
 		t.setVisible(false);
+		
+		Color color = adapter.getColor(name);
+		l.setBackground(color);
+		dimRadioButton.setBackground(color);
 	}
 	
 	private void addTag(String tag)
@@ -121,7 +127,7 @@ public class DimensionControl extends JPanel
 			{
 				if (e.getKeyChar() == '\n')
 				{
-					if (t.getText() != "")
+					if (!t.getText().trim().equals(""))
 					{
 						ds.
 						adapter.changeTag(name, l.getText(), t.getText());
