@@ -27,19 +27,25 @@ var (n := _) = n
 val :: Bind a -> a
 val (_ := a) = a
 
-subs :: Expr t a -> [Expr t a]
-subs (Var _)   = []
-subs (_ :< es) = es
-subs (Let b e) = val b : [e]
-subs (Dim _ e) = [e]
-subs (_ :? es) = es
+children :: Expr t a -> [Expr t a]
+children (Var _)   = []
+children (_ :< es) = es
+children (Let b e) = val b : [e]
+children (Dim _ e) = [e]
+children (_ :? es) = es
 
+-- Apply a transformation function to all children.
+cmap :: (Expr t a -> Expr t a) -> Expr t a -> Expr t a
+cmap f v@(Var _) = v
+cmap f (a :< es) = a :< map f es
+cmap f (Let b e) = Let (fmap f b) (f e)
+cmap f (Dim b e) = Dim b (f e)
+cmap f (n :? es) = n :? map f es
+
+-- Apply a transformation function to an expression, then recursively apply
+-- it to all children.
 emap :: (Expr t a -> Expr t a) -> Expr t a -> Expr t a
-emap f v@(Var _) = v
-emap f (a :< es) = a :< map f es
-emap f (Let b e) = Let (fmap f b) (f e)
-emap f (Dim b e) = Dim b (f e)
-emap f (n :? es) = n :? map f es
+emap f = cmap (emap f) . f
 
 type Map a = [(Name,a)]
 
@@ -100,7 +106,7 @@ checkWith m (n :? es) =
   case lookup n m of
     Just l  -> length es == l && all (checkWith m) es
     Nothing -> error $ "Undefined dimension: " ++ n
-checkWith m e = all (checkWith m) (subs e)
+checkWith m e = all (checkWith m) (children e)
 
 
 --
