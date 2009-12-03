@@ -45,7 +45,7 @@ cmap f (n :? es) = n :? map f es
 -- Apply a transformation function to an expression, then recursively apply
 -- it to all children.
 emap :: (Expr t a -> Expr t a) -> Expr t a -> Expr t a
-emap f = cmap (emap f) . f
+emap f = cmap (emap f) . cmap f
 
 type Map a = [(Name,a)]
 
@@ -284,8 +284,26 @@ class Show a => ShowNesting a where
   comma _ = ", "
   clAng _ = "}"
 
+instance ShowNesting Bool where
+  showS = show
+  opAng _ = "{"
+  comma _ = ","
+  clAng _ = "}"
+
 instance ShowNesting Char where
   showS = (:[])
+  opAng _ = "{"
+  comma _ = ","
+  clAng _ = "}"
+
+instance ShowNesting Int where
+  showS = show
+  opAng _ = "{"
+  comma _ = ","
+  clAng _ = "}"
+
+instance ShowNesting Integer where
+  showS = show
   opAng _ = "{"
   comma _ = ","
   clAng _ = "}"
