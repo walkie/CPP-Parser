@@ -2,7 +2,6 @@
 module Merge where
 
 import Choice
---import Semantics hiding (e,e')
 
 type Degree = Int
 type Index  = Int
@@ -59,10 +58,3 @@ e = Dim ("A" := [True, False]) $
          ] 
 
 e' = dimMerge [Merge "AB" ["A","B"] ["A","B","X"]] e
-
--- ToMerge "A" ["A", "B"]
--- IF A 1 ELSEIF B 2 ELSE 3 END
--- A~B, ~AB, ~A~B
--- A<1,2> -> AB<1,2,2>
--- B<1,2> -> AB<2,1,2>
--- A<1,B<2,3>> ~> AB<1,B<2,3>,B<2,3>> -> AB<1, AB<3,2,3>, AB<3,2,3>>  --reduce--> AB<1,2,3>
