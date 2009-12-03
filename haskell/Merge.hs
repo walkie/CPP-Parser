@@ -44,7 +44,7 @@ dimMerge ms e = decls ms (m e)
         m (Dim (n := ts) e) | elem n merged = m e
                             | otherwise     = Dim (n := ["defined", "undefined"]) (m e)
         m (b :? [t,f])      = case lookup b info of
-          Just (n,d,i) -> Let ("f" := m f) $ -- TODO: this could clobber an existing variable!
+          Just (n,d,i) -> Let ("f" := m f) $ -- TODO: this could capture a free variable in f!
                           n :? (replicate i (Var "f") ++ (m t) : replicate (d-i-1) (Var "f"))
           Nothing      -> b :? [m t, m f]
 
