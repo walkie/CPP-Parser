@@ -1,8 +1,10 @@
-{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
-
+{-# LANGUAGE FlexibleInstances,
+             DeriveDataTypeable,
+             TypeSynonymInstances #-}
 module Choice where
 
 import Data.List (elemIndex, intersperse, nub)
+import Data.Typeable (Typeable)
 import Maybe (fromMaybe)
 
 import Color
@@ -16,10 +18,10 @@ data Expr t a =
   | Let (Bind (Expr t a)) (Expr t a) -- let expression
   | Dim (Bind [t]) (Expr t a)        -- dimension declaration
   | Name :? [Expr t a]               -- choice
-    deriving Eq
+  deriving (Eq, Typeable)
 
 data Bind a = Name := a
-              deriving Eq
+            deriving (Eq, Typeable)
 
 var :: Bind a -> Name
 var (n := _) = n

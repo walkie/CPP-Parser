@@ -1,17 +1,16 @@
 {-# LANGUAGE FlexibleContexts, FlexibleInstances, TypeFamilies #-}
 module Main where
 
-import Data.List (intersect,nub)
+import Data.List (intersect,nub,partition,union)
 
 import System.Environment
 import System.IO.Unsafe
 
-import CPP.Lang
+import CPP.Lang hiding (Name)
 import CPP.Parser
 import CPP.Translator
 
 import Choice
-import Transform
 
 parseAndTranslate :: (Eq a, DataIs a, Stored (StoreAs a)) => 
                      KeepData a -> [FilePath] -> 
@@ -57,7 +56,32 @@ main = do ps <- mainGetPaths
           print e
 -}
 
-instance ShowNesting Bool
+-----------------------
+-- Utility Functions --
+-----------------------
+
+varsets :: Expr t a -> [[Name]]
+varsets = indySets . expr []
+  where expr m (Let (v := e) f) = expr ((v,expr m e):m) f
+        expr m (Var v)   = maybe [] id (lookup v m)
+        expr m (a :< []) = []
+        expr m (a :< es) = exprs m es
+        expr m (Dim _ e) = expr m e
+        expr m (d :? es) = indySets (add d (exprs m es))
+        exprs m = indySets . concatMap (expr m)
+
+add :: a -> [[a]] -> [[a]]
+add a [] = [[a]]
+add a ss = map (a:) ss
+
+indySets :: Eq a => [[a]] -> [[a]]
+indySets []     = []
+indySets (s:ss) = 
+    case partition (null . intersect s) ss of
+      (ns,[]) -> nub s : indySets ns
+      (ns,ys) -> indySets (foldr union s ys : ns)
+
+
 instance ShowNesting (Maybe Int) where
   showS (Just i) = show i
   showS Nothing  = "X"
