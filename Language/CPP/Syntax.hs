@@ -1,19 +1,25 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 
-module CPP.Lang where
+-- | Abstract syntax of a C-Preprocessor annotated file.
+module Language.CPP.Syntax where
 
 import Data.Bits
 import Data.List (intersperse,nub)
 
+--
+-- * Files and Text
+--
 
+-- | A file name.
 type Name = String
 
+-- | A file is a name associated with a block of text.
 data File a = File Name (Text a) deriving Eq
 
--- A block of input which may or may not contain directives.
+-- | A block of input which may or may not contain directives.
 data Text a = Text [Line a] deriving Eq
 
--- A line of input, post gluing of slash-lines.
+-- | A line of input, after gluing slash-lines.
 data Line a = Data a
             | Control Directive
             deriving Eq
@@ -27,9 +33,9 @@ fileText (File _ t) = t
 textLines :: Text a -> [Line a]
 textLines (Text ls) = ls
 
-----------------
--- Directives --
-----------------
+--
+-- * Directives
+--
 
 -- Macros are strings composed only of letters, numbers and underscores.
 -- They are also called "predicates" in the context of assertions.

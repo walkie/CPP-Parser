@@ -1,4 +1,5 @@
-module CPP.Parser where
+
+module Language.CPP.Parser where
 
 import Control.Monad (liftM, liftM2)
 import Data.Char (isSpace)
