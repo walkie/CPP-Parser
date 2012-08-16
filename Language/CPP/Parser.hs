@@ -1,3 +1,16 @@
+-- | Per the language definition, CPP proceeds in four passes:
+--     1. Trigraph replacement
+--     2. Line splicing
+--     3. Tokenization
+--     4. Macro expansion and directive handling
+--
+--   Phase 1 is turned off by default in GCC and seems safe to ignore since it
+--   exists only for archaic machines.  It could easily be added if needed.
+--   Phase 2 is directly implemented as part of the parser.  Tokenization is not
+--   implemented exactly as specified in the CPP specification, but hopefully
+--   captures the same valid programs (while discarding invalid ones which CPP
+--   would pass through to later stages).  Phase 4 is outside the scope of the 
+--   ToSC project.
 
 module Language.CPP.Parser where
 
@@ -14,29 +27,15 @@ import qualified Text.ParserCombinators.Parsec.Token as Lex
 
 import CPP.Lang
 
--- Per the definition, CPP proceeds in four passes:
---   1. Trigraph replacement
---   2. Line splicing
---   3. Tokenization
---   4. Macro expansion and directive handling
---
--- Phase 1 is turned off by default in GCC and seems safe to ignore since it
--- exists only for archaic machines.  It could easily be added if needed.
--- Phase 2 is directly implemented as part of the parser.  Tokenization is not
--- implemented exactly as specified in the CPP specification, but hopefully
--- captures the same valid programs (while discarding invalid ones which CPP
--- would pass through to later stages).  Phase 4 is outside the scope of the 
--- ToSC project.
-
 parseCPP :: Eq a => KeepData a -> FilePath -> String -> File a
 parseCPP k p = File p . parseLines k p . splice . lines
 
 parseFile :: Eq a => KeepData a -> FilePath -> IO (File a)
 parseFile k p = liftM (parseCPP k p) (readFile p)
 
--------------------
--- Line Splicing --
--------------------
+--
+-- * Line Splicing
+--
 
 splice :: [String] -> [String]
 splice = glue . group . prep
@@ -48,9 +47,9 @@ splice = glue . group . prep
                  (as, a:bs) -> (map tail as ++ [a]) : group bs
                  (as, _)    -> [map tail as]
     
------------
--- Lexer --
------------
+--
+-- * Lexer
+--
 
 cpp = LanguageDef {
     commentStart    = "/*",
@@ -78,9 +77,9 @@ reservedOp = Lex.reservedOp lexer
 reserved = Lex.reserved lexer
 comma = Lex.comma lexer
 
-------------
--- Parser --
-------------
+--
+-- * Parser
+--
 
 type KeepData a = String -> a
 
