@@ -1,10 +1,12 @@
-{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE DeriveDataTypeable,
+             TypeSynonymInstances #-}
 
 -- | Abstract syntax of a C-Preprocessor annotated file.
 module Language.CPP.Syntax where
 
 import Data.Bits
 import Data.List (intersperse,nub)
+import Data.Generics
 
 --
 -- * Files and Text
@@ -14,42 +16,38 @@ import Data.List (intersperse,nub)
 type Name = String
 
 -- | A file is a name associated with a block of text.
-data File a = File Name (Text a) deriving Eq
+data File a = File {
+  fileName :: Name,
+  fileText :: Text a
+} deriving (Eq,Data,Typeable)
 
 -- | A block of input which may or may not contain directives.
-data Text a = Text [Line a] deriving Eq
+newtype Text a = Text { textLines :: [Line a] }
+  deriving (Eq,Data,Typeable)
 
 -- | A line of input, after gluing slash-lines.
 data Line a = Data a
             | Control Directive
-            deriving Eq
+  deriving (Eq,Data,Typeable)
 
-fileName :: File a -> Name
-fileName (File n _) = n
-
-fileText :: File a -> Text a
-fileText (File _ t) = t
-
-textLines :: Text a -> [Line a]
-textLines (Text ls) = ls
 
 --
 -- * Directives
 --
 
--- Macros are strings composed only of letters, numbers and underscores.
--- They are also called "predicates" in the context of assertions.
+-- | Macros are strings composed only of letters, numbers and underscores.
+--   They are also called "predicates" in the context of assertions.
 type Macro = String
 
--- A type used to capture the "rest of a line".  CPP performs tokenization
--- on these values, but we're ignoring that for now.
+-- | A type used to capture the "rest of a line".  CPP performs tokenization
+--   on these values, but we're ignoring that for now.
 type Tokens = String
 
--- A file argument to the #include family of directives.
+-- | A file argument to the #include family of directives.
 data Include = System Name | Local Name | IMacro Macro
-  deriving Eq
+  deriving (Eq,Data,Typeable)
 
--- A command to the C-preprocessor.
+-- | A command to the C-preprocessor.
 data Directive =
     D   D 
   | DF  DF  Include
@@ -58,78 +56,40 @@ data Directive =
   | DE  DE  CExpr
   | DMT DMT Macro Tokens -- TODO handle function macros separately?
   | NonStandard Name Tokens
-  deriving Eq
+  deriving (Eq,Data,Typeable)
 
-data D   = Else    | Endif   | Null               deriving Eq
-data DF  = Include | Import  | IncludeNext        deriving Eq
-data DM  = Ifdef   | Ifndef  | Undef   | Unassert deriving Eq
-data DT  = Error   | Warning | Line    | Pragma   deriving Eq
-data DE  = If      | Elif                         deriving Eq
-data DMT = Define  | Assert                       deriving Eq
+data D   = Else    | Endif   | Null               deriving (Eq,Data,Typeable)
+data DF  = Include | Import  | IncludeNext        deriving (Eq,Data,Typeable)
+data DM  = Ifdef   | Ifndef  | Undef   | Unassert deriving (Eq,Data,Typeable)
+data DT  = Error   | Warning | Line    | Pragma   deriving (Eq,Data,Typeable)
+data DE  = If      | Elif                         deriving (Eq,Data,Typeable)
+data DMT = Define  | Assert                       deriving (Eq,Data,Typeable)
 
------------------
--- Expressions --
------------------
+--
+-- * Expressions
+--
 
 data CExpr = 
     Defined Macro 
   | IntConst Int
   | CharConst Char
   | Macro Macro
-  | MFun Macro [CExpr]
+  | MFun  Macro [CExpr]
   | UnOp  UnOp  CExpr
   | BinOp BinOp CExpr CExpr
   | TerIf       CExpr CExpr CExpr
-  deriving Eq
+  deriving (Eq,Data,Typeable)
 
 data UnOp  = Not | Pos | Neg | Com
-  deriving Eq
+  deriving (Eq,Data,Typeable)
 
 data BinOp = Add | Sub | Mul | Div | Mod
            | CLT | LEq | CGT | GEq 
            | CEq | NEq | And | Or
            | ShL | ShR | And'| Or' | Xor
-  deriving Eq
+  deriving (Eq,Data,Typeable)
 
--- Wow, this is a SYBP use case...
-
--- Returns all non-function macro uses.
-macrosE :: CExpr -> [Macro]
-macrosE (Defined m) = [m]
-macrosE (Macro   m) = [m]
---macrosE (MFun m as) = m : macrosEL as -- TODO recurse into args?
-macrosE (UnOp  _ e)   = macrosE e
-macrosE (BinOp _ e f) = macrosEs [e,f]
-macrosE (TerIf e f g) = macrosEs [e,f,g]
-macrosE _ = []
-
-macrosEs :: [CExpr] -> [Macro]
-macrosEs = nub . concatMap macrosE
-
--- Returns all non-function macro uses in conditional statements.
-macrosD :: Directive -> [Macro]
-macrosD (DM Ifdef  m) = [m]
-macrosD (DM Ifndef m) = [m]
-macrosD (DE _ e)      = macrosE e
-macrosD _ = []
-
--- Returns all non-function macro uses in conditional statements.
-macrosL :: Line a -> [Macro]
-macrosL (Control d) = macrosD d
-macrosL _ = []
-
--- Returns all non-function macro uses in conditional statements.
-macrosT :: Text a -> [Macro]
-macrosT = nub . concatMap macrosL . textLines
-
--- Returns all non-function macro uses in conditional statements.
-macrosF :: File a -> [Macro]
-macrosF = macrosT . fileText
-
-macrosFs :: [File a] -> [Macro]
-macrosFs = nub . concatMap macrosF
-
--- Expression evaluation
+-- ** Expression evaluation
 
 eval :: CExpr -> Int
 eval (Defined m)   = undefined -- 0 if undefined, 1 if defined
@@ -183,11 +143,22 @@ onZero :: (CExpr -> a) -> (CExpr -> a) -> Int -> CExpr -> a
 onZero z _ 0 e = z e
 onZero _ n _ e = n e
 
----------------
--- Functions --
----------------
+--
+-- * Functions
+--
 
--- Predicates for identifying conditional directives.
+-- | Find all of the non-function macro uses.
+findMacros :: Data a => a -> [Macro]
+findMacros = everything (++) (mkQ [] inE `extQ` inD)
+  where 
+    inE (Defined m)   = [m]
+    inE (Macro   m)   = [m]
+    inE e             = findMacros e
+    inD (DM Ifdef m)  = [m]
+    inD (DM Ifndef m) = [m]
+    inD d             = findMacros d
+
+-- ** Predicates for identifying conditional directives
 
 isIf :: Line a -> Bool
 isIf (Control (DM Ifdef  _)) = True
@@ -210,7 +181,7 @@ isEndif _                   = False
 isConditional :: Line a -> Bool
 isConditional l = any ($ l) [isIf, isElif, isElse, isEndif]
 
--- Extract the condition from a conditional directive.
+-- | Extract the condition from a conditional directive.
 condition :: ShowData a => Line a -> CExpr
 condition (Control (DM Ifdef  m)) = Defined m
 condition (Control (DM Ifndef m)) = UnOp Not (Defined m)
@@ -218,9 +189,9 @@ condition (Control (DE _      e)) = e
 condition (Control (D  Else    )) = IntConst 1
 condition l = error $ "Not a conditional directive: " ++ show l
 
----------------------
--- Pretty printing --
----------------------
+--
+-- * Pretty printing
+--
 
 sep :: [String] -> String
 sep = concat . intersperse " "
