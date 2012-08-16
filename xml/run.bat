@@ -1,1 +1,0 @@
-jaxb-ri-20090206\bin\xjc Schema4.xsd -p tosc Schema4.xsd
