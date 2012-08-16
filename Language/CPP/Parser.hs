@@ -18,14 +18,15 @@ import Control.Monad (liftM, liftM2)
 import Data.Char (isSpace)
 import Data.List (dropWhile, group, isPrefixOf)
 
-import Text.ParserCombinators.Parsec hiding (Line)
-import Text.ParserCombinators.Parsec.Error
-import Text.ParserCombinators.Parsec.Expr
-import Text.ParserCombinators.Parsec.Pos (newPos)
-import Text.ParserCombinators.Parsec.Token (LanguageDef(..),TokenParser,makeTokenParser)
-import qualified Text.ParserCombinators.Parsec.Token as Lex
+import Text.Parsec hiding (Line,Error)
+import Text.Parsec.Pos (newPos)
+import Text.Parsec.Error
+import Text.Parsec.Expr
+import Text.Parsec.String
+import Text.Parsec.Token (GenLanguageDef(..),TokenParser,makeTokenParser)
+import qualified Text.Parsec.Token as Lex
 
-import CPP.Lang
+import Language.CPP.Syntax
 
 parseCPP :: Eq a => KeepData a -> FilePath -> String -> File a
 parseCPP k p = File p . parseLines k p . splice . lines
@@ -195,10 +196,3 @@ literal :: Parser CExpr
 literal = int <|> char
   where int  = liftM (IntConst . fromInteger) integer
         char = liftM CharConst charLiteral
-        
-instance Eq Message where
-  SysUnExpect m == SysUnExpect n = m == n
-  UnExpect    m == UnExpect    n = m == n
-  Expect      m == Expect      n = m == n
-  Message     m == Message     n = m == n
-  _ == _ = False
