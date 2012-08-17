@@ -154,10 +154,10 @@ findMacros = everything (++) (mkQ [] inE `extQ` inD)
   where 
     inE (Defined m)   = [m]
     inE (Macro   m)   = [m]
-    inE e             = findMacros e
+    inE e             = []
     inD (DM Ifdef m)  = [m]
     inD (DM Ifndef m) = [m]
-    inD d             = findMacros d
+    inD d             = []
 
 -- ** Predicates for identifying conditional directives
 
@@ -218,7 +218,7 @@ instance ShowData a => Show (Text a) where
 
 instance ShowData a => Show (File a) where
   show (File p t) = name ++ show t
-    where name = "/** GREPME File: " ++ p ++ " */"
+    where name = "/** Begin File: " ++ p ++ " */\n"
 
 instance Show Directive where
   show (D d) = show d

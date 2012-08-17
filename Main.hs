@@ -28,4 +28,4 @@ mainGetPaths = do as <- getArgs
                     _ -> return as
 
 main = do fs <- mainGetPaths >>= parseFiles discard
-          putStrLn $ "Total number of macros: " ++ show (length (findMacros fs))
+          mapM_ putStrLn (findMacros fs)
