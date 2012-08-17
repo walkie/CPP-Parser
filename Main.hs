@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleContexts, FlexibleInstances, TypeFamilies #-}
+{-# LANGUAGE FlexibleContexts, TypeFamilies #-}
 module Main where
 
 import Data.List (intersect,nub,partition,union)

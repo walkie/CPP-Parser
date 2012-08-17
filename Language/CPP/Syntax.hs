@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable,
+             FlexibleInstances,
              TypeSynonymInstances #-}
 
 -- | Abstract syntax of a C-Preprocessor annotated file.

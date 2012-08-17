@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeFamilies, TypeSynonymInstances #-}
+{-# LANGUAGE TypeFamilies, FlexibleInstances, TypeSynonymInstances #-}
 
 module Analysis.Translator where
 
